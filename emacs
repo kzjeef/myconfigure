@@ -63,9 +63,27 @@
 
 (defun color-init()
 "init the color theme"
-;;(require 'color-theme)
-;;(color-theme-initialize)
-;;(color-theme-calm-forest)
+(require 'color-theme)
+(color-theme-initialize)
+;(color-theme-calm-forest)
+
+;(if ((display-color-cells) 20)
+;     (color-theme-tty-dark)
+   (color-theme-clarity)
+;)
+
+(defun toggle-night-color-theme ()
+  "Switch to/from night color scheme."
+  (interactive)
+  (require 'color-theme)
+  (if (eq (frame-parameter (next-frame) 'background-mode) 'dark)
+      (color-theme-snapshot) ; restore default (light) colors
+    ;; create the snapshot if necessary
+    (when (not (commandp 'color-theme-snapshot))
+      (fset 'color-theme-snapshot (color-theme-make-snapshot)))
+        (color-theme-clarity)))
+
+(global-set-key (kbd "<f9>") 'toggle-night-color-theme)
 )
 
 (defun config-in-tty-mode ()
@@ -80,6 +98,8 @@
 (setq x-select-enable-clipboard t)	;;让X的剪切板和EMACS联系起来
 (tool-bar-mode -1) ;; 不要工具按钮
 (scroll-bar-mode -1) ;; 不要缩放条
+(color-init)
+
 )
 
 (defun if-in-tty()
@@ -109,7 +129,7 @@ try-complete-lisp-symbol-partially
 ;; for object-c.
 (add-hook 'objc-mode-hook
 '(lambda ()
-   (setq cscope-do-not-update-database t)
+   (setq cscope-do-not-update-database nil)
    (load-c-relate-lib)
    (c-set-style "cc-mode")))
 
@@ -209,6 +229,35 @@ Zhang Jiejing")
 ;;(load "desktop")
 ;;(desktop-load-default)
 ;;(desktop-read)
+
+
+;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
+;; need find-file to do this
+(require 'find-file)
+;; find-file doesn't grok objc files for some reason, add that
+(push ".m" (cadr (assoc "\\.h\\'" cc-other-file-alist)))
+
+(defun my-find-proper-mode ()
+  (interactive)
+  ;; only run on .h files
+  (when (string-match "\\.h\\'" (buffer-file-name))
+    (save-window-excursion
+      (save-excursion
+        (let* ((alist (append auto-mode-alist nil))  ;; use whatever auto-mode-alist has
+               (ff-ignore-include t)                 ;; operate on buffer name only
+               (src (ff-other-file-name))            ;; find the src file corresponding to .h
+               re mode)
+          ;; go through the association list
+          ;; and find the mode associated with the source file
+          ;; that is the mode we want to use for the .h file
+          (while (and alist
+                      (setq mode (cdar alist))
+                      (setq re (caar alist))
+                      (not (string-match re src)))
+            (setq alist (cdr alist)))
+          (when mode (funcall mode)))))))
+
+(add-hook 'find-file-hook 'my-find-proper-mode)
 
 ;; Ask question when C-x, C-c.
 (setq kill-emacs-query-functions
