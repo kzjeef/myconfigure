@@ -20,6 +20,23 @@
 ;; speed up cscope speed
 ;(require 'git)
 
+
+;; my git setup codes.
+(defun git-setup () 
+;; git setup;
+(require 'git)
+(require 'git-blame)
+(autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
+(require 'egg)
+;; add signed off by;
+
+(defun signed-off-by-me ()
+ (interactive)		
+(insert "Signed-off-by Zhang Jiejing \<jiejing.zhang@freescale.com\>")
+)
+(global-set-key [f11] 'signed-off-by-me)
+)
+
 (defun generic-programming-realted-config ()
 ;; (require 'doxymacs)
 ;; (doxymacs-font-lock)
@@ -67,11 +84,6 @@
 (color-theme-initialize)
 ;(color-theme-calm-forest)
 
-;(if ((display-color-cells) 20)
-;     (color-theme-tty-dark)
-   (color-theme-clarity)
-;)
-
 (defun toggle-night-color-theme ()
   "Switch to/from night color scheme."
   (interactive)
@@ -83,17 +95,23 @@
       (fset 'color-theme-snapshot (color-theme-make-snapshot)))
         (color-theme-clarity)))
 
-(global-set-key (kbd "<f9>") 'toggle-night-color-theme)
+(global-set-key [f10] 'toggle-night-color-theme)
 )
 
 (defun config-in-tty-mode ()
-(color-init))
+;; don't load color in tty mode.
+;(color-init)
+)
+
 
 (defun config-not-in-tty-mode ()
 ;(set-fontset-font (frame-parameter nil 'font)
 ;'han '("WenQuanYi Zen Hei" . "unicode-bmp"))
-;(set-default-font "Lucida Sans Typewriter-11")
-;(color-init)
+
+;; for big screen, use bigger fonts.
+(if (>= (x-display-pixel-width) 1920)
+(set-default-font "Lucida Sans Typewriter-13")
+(set-default-font "Lucida Sans Typewriter-11"))
 (mouse-avoidance-mode 'animate)	;; 光标靠近鼠标的时候，　鼠标自己就跑了
 (setq x-select-enable-clipboard t)	;;让X的剪切板和EMACS联系起来
 (tool-bar-mode -1) ;; 不要工具按钮
@@ -272,7 +290,6 @@ Zhang Jiejing")
 (config-in-tty-mode)))))
 
 ;; Non-deamon mode config
-
 ;(if (equal (daemonp) nil)
 (if (equal (if-in-tty) nil)
 (config-not-in-tty-mode)
@@ -284,4 +301,10 @@ Zhang Jiejing")
 ;(server-force-delete)
 (server-start)
 ;; 用Daemon替代
+
+(defun page2mb (page-number)
+  "Define a function conv page number to MB"
+ (/ (* page-number 4) 1024))
+(put 'set-goal-column 'disabled nil)
+
 

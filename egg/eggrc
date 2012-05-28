@@ -1,0 +1,402 @@
+;;; eggrc --- EGG Input Method Startup File -*- emacs-lisp -*-
+
+;; Copyright (C) 1999, 2000 Free Software Foundation, Inc
+
+;; Author: KATAYAMA Yoshio <kate@pfu.co.jp>
+
+;; Maintainer: TOMURA Satoru <tomura@etl.go.jp>
+
+;; Keywords: mule, multilingual, input method
+
+;; This file is part of EGG.
+
+;; EGG is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2, or (at your option)
+;; any later version.
+
+;; EGG is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+
+;;; Commentary:
+
+;;; Code:
+
+(defun wnn4-jserver-setup ()
+  (wnn-define-environment nil)
+  (wnn-set-fuzokugo "pubdic/full.fzk")
+  (wnn-add-dict "pubdic/kihon.dic"     '("kihon.h")    5 nil t)
+  (wnn-add-dict "pubdic/setsuji.dic"   '("setsuji.h")  5 nil t)
+  (wnn-add-dict "pubdic/koyuu.dic"     '("koyuu.h")    1 nil t)
+  (wnn-add-dict "pubdic/chimei.dic"    '("chimei.h")   1 nil t)
+  (wnn-add-dict "pubdic/jinmei.dic"    '("jinmei.h")   1 nil t)
+  (wnn-add-dict "pubdic/special.dic"   '("special.h")  5 nil t)
+  (wnn-add-dict "pubdic/computer.dic"  '("computer.h") 5 nil t)
+  (wnn-add-dict "pubdic/symbol.dic"    '("symbol.h")   1 nil t)
+  (wnn-add-dict "pubdic/tankan.dic"    nil             1 nil nil)
+  (wnn-add-dict "pubdic/bio.dic"       '("bio.h")      1 nil t)
+  (wnn-add-dict '("ud")                nil             5 t   t)
+  (wnn-add-dict "wnncons/tankan2.dic"  nil             1 nil nil)
+  (wnn-add-dict "wnncons/tankan3.dic"  nil             1 nil nil)
+;  (wnn-add-dict "gerodic/g-jinmei.dic" '("g-jinmei.h") 1 nil t)
+  (wnn-set-param 2 10 2 45 100 200 5 1 40 -100 200 -100 200 80 200 200 200)
+
+  (wnn-define-environment t)
+  (wnn-set-fuzokugo "pubdic/full.fzk")
+  (wnn-add-dict "pubdic/kihon.dic"     '("kihon.h")    5 nil t)
+  (wnn-add-dict "pubdic/setsuji.dic"   '("setsuji.h")  5 nil t)
+  (wnn-add-dict "pubdic/koyuu.dic"     '("koyuu.h")    1 nil t)
+  (wnn-add-dict "pubdic/chimei.dic"    '("chimei.h")   1 nil t)
+  (wnn-add-dict "pubdic/jinmei.dic"    '("jinmei.h")   1 nil t)
+  (wnn-add-dict "pubdic/special.dic"   '("special.h")  5 nil t)
+  (wnn-add-dict "pubdic/computer.dic"  '("computer.h") 5 nil t)
+  (wnn-add-dict "pubdic/symbol.dic"    '("symbol.h")   1 nil t)
+  (wnn-add-dict "pubdic/tankan.dic"    nil             1 nil nil)
+  (wnn-add-dict "pubdic/bio.dic"       '("bio.h")      1 nil t)
+  (wnn-add-dict '("ud")                nil             5 t   t)
+  (wnn-add-dict "wnncons/tankan2.dic"  nil             1 nil nil)
+  (wnn-add-dict "wnncons/tankan3.dic"  nil             1 nil nil)
+;  (wnn-add-dict "gerodic/g-jinmei.dic" '("g-jinmei.h") 1 nil t)
+  (wnn-set-param 2 10 2 45 100 200 5 1 40 -100 200 -100 200 80 200 200 200))
+
+(defun wnn6-jserver-setup ()
+  (wnn-define-environment nil)
+  (wnn-set-fuzokugo "iwanami/kougo.fzk")
+  (wnn-add-fisys-dict "iwanami/fisd"   '("fisd.h")       t)
+  (wnn-add-fiusr-dict '("fiud")        nil               t   nil)
+  (wnn-add-dict "iwanami/kihon.dic"    '("kihon.h")    6 nil t)
+  (wnn-add-dict "iwanami/symbol.dic"   '("symbol.h")   1 nil t)
+  (wnn-add-dict "iwanami/tankan.dic"   nil             1 nil nil)
+  (wnn-add-dict "iwanami/tankan2.dic"  nil             1 nil nil)
+  (wnn-add-dict "iwanami/tel.dic"      nil             1 nil nil)
+  (wnn-add-dict "iwanami/zip.dic"      nil             1 nil nil)
+  (wnn-add-dict '("ud")                nil             15 t   t)
+;  (wnn-add-dict "wnncons/tankan2.dic"  nil            1 nil nil)
+;  (wnn-add-dict "wnncons/tankan3.dic"  nil            1 nil nil)
+  (wnn-set-param  5 10 2 45 0  80 5 1 20  0 400 -100 400   80 200 2 200)
+
+  (wnn-add-notrans-dict '("katakana") 15 t)
+  (wnn-add-bmodify-dict '("bunsetsu") 15 t)
+
+  (wnn-set-last-is-first-mode t)
+  (wnn-set-complex-conv-mode nil)
+;  (wnn-set-okuri-flag -1)
+  (wnn-set-prefix-flag 0)
+
+  (wnn-set-okuri-learn-mode t)
+  (wnn-set-prefix-learn-mode t)
+  (wnn-set-suffix-learn-mode t)
+  (wnn-set-common-learn-mode t)
+  (wnn-set-yuragi-mode nil)
+
+  (wnn-set-freq-func-mode 4)
+
+;  (wnn-set-numeric-mode -12)
+;  (wnn-set-alphabet-mode -30)
+;  (wnn-set-symbol-mode -40)
+
+  (wnn-define-environment t)
+  (wnn-set-fuzokugo "iwanami/kougo.fzk")
+  (wnn-add-dict '("ud") "" 15 t t)
+  (wnn-set-param  2 10 2 45 1 80 5 1 50 -20 400 -10  100  -100 200 0 200))
+
+(defun wnn7-jserver-setup ()
+  (wnn-define-environment nil)
+  (wnn-set-fuzokugo "system/kougo.fzk")
+  (wnn-add-fisys-dict "system/fisd" '("fisd.h") t)
+  (wnn-add-fiusr-dict '("fiud") nil t nil)
+
+  (wnn-add-dict "system/kihon.dic"       '("kihon.h")       6 nil t)
+  (wnn-add-dict "system/symbol.dic"      '("symbol.h")      1 nil t)
+  (wnn-add-dict "system/symbol_noat.dic" '("symbol_noat.h") 1 nil t)
+  (wnn-add-dict "system/tel.dic"         '("tel.h")         1 nil t)
+  (wnn-add-dict "system/zip.dic"         '("zip.h")         1 nil t)
+  (wnn-add-dict "system/tankan.dic"       nil               1 nil nil)
+  (wnn-add-dict "system/tankan2.dic"      nil               1 nil nil)
+  (wnn-add-dict "system/ikeiji.dic"       nil               1 nil nil)
+  (wnn-add-dict "system/rensou.dic"       nil               1 nil nil)
+  (wnn-add-dict '("ud")                   ""                15 t  t)
+
+  (wnn-add-dict "option/jinmei.dic"       '("jinmei.h")     1 nil t)
+  (wnn-add-dict "option/chimei.dic"       '("chimei.h")     1 nil t)
+  (wnn-add-dict "option/address.dic"      '("address.h")    1 nil t)
+  (wnn-add-dict "option/station.dic"      '("station.h")    1 nil t)
+  (wnn-add-dict "option/kana_english.dic" '("kana_english.h") 1 nil t)
+  (wnn-add-dict "option/enterprise.dic"   '("enterprise.h") 1 nil t)
+  (wnn-add-dict "option/airport.dic"      '("airport.h")    1 nil t)
+  (wnn-add-dict "option/university.dic"	  '("university.h") 1 nil t)
+  (wnn-add-dict "option/zoo.dic"          '("zoo.h")        1 nil t)
+  (wnn-add-dict "option/botanical_garden.dic" '("botanical_garden.h") 1 nil t)
+  (wnn-add-dict "option/aquarium.dic"     '("aquarium.h")   1 nil t)
+  (wnn-add-dict "option/conveni.dic"      '("conveni.h")    1 nil t)
+  (wnn-add-dict "option/amusement.dic"    '("amusement.h")  1 nil t)
+  (wnn-add-dict "option/computer.dic"     '("computer.h")   1 nil t)
+
+  (wnn-set-param  5 10 2 45 0  80 5 1 20  0 400 -100 400   80 200 2 200)
+
+  (wnn-add-notrans-dict '("katakana") 15 t)
+  (wnn-add-bmodify-dict '("bunsetsu") 15 t)
+
+  (wnn-set-last-is-first-mode t)
+  (wnn-set-complex-conv-mode nil)
+  ;; (wnn-set-okuri-flag -1)
+  (wnn-set-prefix-flag 0)
+
+  (wnn-set-okuri-learn-mode t)
+  (wnn-set-prefix-learn-mode t)
+  (wnn-set-suffix-learn-mode t)
+  (wnn-set-common-learn-mode t)
+  (wnn-set-yuragi-mode nil)
+
+  (wnn-set-freq-func-mode 4)
+
+  (wnn-set-yosoku-learn-mode t)
+  (wnn-set-yosoku-max-disp 10)
+  (wnn-set-yosoku-last-is-first-mode t)
+
+  (wnn-set-boin-kabusoku-mode t)
+  (wnn-set-shiin-choka-mode t)
+  (wnn-set-n-choka-mode t)
+  (wnn-set-nihongo-kosei-mode t)
+
+  ;; (wnn-set-numeric-mode -12)
+  ;; (wnn-set-alphabet-mode -30)
+  ;; (wnn-set-symbol-mode -40)
+
+  (wnn-define-environment t)
+  (wnn-set-fuzokugo "system/kougo.fzk")
+  (wnn-add-dict "system/kihonR.dic"   nil 1 nil nil)
+  (wnn-add-dict "system/telR.dic"     nil 1 nil nil)
+  (wnn-add-dict "system/zipR.dic"     nil 1 nil nil)
+  (wnn-add-dict "system/tankanR.dic"  nil 1 nil nil)
+  (wnn-add-dict "system/tankan2R.dic" nil 1 nil nil)
+
+  (wnn-add-dict "option/jinmeiR.dic"  nil 1 nil nil)
+  (wnn-add-dict "option/chimeiR.dic"  nil 1 nil nil)
+  (wnn-add-dict "option/addressR.dic" nil 1 nil nil)
+  ;;(wnn-add-dict "option/stationR.dic"          nil 1 nil nil)
+  ;;(wnn-add-dict "option/kana_englishR.dic"     nil 1 nil nil)
+  ;;(wnn-add-dict "option/enterpriseR.dic"       nil 1 nil nil)
+  ;;(wnn-add-dict "option/airportR.dic"          nil 1 nil nil)
+  ;;(wnn-add-dict "option/universityR.dic"       nil 1 nil nil)
+  ;;(wnn-add-dict "option/zooR.dic"              nil 1 nil nil)
+  ;;(wnn-add-dict "option/botanical_gardenR.dic" nil 1 nil nil)
+  ;;(wnn-add-dict "option/aquariumR.dic"         nil 1 nil nil)
+  ;;(wnn-add-dict "option/conveniR.dic"          nil 1 nil nil)
+  ;;(wnn-add-dict "option/amusementR.dic"        nil 1 nil nil)
+  ;;(wnn-add-dict "option/computerR.dic"         nil 1 nil nil)
+
+  (wnn-add-dict '("ud") "" 15 t t)
+  (wnn-set-param  2 10 2 45 1 80 5 1 50 -20 400 -10  100  -100 200 0 200))
+
+(defun wnn8-jserver-setup ()
+  (wnn-define-environment nil)
+  (wnn-set-fuzokugo   "system/kougo.fzk")
+  (wnn-add-fisys-dict "system/fisd" '("fisd.h") t)
+  (wnn-add-fiusr-dict '("fiud") nil t nil)
+
+  (wnn-add-dict "system/kihon.dic"          '("kihon.h")          6 nil t)
+  (wnn-add-dict "system/kihon3_4.dic"       '("kihon3_4.h")       6 nil t)
+  (wnn-add-dict "system/symbol.dic"         '("symbol.h")         1 nil t)
+  (wnn-add-dict "system/symbol3_4.dic"      '("symbol3_4.h")      1 nil t)
+  (wnn-add-dict "system/symbol_noat.dic"    '("symbol_noat.h")    1 nil t)
+  (wnn-add-dict "system/symbol3_4_noat.dic" '("symbol3_4_noat.h") 1 nil t)
+  (wnn-add-dict "system/tel.dic"            '("tel.h")            1 nil t)
+  (wnn-add-dict "system/zip.dic"            '("zip.h")            1 nil t)
+  (wnn-add-dict "system/tankan.dic"          nil                   1 nil nil)
+  (wnn-add-dict "system/tankan2.dic"         nil                   1 nil nil)
+  (wnn-add-dict "system/tankan3_4.dic"       nil                   1 nil nil)
+  (wnn-add-dict "system/ikeiji.dic"          nil                   1 nil nil)
+  (wnn-add-dict "system/rensou.dic"          nil                   1 nil nil)
+  (wnn-add-dict '("ud")                      ""                    15 t  t)
+
+  (wnn-add-dict "option/jinmei.dic"       '("jinmei.h")     1 nil t)
+  (wnn-add-dict "option/chimei.dic"       '("chimei.h")     1 nil t)
+  (wnn-add-dict "option/address.dic"      '("address.h")    1 nil t)
+  (wnn-add-dict "option/station.dic"      '("station.h")    1 nil t)
+  (wnn-add-dict "option/kana_english.dic" '("kana_english.h") 1 nil t)
+  (wnn-add-dict "option/enterprise.dic"   '("enterprise.h") 1 nil t)
+  (wnn-add-dict "option/airport.dic"      '("airport.h")    1 nil t)
+  (wnn-add-dict "option/university.dic"	  '("university.h") 1 nil t)
+  (wnn-add-dict "option/zoo.dic"          '("zoo.h")        1 nil t)
+  (wnn-add-dict "option/botanical_garden.dic" '("botanical_garden.h") 1 nil t)
+  (wnn-add-dict "option/aquarium.dic"     '("aquarium.h")   1 nil t)
+  (wnn-add-dict "option/conveni.dic"      '("conveni.h")    1 nil t)
+  (wnn-add-dict "option/amusement.dic"    '("amusement.h")  1 nil t)
+  (wnn-add-dict "option/computer.dic"     '("computer.h")   1 nil t)
+  (wnn-add-dict "option/business.dic"     '("business.h")   1 nil t)
+  (wnn-add-dict "option/food.dic"         '("food.h")       1 nil t)
+  (wnn-add-dict "option/hobby.dic"        '("hobby.h")      1 nil t)
+  (wnn-add-dict "option/mailextend.dic"   '("mailextend.h") 1 nil t)
+  (wnn-add-dict "option/person.dic"       '("person.h")     1 nil t)
+  (wnn-add-dict "option/sports.dic"       '("sports.h")     1 nil t)
+  (wnn-add-dict "option/spot.dic"         '("spot.h")       1 nil t)
+
+  (wnn-set-param  5 10 2 45 0  80 5 1 20  0 400 -100 400   80 200 2 200)
+
+  (wnn-add-notrans-dict '("katakana") 15 t)
+  (wnn-add-bmodify-dict '("bunsetsu") 15 t)
+
+  (wnn-set-last-is-first-mode t)
+  (wnn-set-complex-conv-mode nil)
+  ;; (wnn-set-okuri-flag -1)
+  (wnn-set-prefix-flag 0)
+
+  (wnn-set-okuri-learn-mode t)
+  (wnn-set-prefix-learn-mode t)
+  (wnn-set-suffix-learn-mode t)
+  (wnn-set-common-learn-mode t)
+  (wnn-set-yuragi-mode nil)
+
+  (wnn-set-freq-func-mode 4)
+
+  (wnn-set-yosoku-learn-mode t)
+  (wnn-set-yosoku-max-disp 10)
+  (wnn-set-yosoku-last-is-first-mode t)
+
+  (wnn-set-boin-kabusoku-mode t)
+  (wnn-set-shiin-choka-mode t)
+  (wnn-set-n-choka-mode t)
+  (wnn-set-nihongo-kosei-mode t)
+
+  ;; (wnn-set-numeric-mode -12)
+  ;; (wnn-set-alphabet-mode -30)
+  ;; (wnn-set-symbol-mode -40)
+
+  (wnn-define-environment t)
+  (wnn-set-fuzokugo "system/kougo.fzk")
+  (wnn-add-dict "system/kihonR.dic"     nil 1 nil nil)
+  (wnn-add-dict "system/kihon3_4R.dic"  nil 1 nil nil)
+  (wnn-add-dict "system/telR.dic"       nil 1 nil nil)
+  (wnn-add-dict "system/zipR.dic"       nil 1 nil nil)
+  (wnn-add-dict "system/tankanR.dic"    nil 1 nil nil)
+  (wnn-add-dict "system/tankan2R.dic"   nil 1 nil nil)
+  (wnn-add-dict "system/tankan3_4R.dic" nil 1 nil nil)
+
+  (wnn-add-dict "option/jinmeiR.dic"  nil 1 nil nil)
+  (wnn-add-dict "option/chimeiR.dic"  nil 1 nil nil)
+  (wnn-add-dict "option/addressR.dic" nil 1 nil nil)
+  ;;(wnn-add-dict "option/stationR.dic"          nil 1 nil nil)
+  ;;(wnn-add-dict "option/kana_englishR.dic"     nil 1 nil nil)
+  ;;(wnn-add-dict "option/enterpriseR.dic"       nil 1 nil nil)
+  ;;(wnn-add-dict "option/airportR.dic"          nil 1 nil nil)
+  ;;(wnn-add-dict "option/universityR.dic"       nil 1 nil nil)
+  ;;(wnn-add-dict "option/zooR.dic"              nil 1 nil nil)
+  ;;(wnn-add-dict "option/botanical_gardenR.dic" nil 1 nil nil)
+  ;;(wnn-add-dict "option/aquariumR.dic"         nil 1 nil nil)
+  ;;(wnn-add-dict "option/conveniR.dic"          nil 1 nil nil)
+  ;;(wnn-add-dict "option/amusementR.dic"        nil 1 nil nil)
+  ;;(wnn-add-dict "option/computerR.dic"         nil 1 nil nil)
+  ;;(wnn-add-dict "option/businessR.dic"         nil 1 nil nil)
+  ;;(wnn-add-dict "option/foodR.dic"             nil 1 nil nil)
+  ;;(wnn-add-dict "option/hobbyR.dic"            nil 1 nil nil)
+  ;;(wnn-add-dict "option/mailextendR.dic"       nil 1 nil nil)
+  ;;(wnn-add-dict "option/personR.dic"           nil 1 nil nil)
+  ;;(wnn-add-dict "option/sportsR.dic"           nil 1 nil nil)
+  ;;(wnn-add-dict "option/spotR.dic"             nil 1 nil nil)
+
+  (wnn-add-dict '("ud") "" 15 t t)
+  (wnn-set-param  2 10 2 45 1 80 5 1 50 -20 400 -10  100  -100 200 0 200))
+
+(cond
+ ((eq egg-backend-type 'wnn)
+  (cond
+   ((eq wnn-server-type 'jserver)
+    (if wnn-wnn8-server
+	(wnn8-jserver-setup)
+      (if wnn-wnn7-server
+	  (wnn7-jserver-setup)
+	(if wnn-wnn6-server
+	    (wnn6-jserver-setup)
+	  (wnn4-jserver-setup)))))
+
+   ((eq wnn-server-type 'cserver)
+    (if wnn-use-bixing
+	(progn
+	  (wnn-define-environment nil "Q")
+	  (wnn-set-fuzokugo "sys/full.con")
+	  (wnn-add-dict "sys/QianMa.dic"     nil         1 nil nil)
+
+	  (wnn-define-environment nil "W")
+	  (wnn-set-fuzokugo "sys/full.con")
+	  (wnn-add-dict "sys/WuBi.dic"       nil         1 nil nil)))
+
+    (wnn-define-environment nil "PZ")
+    (wnn-set-fuzokugo "sys/full.con")
+    (wnn-add-dict "sys/level_1.dic"      '("level_1.h")  4 nil t)
+    (wnn-add-dict "sys/level_2.dic"      '("level_2.h")  1 nil t)
+    (wnn-add-dict "sys/basic.dic"        '("basic.h")    7 nil t)
+    (wnn-add-dict "sys/computer.dic"     '("computer.h") 4 nil t)
+    (wnn-add-dict "sys/cwnn.dic"         '("cwnn.h")     4 nil t)
+    (wnn-add-dict '("ud")                nil             5 t   t)
+    (wnn-set-param 1 5 2 750 10 80 10 5 1000 50 0 -200 0 0 0 16 0)
+
+    (if wnn-use-bixing
+	(progn
+	  (wnn-define-environment t "Q")
+	  (wnn-set-fuzokugo "sys/full.conR")
+	  (wnn-add-dict "sys/QianMa.dic"     nil         1 nil nil)
+
+	  (wnn-define-environment t "W")
+	  (wnn-set-fuzokugo "sys/full.conR")
+	  (wnn-add-dict "sys/WuBi.dic"       nil         1 nil nil)))
+
+    (wnn-define-environment t "PZ")
+    (wnn-set-fuzokugo "sys/full.conR")
+    (wnn-add-dict "sys/level_1.dic"      '("level_1.h")  4 nil t)
+    (wnn-add-dict "sys/level_2.dic"      '("level_2.h")  1 nil t)
+    (wnn-add-dict "sys/basic.dic"        '("basic.h")    7 nil t)
+    (wnn-add-dict "sys/computer.dic"     '("computer.h") 4 nil t)
+    (wnn-add-dict "sys/cwnn.dic"         '("cwnn.h")     4 nil t)
+    (wnn-add-dict '("ud")                nil             5 t   t)
+    (wnn-set-param 1 5 2 750 10 80 10 5 1000 50 0 -200 0 0 0 16 0))
+
+   ((eq wnn-server-type 'tserver)
+    (wnn-define-environment nil "PZ")
+    (wnn-set-fuzokugo "sys/full.con")
+    (wnn-add-dict "sys/cns_ch.dic"       '("cns_ch.h")   4 nil t)
+    (wnn-add-dict "sys/cns_wd.dic"       '("cns_wd.h")   1 nil t)
+    (wnn-add-dict '("ud")                nil             5 t   t)
+    (wnn-set-param 1 5 2 750 10 80 10 5 1000 50 0 -200 0 0 0 16 0)
+
+    (wnn-define-environment t "PZ")
+    (wnn-set-fuzokugo "sys/full.conR")
+    (wnn-add-dict "sys/cns_ch.dic"       '("cns_ch.h")   4 nil t)
+    (wnn-add-dict "sys/cns_wd.dic"       '("cns_wd.h")   1 nil t)
+    (wnn-add-dict '("ud")                nil             5 t   t)
+    (wnn-set-param 1 5 2 750 10 80 10 5 1000 50 0 -200 0 0 0 16 0))
+
+   ((eq wnn-server-type 'kserver)
+    (wnn-define-environment nil)
+    (wnn-set-fuzokugo "sys/full.fzk")
+    (wnn-add-dict "sys/hword.dic"        '("hword.h")    5 nil t)
+    (wnn-add-dict "sys/single.dic"       '("single.h")   1 nil t)
+    (wnn-add-dict '("ud")                nil             2 t   t)
+    (wnn-set-param 2 5 2 45 200 80 5 1 40 0 400 -100 400 80 200 2 200)
+
+    (wnn-define-environment t)
+    (wnn-set-fuzokugo "sys/full.fzk")
+    (wnn-add-dict "sys/hword.dic"        '("hword.h")    5 nil t)
+    (wnn-add-dict "sys/single.dic"       '("single.h")   1 nil t)
+    (wnn-add-dict '("ud")                nil             2 t   t)
+    (wnn-set-param 2 5 2 45 200 80 5 1 40 0 400 -100 400 80 200 2 200))))
+
+ ((eq egg-backend-type 'canna)
+
+  (canna-define-environment)
+  (canna-add-dict "iroha" nil)
+  (canna-add-dict "fuzokugo" nil)
+  (canna-add-dict "hojomwd" nil)
+  (canna-add-dict "hojoswd" nil)
+  (canna-add-dict "user" t)
+
+  (canna-define-environment "Bushu" 0 t)
+  (canna-add-dict "bushu" nil))
+ )
