@@ -8,12 +8,19 @@
 ;;	 编程相关的配置
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Mac related settings
+;; Config for Mac
+(if (eq system-type 'darwin)
+ (lambda ()
+;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
+;; need find-file to do this
+(require 'find-file)
+;; find-file doesn't grok objc files for some reason, add that
+(push (".m" (cadr (assoc "\\.h\\'" cc-other-file-alist))))
 (add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
 (setq mac-option-key-is-meta t)
 (setq mac-right-option-modifier nil)
 (setq exec-path (append exec-path '("/opt/local/bin")) )
-
+) nil)
 
 (require 'xcscope)
 (setq cscope-do-not-update-database t)
@@ -249,11 +256,6 @@ Zhang Jiejing")
 ;;(desktop-read)
 
 
-;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
-;; need find-file to do this
-(require 'find-file)
-;; find-file doesn't grok objc files for some reason, add that
-(push ".m" (cadr (assoc "\\.h\\'" cc-other-file-alist)))
 
 (defun my-find-proper-mode ()
   (interactive)
@@ -299,12 +301,13 @@ Zhang Jiejing")
 
 ;; 开启服务器模式
 ;(server-force-delete)
-(server-start)
+;(server-start)
 ;; 用Daemon替代
 
 (defun page2mb (page-number)
   "Define a function conv page number to MB"
  (/ (* page-number 4) 1024))
 (put 'set-goal-column 'disabled nil)
+
 
 
