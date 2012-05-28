@@ -10,17 +10,15 @@
 
 ;; Config for Mac
 (if (eq system-type 'darwin)
- (lambda ()
+((lambda ()
 ;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
 ;; need find-file to do this
-(require 'find-file)
-;; find-file doesn't grok objc files for some reason, add that
-(push (".m" (cadr (assoc "\\.h\\'" cc-other-file-alist))))
 (add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
 (setq mac-option-key-is-meta t)
 (setq mac-right-option-modifier nil)
 (setq exec-path (append exec-path '("/opt/local/bin")) )
-) nil)
+)) nil)
+
 
 (require 'xcscope)
 (setq cscope-do-not-update-database t)
