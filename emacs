@@ -17,6 +17,8 @@
 (setq mac-option-key-is-meta t)
 (setq mac-right-option-modifier nil)
 (setq exec-path (append exec-path '("/opt/local/bin")) )
+(set-face-attribute 'default nil
+                :family "Monaco" :height 130 :weight 'normal)
 )) nil)
 
 
@@ -115,14 +117,18 @@
 ;'han '("WenQuanYi Zen Hei" . "unicode-bmp"))
 
 ;; for big screen, use bigger fonts.
-(if (>= (x-display-pixel-width) 1920)
-(set-default-font "Lucida Sans Typewriter-13")
-(set-default-font "Lucida Sans Typewriter-11"))
+(if (not (eq system-type 'darwin))
+(lambda ()
+  (if (>= (x-display-pixel-width) 1920)
+      (set-default-font "Lucida Sans Typewriter-13")
+    (set-default-font "Lucida Sans Typewriter-12"))) nil)
+
 (mouse-avoidance-mode 'animate)	;; 光标靠近鼠标的时候，　鼠标自己就跑了
 (setq x-select-enable-clipboard t)	;;让X的剪切板和EMACS联系起来
 (tool-bar-mode -1) ;; 不要工具按钮
 (scroll-bar-mode -1) ;; 不要缩放条
 (color-init)
+
 
 )
 
