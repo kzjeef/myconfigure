@@ -89,6 +89,7 @@
 "init the color theme"
 (require 'color-theme)
 (color-theme-initialize)
+(color-theme-clarity)
 ;(color-theme-calm-forest)
 
 (defun toggle-night-color-theme ()
