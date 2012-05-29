@@ -117,11 +117,18 @@
 ;'han '("WenQuanYi Zen Hei" . "unicode-bmp"))
 
 ;; for big screen, use bigger fonts.
+
 (if (not (eq system-type 'darwin))
 (lambda ()
+;; use monaco fonts default, want to switch to Lucida, change this to nil
+(if t
+(if (>= (x-display-pixel-width) 1920)
+        (set-default-font "Monaco-14")
+          (set-default-font "Monaco-12")  nil)
+
   (if (>= (x-display-pixel-width) 1920)
       (set-default-font "Lucida Sans Typewriter-13")
-    (set-default-font "Lucida Sans Typewriter-12"))) nil)
+    (set-default-font "Lucida Sans Typewriter-12")) nil)))
 
 (mouse-avoidance-mode 'animate)	;; 光标靠近鼠标的时候，　鼠标自己就跑了
 (setq x-select-enable-clipboard t)	;;让X的剪切板和EMACS联系起来
