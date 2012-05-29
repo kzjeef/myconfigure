@@ -43,6 +43,7 @@
 )
 (global-set-key [f11] 'signed-off-by-me)
 )
+(git-setup)
 
 (defun generic-programming-realted-config ()
 ;; (require 'doxymacs)
