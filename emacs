@@ -34,7 +34,7 @@
 (require 'git)
 (require 'git-blame)
 (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
-(require 'egg)
+(require 'magit)
 ;; add signed off by;
 
 (defun signed-off-by-me ()
@@ -268,29 +268,6 @@ Zhang Jiejing")
 ;;(desktop-load-default)
 ;;(desktop-read)
 
-
-
-(defun my-find-proper-mode ()
-  (interactive)
-  ;; only run on .h files
-  (when (string-match "\\.h\\'" (buffer-file-name))
-    (save-window-excursion
-      (save-excursion
-        (let* ((alist (append auto-mode-alist nil))  ;; use whatever auto-mode-alist has
-               (ff-ignore-include t)                 ;; operate on buffer name only
-               (src (ff-other-file-name))            ;; find the src file corresponding to .h
-               re mode)
-          ;; go through the association list
-          ;; and find the mode associated with the source file
-          ;; that is the mode we want to use for the .h file
-          (while (and alist
-                      (setq mode (cdar alist))
-                      (setq re (caar alist))
-                      (not (string-match re src)))
-            (setq alist (cdr alist)))
-          (when mode (funcall mode)))))))
-
-(add-hook 'find-file-hook 'my-find-proper-mode)
 
 ;; Ask question when C-x, C-c.
 (setq kill-emacs-query-functions
