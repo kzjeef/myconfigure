@@ -21,7 +21,7 @@
                 :family "Monaco" :height 130 :weight 'normal)
 )) nil)
 
-
+(add-to-list 'load-path "/usr/share/emacs/site-lisp")
 (require 'xcscope)
 (setq cscope-do-not-update-database t)
 ;; speed up cscope speed
@@ -120,16 +120,15 @@
 ;; for big screen, use bigger fonts.
 
 (if (not (eq system-type 'darwin))
-(lambda ()
+    ((lambda ()
 ;; use monaco fonts default, want to switch to Lucida, change this to nil
-(if t
-(if (>= (x-display-pixel-width) 1920)
-        (set-default-font "Monaco-14")
-          (set-default-font "Monaco-12")  nil)
-
-  (if (>= (x-display-pixel-width) 1920)
-      (set-default-font "Lucida Sans Typewriter-13")
-    (set-default-font "Lucida Sans Typewriter-12")) nil)))
+      (if t
+	  (if (>= (x-display-pixel-width) 1920)
+	      (set-default-font "Monaco-14")
+	    (set-default-font "Monaco-12"))
+	(if (>= (x-display-pixel-width) 1920)
+	    (set-default-font "Lucida Sans Typewriter-13")
+	  (set-default-font "Lucida Sans Typewriter-12"))))) nil)
 
 (mouse-avoidance-mode 'animate)	;; 光标靠近鼠标的时候，　鼠标自己就跑了
 (setq x-select-enable-clipboard t)	;;让X的剪切板和EMACS联系起来
