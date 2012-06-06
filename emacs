@@ -3,12 +3,13 @@
 ;; (setq inhibit-default-init t)
 ;; Time-stamp: 
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;	 编程相关的配置
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Config for Mac
+
+
 (if (eq system-type 'darwin)
 ((lambda ()
 ;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
@@ -36,7 +37,6 @@
 (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
 (require 'magit)
 ;; add signed off by;
-
 (defun signed-off-by-me ()
  (interactive)		
 (insert "Signed-off-by Zhang Jiejing \<jiejing.zhang@freescale.com\>")
@@ -45,17 +45,33 @@
 )
 (git-setup)
 
+
+(defun cedet-configure()
+(load-file "~/.emacs.d/site-lisp/cedet-1.1/common/cedet.el")
+(setq sematicdb-project-roots
+      (list
+       (expand-file-name "/")))
+
+;; enable source code folding
+(global-semantic-tag-folding-mode 1)
+)
+
+
 (defun generic-programming-realted-config ()
 ;; (require 'doxymacs)
 ;; (doxymacs-font-lock)
+
+;; Remeber artist-mode can draw picutre !!!
+(define-key c-mode-base-map [(return)] 'newline-and-indent)
 (setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
 (c-toggle-hungry-state t)	 ;; hungry delete
 (which-func-mode t)	 ;; 在状态栏显示当前函数
-;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
+(cedet-configure)
+  ;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
 (font-lock-add-keywords 'python-mode
-'(("\\&lt;\\(FIXME\\|HACK\\|XXX\\|TODO\\)" 1 font-lock-warning-face prepend)))
-;; (add-hook 'before-save-hook 'whitespace-cleanup) ;;在保存之前清除空字符
-;; (setq-default indent-tabs-mode t)	;; 在kernel模式下默认用table
+			  '(("\\&lt;\\(FIXME\\|HACK\\|XXX\\|TODO\\)" 1 font-lock-warning-face prepend)))
+  ;; (add-hook 'before-save-hook 'whitespace-cleanup) ;;在保存之前清除空字符
+  ;; (setq-default indent-tabs-mode t)	;; 在kernel模式下默认用table
 )
 
 (defun load-java-relate-lib ()
@@ -63,6 +79,7 @@
 (add-hook 'java-mode-hook (function cscope:hook))
 (cscope-minor-mode)
 (setq-default indent-tabs-mode nil) ;; 使用空格代替tab
+(glasses-mode t) ;; ThisIsAVarInJava
 )
 
 (defun load-c-relate-lib ()
@@ -77,12 +94,17 @@
 (setq Man-notify-method 'pushy)
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
 
+(global-set-key [(f1)] (lambda() 
+                 (interactive) 
+                 (let ((woman-topic-at-point t))
+                 (woman))))
+(global-set-key [f5] 'revert-buffer)	;; 恢复文件
+(global-set-key [f6] 'ff-find-related-file) ;; 找到对应的头文件
+(global-set-key [f7] 'grep-find)
 (global-set-key [f8] 'compile)	 ;; 在 Emacs 中编译
 (global-set-key [f9] 'gdb)	 ;; 在 Emacs 中调试
-(global-set-key [f5] 'revert-buffer)	;; 恢复文件
-(global-set-key [f7] 'grep-find)
-(global-set-key [f6] 'ff-find-related-file) ;; 找到对应的头文件
-(global-set-key [f12] 'todo-show)
+(global-set-key [f12] 'speedbar)
+;(global-set-key [f12] 'todo-show)
 
 (put 'upcase-region 'disabled nil)	;; 打开C－x c－u把区域变成大写的功能
 
@@ -146,8 +168,12 @@ nil))
 
 ;; 自动补全的尝试列表
 ;; (global-set-key [(meta ?/)] 'hippie-expand)
+
+(autoload 'senator-try-expand-sematic "senator")
+
 (setq hippie-expand-try-functions-list
 '(
+senator-try-expand-sematic
 ;; try-expand-line
 ;; try-expand-line-all-buffers
 try-expand-list
@@ -168,6 +194,7 @@ try-complete-lisp-symbol-partially
 '(lambda ()
    (setq cscope-do-not-update-database nil)
    (load-c-relate-lib)
+   (glasses-mode t) ;; ThisIsAVarInJava
    (c-set-style "cc-mode")))
 
 ;; lazy evaluate accelerate boot speed
