@@ -162,14 +162,19 @@ nil))
 				 (if (boundp 'old-fullscreen) old-fullscreen nil)
 			       (progn (setq old-fullscreen current-value)
 				      'fullboth)))))
+
+(defun cscope-setup ()
+	     (require 'xcscope)
+	     (setq cscope-do-not-update-database t))  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; start configure work here
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add-to-list 'load-path "/usr/share/emacs/site-lisp")
 ;;; if no cscope installed, ignore it.
-(safe-wrap (lambda () 
-	     (require 'xcscope)
-	     (setq cscope-do-not-update-database t)))
+
+(safe-wrap (cscope-setup))
+
+
 (safe-wrap (git-setup))
 
 ;; Config for Mac
@@ -180,6 +185,7 @@ nil))
 (add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
 (setq mac-option-key-is-meta t)
 (setq mac-right-option-modifier nil)
+
 (setq exec-path (append exec-path '("/opt/local/bin")) )
 (set-face-attribute 'default nil
                 :family "Monaco" :height 130 :weight 'normal)
