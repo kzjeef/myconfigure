@@ -7,59 +7,64 @@
 ;;	 编程相关的配置
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Config for Mac
-
-
-(if (eq system-type 'darwin)
-((lambda ()
-;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
-;; need find-file to do this
-(add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
-(setq mac-option-key-is-meta t)
-(setq mac-right-option-modifier nil)
-(setq exec-path (append exec-path '("/opt/local/bin")) )
-(set-face-attribute 'default nil
-                :family "Monaco" :height 130 :weight 'normal)
-)) nil)
-
-(add-to-list 'load-path "/usr/share/emacs/site-lisp")
-(require 'xcscope)
-(setq cscope-do-not-update-database t)
-;; speed up cscope speed
-;(require 'git)
-
+;; wrap to some feature don't really block the boot.
+(defmacro safe-wrap (fn &rest clean-up)
+  `(unwind-protect
+       (let (retval)
+         (condition-case ex
+             (setq retval (progn ,fn))
+           ('error
+            (message (format "Caught exception: [%s]" ex))
+            (setq retval (cons 'exception (list ex)))))
+         retval)
+     ,@clean-up))
 
 ;; my git setup codes.
-(defun git-setup () 
-;; git setup;
-(require 'git)
-(require 'git-blame)
-(autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
-(require 'magit)
-;; add signed off by;
-(defun signed-off-by-me ()
- (interactive)		
-(insert "Signed-off-by Zhang Jiejing \<jiejing.zhang@freescale.com\>")
-)
-(global-set-key [f11] 'signed-off-by-me)
-)
-(git-setup)
+(defun cedet-configure()
+; load once
+ (if (featurep 'cedet)
+     nil
+   (lambda ()
+   (load-file "~/.emacs.d/site-lisp/cedet-1.1/common/cedet.el")
+   (setq sematicdb-project-roots
+	 (list
+	  (expand-file-name "/")))
+   ;; enable source code folding
+   (global-semantic-tag-folding-mode 1))))
 
+(defun git-setup ()
+ (featurep 'git)
+    nil
+    (lambda ()
+    (require 'git)
+    (require 'git-blame)
+    (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
+    (require 'magit)
+    ;; add signed off by;
+    (defun signed-off-by-me n()
+      (interactive)		
+      (insert "Signed-off-by Zhang Jiejing \<jiejing.zhang@freescale.com\>")
+      )
+    (global-set-key [f11] 'signed-off-by-me)
+    ))
 
 (defun cedet-configure()
-(load-file "~/.emacs.d/site-lisp/cedet-1.1/common/cedet.el")
-(setq sematicdb-project-roots
-      (list
-       (expand-file-name "/")))
-
-;; enable source code folding
-(global-semantic-tag-folding-mode 1)
-)
+; load once
+ (if (featurep 'cedet)
+     nil
+   (lambda ()
+   (load-file "~/.emacs.d/site-lisp/cedet-1.1/common/cedet.el")
+   (setq sematicdb-project-roots
+	 (list
+	  (expand-file-name "/")))
+   ;; enable source code folding
+   (global-semantic-tag-folding-mode 1))))
 
 
 (defun generic-programming-realted-config ()
-;; (require 'doxymacs)
-;; (doxymacs-font-lock)
+
+(safe-wrap (lambda () (require 'doxymacs)
+	     (doxymacs-font-lock)))
 
 ;; Remeber artist-mode can draw picutre !!!
 (define-key c-mode-base-map [(return)] 'newline-and-indent)
@@ -73,40 +78,6 @@
   ;; (add-hook 'before-save-hook 'whitespace-cleanup) ;;在保存之前清除空字符
   ;; (setq-default indent-tabs-mode t)	;; 在kernel模式下默认用table
 )
-
-(defun load-java-relate-lib ()
-(generic-programming-realted-config)
-(add-hook 'java-mode-hook (function cscope:hook))
-(cscope-minor-mode)
-(setq-default indent-tabs-mode nil) ;; 使用空格代替tab
-(glasses-mode t) ;; ThisIsAVarInJava
-)
-
-(defun load-c-relate-lib ()
-(generic-programming-realted-config)
-(require 'cc-mode)	 ;; 更强大的C／C++语言模式
-(cscope-minor-mode)
-(c-set-offset 'inline-open 0)
-(c-set-offset 'friend '-)
-(c-set-offset 'substatement-open 0)
-)
-
-(setq Man-notify-method 'pushy)
-(setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
-
-(global-set-key [(f1)] (lambda() 
-                 (interactive) 
-                 (let ((woman-topic-at-point t))
-                 (woman))))
-(global-set-key [f5] 'revert-buffer)	;; 恢复文件
-(global-set-key [f6] 'ff-find-related-file) ;; 找到对应的头文件
-(global-set-key [f7] 'grep-find)
-(global-set-key [f8] 'compile)	 ;; 在 Emacs 中编译
-(global-set-key [f9] 'gdb)	 ;; 在 Emacs 中调试
-(global-set-key [f12] 'speedbar)
-;(global-set-key [f12] 'todo-show)
-
-(put 'upcase-region 'disabled nil)	;; 打开C－x c－u把区域变成大写的功能
 
 (defun color-init()
 "init the color theme"
@@ -135,12 +106,29 @@
 )
 
 
+(defun load-java-relate-lib ()
+(generic-programming-realted-config)
+(add-hook 'java-mode-hook (function cscope:hook))
+(cscope-minor-mode)
+(setq-default indent-tabs-mode nil) ;; 使用空格代替tab
+(glasses-mode t) ;; ThisIsAVarInJava
+)
+
+(defun load-c-relate-lib ()
+(generic-programming-realted-config)
+(require 'cc-mode)	 ;; 更强大的C／C++语言模式
+(cscope-minor-mode)
+(c-set-offset 'inline-open 0)
+(c-set-offset 'friend '-)
+(c-set-offset 'substatement-open 0)
+)
+
+(defun if-in-tty()
+(if (equal (frame-parameter nil 'font) "tty")
+t
+nil))
+
 (defun config-not-in-tty-mode ()
-;(set-fontset-font (frame-parameter nil 'font)
-;'han '("WenQuanYi Zen Hei" . "unicode-bmp"))
-
-;; for big screen, use bigger fonts.
-
 (if (not (eq system-type 'darwin))
     ((lambda ()
 ;; use monaco fonts default, want to switch to Lucida, change this to nil
@@ -156,21 +144,57 @@
 (setq x-select-enable-clipboard t)	;;让X的剪切板和EMACS联系起来
 (tool-bar-mode -1) ;; 不要工具按钮
 (scroll-bar-mode -1) ;; 不要缩放条
-(color-init)
+(color-init))
 
+(defun page2mb (page-number)
+  "Define a function conv page number to MB"
+ (/ (* page-number 4) 1024))
+(put 'set-goal-column 'disabled nil)
 
-)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; start configure work here
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-to-list 'load-path "/usr/share/emacs/site-lisp")
+;;; if no cscope installed, ignore it.
+(safe-wrap (lambda () 
+	     (require 'xcscope)
+	     (setq cscope-do-not-update-database t)))
+(safe-wrap (git-setup))
 
-(defun if-in-tty()
-(if (equal (frame-parameter nil 'font) "tty")
-t
-nil))
+;; Config for Mac
+(if (eq system-type 'darwin)
+((lambda ()
+;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
+;; need find-file to do this
+(add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
+(setq mac-option-key-is-meta t)
+(setq mac-right-option-modifier nil)
+(setq exec-path (append exec-path '("/opt/local/bin")) )
+(set-face-attribute 'default nil
+                :family "Monaco" :height 130 :weight 'normal)
+)) nil)
 
+(setq Man-notify-method 'pushy)
+(setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
+
+(global-set-key [(f1)] (lambda() 
+                 (interactive) 
+                 (let ((woman-topic-at-point t))
+                 (woman))))
+(global-set-key [f5] 'revert-buffer)	;; 恢复文件
+(global-set-key [f6] 'ff-find-related-file) ;; 找到对应的头文件
+(global-set-key [f7] 'grep-find)
+(global-set-key [f8] 'compile)	 ;; 在 Emacs 中编译
+(global-set-key [f9] 'gdb)	 ;; 在 Emacs 中调试
+(global-set-key [f12] 'speedbar)
+;(global-set-key [f12] 'todo-show)
+(global-set-key "\C-z" 'undo)	 ;; 撤销命令
+;(global-set-key "\C-xl" 'goto-line)	;; used to goto line
+(global-set-key "\C-xj" [?\C-x ?b return]) ;; 跳到前一个buffer
+(put 'upcase-region 'disabled nil)	;; 打开C－x c－u把区域变成大写的功能
 ;; 自动补全的尝试列表
 ;; (global-set-key [(meta ?/)] 'hippie-expand)
-
 (autoload 'senator-try-expand-sematic "senator")
-
 (setq hippie-expand-try-functions-list
 '(
 senator-try-expand-sematic
@@ -225,22 +249,17 @@ try-complete-lisp-symbol-partially
 --
 Zhang Jiejing")
 
-;(setq-default truncate-lines 1) ;; 自动折行
-(toggle-truncate-lines 1)  ;; 自动折行
+(setq-default truncate-lines nil) ;; 自动折行
 (auto-compression-mode 1) ;; 打开压缩文件时自动解压缩
 (auto-image-file-mode)	 ;; 自动打开图片模式
 (column-number-mode 1) ;; 显示列号
 (blink-cursor-mode -1) ;; 光标不要闪烁
 (show-paren-mode 1) ;; 高亮显示匹配的括号
-
 (icomplete-mode t)	 ;; 给出用 M-x foo-bar-COMMAND 输入命令的提示。
-(iswitchb-mode 1)	 ;; buffer切换的时候有字符匹配
+;(iswitchb-mode t)	 ;; buffer切换的时候有字符匹配
 ;; (menu-bar-mode -1)	 ;; 不要 menu-bar。
 ;;(autoload 'big5togb-region "big5togb" "Big5 to GB2312" t)
 ;;【big5togb.el】ZSH 写的将 big5 文本转为 gb2312 的包。
-(global-set-key "\C-z" 'undo)	 ;; 撤销命令
-;(global-set-key "\C-xl" 'goto-line)	;; used to goto line
-(global-set-key "\C-xj" [?\C-x ?b return]) ;; 跳到前一个buffer
 (global-font-lock-mode t)	 ;; open font lock
 (setq font-lock-maximum-decoration t)
 (setq font-lock-verbose t)
@@ -275,8 +294,6 @@ Zhang Jiejing")
 ;; (并不可取)，也可以制定备份的方式。这里采用的是，把所有的文件备份都放在一
 ;; 个固定的地方("~/var/tmp")。对于每个备份文件，保留最原始的两个版本和最新的
 ;; 五个版本。并且备份的时候，备份文件是复本，而不是原件。
-
-
 (ansi-color-for-comint-mode-on)	 ;; 消除shell中的乱码
 (fset 'yes-or-no-p 'y-or-n-p)	 ;; 把Yes或者用y代替
 ;; (cua-mode t)	 ;; something like CTRL-V is copy
@@ -293,7 +310,6 @@ Zhang Jiejing")
 ;;(load "desktop")
 ;;(desktop-load-default)
 ;;(desktop-read)
-
 
 ;; Ask question when C-x, C-c.
 (setq kill-emacs-query-functions
@@ -314,16 +330,11 @@ Zhang Jiejing")
 (config-in-tty-mode))
 ;)
 
-
 ;; 开启服务器模式
 ;(server-force-delete)
 ;(server-start)
 ;; 用Daemon替代
 
-(defun page2mb (page-number)
-  "Define a function conv page number to MB"
- (/ (* page-number 4) 1024))
-(put 'set-goal-column 'disabled nil)
 
 
 
