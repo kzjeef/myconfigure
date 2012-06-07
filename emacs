@@ -24,18 +24,18 @@
 ; load once
  (if (featurep 'cedet)
      nil
-   (lambda ()
+   ((lambda ()
    (load-file "~/.emacs.d/site-lisp/cedet-1.1/common/cedet.el")
    (setq sematicdb-project-roots
 	 (list
 	  (expand-file-name "/")))
    ;; enable source code folding
-   (global-semantic-tag-folding-mode 1))))
+   (global-semantic-tag-folding-mode 1)))))
 
 (defun git-setup ()
  (featurep 'git)
     nil
-    (lambda ()
+    ((lambda ()
     (require 'git)
     (require 'git-blame)
     (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
@@ -48,24 +48,24 @@
       )
 
     (global-set-key (kbd "C-c s") 'signed-off-by-me)
-    ))
+    )))
 
 (defun cedet-configure()
 ; load once
  (if (featurep 'cedet)
      nil
-   (lambda ()
+   ((lambda ()
    (load-file "~/.emacs.d/site-lisp/cedet-1.1/common/cedet.el")
    (setq sematicdb-project-roots
 	 (list
 	  (expand-file-name "/")))
    ;; enable source code folding
-   (global-semantic-tag-folding-mode 1))))
+   (global-semantic-tag-folding-mode 1)))))
 
 
 (defun generic-programming-realted-config ()
-(safe-wrap (lambda () (require 'doxymacs)
-	     (doxymacs-font-lock)))
+(safe-wrap ((lambda () (require 'doxymacs)
+	     (doxymacs-font-lock))))
 
 ;; Remeber artist-mode can draw picutre !!!
 (define-key c-mode-base-map [(return)] 'newline-and-indent)
@@ -196,10 +196,10 @@ nil))
 (setq Man-notify-method 'pushy)
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
 
-(global-set-key [(f1)] (lambda() 
+(global-set-key [(f1)] ((lambda() 
                  (interactive) 
                  (let ((woman-topic-at-point t))
-                 (woman))))
+                 (woman)))))
 (global-set-key [f5] 'revert-buffer)	;; 恢复文件
 (global-set-key [f6] 'ff-find-related-file) ;; 找到对应的头文件
 (global-set-key [f7] 'grep-find)
@@ -332,12 +332,12 @@ Zhang Jiejing")
 (if (eq system-type 'darwin)
     ;; Needs Mac configure of full screen
     nil
-    (lambda () 
+    ((lambda () 
       (global-set-key [f11] 'toggle-fullscreen-nonmac)
     ; Make new frames fullscreen by default. Note: this hook doesn't do
     ; anything to the initial frame if it's in your .emacs, since that file is
     ; read _after_ the initial frame is created.
-      (add-hook 'after-make-frame-functions 'toggle-fullscreen-nonmac)))
+      (add-hook 'after-make-frame-functions 'toggle-fullscreen-nonmac))))
 
 ;;(load "desktop")
 ;;(desktop-load-default)
