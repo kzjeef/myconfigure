@@ -124,7 +124,7 @@
 ;; use monaco fonts default, want to switch to Lucida, change this to nil
       (if t
 	  (if (>= (x-display-pixel-width) 1920)
-	      (set-default-font "Monaco-14")
+	      (set-default-font "Monaco-12")
 	    (set-default-font "Monaco-12"))
 	(if (>= (x-display-pixel-width) 1920)
 	    (set-default-font "Lucida Sans Typewriter-13")
