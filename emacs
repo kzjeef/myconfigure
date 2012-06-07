@@ -41,11 +41,13 @@
     (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
     (require 'magit)
     ;; add signed off by;
+
     (defun signed-off-by-me n()
       (interactive)		
       (insert "Signed-off-by Zhang Jiejing \<jiejing.zhang@freescale.com\>")
       )
-    (global-set-key [f11] 'signed-off-by-me)
+
+    (global-set-key (kbd "C-c s") 'signed-off-by-me)
     ))
 
 (defun cedet-configure()
@@ -62,7 +64,6 @@
 
 
 (defun generic-programming-realted-config ()
-
 (safe-wrap (lambda () (require 'doxymacs)
 	     (doxymacs-font-lock)))
 
@@ -151,6 +152,16 @@ nil))
  (/ (* page-number 4) 1024))
 (put 'set-goal-column 'disabled nil)
 
+
+
+(defun toggle-fullscreen-nonmac (&optional f)
+      (interactive)
+      (let ((current-value (frame-parameter nil 'fullscreen)))
+	(set-frame-parameter nil 'fullscreen
+			     (if (equal 'fullboth current-value)
+				 (if (boundp 'old-fullscreen) old-fullscreen nil)
+			       (progn (setq old-fullscreen current-value)
+				      'fullboth)))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; start configure work here
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -173,6 +184,8 @@ nil))
 (set-face-attribute 'default nil
                 :family "Monaco" :height 130 :weight 'normal)
 )) nil)
+
+
 
 (setq Man-notify-method 'pushy)
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
@@ -241,6 +254,8 @@ try-complete-lisp-symbol-partially
 '(lambda ()
 (load-java-relate-lib)))
 
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;	 日常的配置
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -306,6 +321,17 @@ Zhang Jiejing")
 (add-hook 'comint-output-filter-functions
 'comint-watch-for-password-prompt)
 ;; 密码的相关的提示密码
+
+;; Full screen settings.
+(if (eq system-type 'darwin)
+    ;; Needs Mac configure of full screen
+    nil
+    (lambda () 
+      (global-set-key [f11] 'toggle-fullscreen-nonmac)
+    ; Make new frames fullscreen by default. Note: this hook doesn't do
+    ; anything to the initial frame if it's in your .emacs, since that file is
+    ; read _after_ the initial frame is created.
+      (add-hook 'after-make-frame-functions 'toggle-fullscreen-nonmac)))
 
 ;;(load "desktop")
 ;;(desktop-load-default)
