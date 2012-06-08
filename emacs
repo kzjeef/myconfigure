@@ -196,10 +196,10 @@ nil))
 (setq Man-notify-method 'pushy)
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
 
-(global-set-key [(f1)] ((lambda() 
+(global-set-key [(f1)] (lambda() 
                  (interactive) 
                  (let ((woman-topic-at-point t))
-                 (woman)))))
+                 (woman))))
 (global-set-key [f5] 'revert-buffer)	;; 恢复文件
 (global-set-key [f6] 'ff-find-related-file) ;; 找到对应的头文件
 (global-set-key [f7] 'grep-find)
