@@ -72,7 +72,7 @@
 (setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
 (c-toggle-hungry-state t)	 ;; hungry delete
 (which-func-mode t)	 ;; 在状态栏显示当前函数
-(cedet-configure)
+(safe-wrap (cedet-configure))
   ;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
 (font-lock-add-keywords 'python-mode
 			  '(("\\&lt;\\(FIXME\\|HACK\\|XXX\\|TODO\\)" 1 font-lock-warning-face prepend)))
@@ -117,7 +117,6 @@
 
 (defun load-c-relate-lib ()
 (generic-programming-realted-config)
-(require 'cc-mode)	 ;; 更强大的C／C++语言模式
 (cscope-minor-mode)
 (c-set-offset 'inline-open 0)
 (c-set-offset 'friend '-)
@@ -164,18 +163,15 @@ nil))
 				      'fullboth)))))
 
 (defun cscope-setup ()
-	     (require 'xcscope)
-	     (setq cscope-do-not-update-database t))  
+  (print "cscope setup")
+  (require 'xcscope)
+  (setq cscope-do-not-update-database t))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; start configure work here
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add-to-list 'load-path "/usr/share/emacs/site-lisp")
 ;;; if no cscope installed, ignore it.
 
-(safe-wrap (cscope-setup))
-
-
-(safe-wrap (git-setup))
 
 ;; Config for Mac
 (if (eq system-type 'darwin)
@@ -185,14 +181,14 @@ nil))
 (add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
 (setq mac-option-key-is-meta t)
 (setq mac-right-option-modifier nil)
-
 (setq exec-path (append exec-path '("/opt/local/bin")) )
 (set-face-attribute 'default nil
                 :family "Monaco" :height 130 :weight 'normal)
+t
 )) nil)
 
-
-
+(safe-wrap (cscope-setup))
+(safe-wrap (git-setup))
 (setq Man-notify-method 'pushy)
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
 
@@ -235,15 +231,18 @@ try-complete-lisp-symbol-partially
 ;; for object-c.
 (add-hook 'objc-mode-hook
 '(lambda ()
+   (print "with objc mode hook")
    (setq cscope-do-not-update-database nil)
    (load-c-relate-lib)
    (glasses-mode t) ;; ThisIsAVarInJava
-   (c-set-style "cc-mode")))
+   (c-set-style "cc-mode")
+   (print "objc mode hook finish")))
 
 ;; lazy evaluate accelerate boot speed
 (add-hook 'c-mode-hook
 '(lambda ()
 ;;(setq commento-style 'mutil-line)
+(print "with c mode hook")
 (load-c-relate-lib)
 (setq-default indent-tabs-mode t) ;; 在kernel模式下默认用table
 (c-set-style "linux")
@@ -251,6 +250,7 @@ try-complete-lisp-symbol-partially
 
 (add-hook 'c++-mode-hook
 '(lambda ()
+   (print "with cpp mode hook")
 ;;	(setq comment-style 'mutil-line)
 (load-c-relate-lib)
 (setq-default indent-tabs-mode nil) ;; 在kernel模式下默认用table
@@ -258,7 +258,8 @@ try-complete-lisp-symbol-partially
 
 (add-hook 'java-mode-hook
 '(lambda ()
-(load-java-relate-lib)))
+   (print "with java mode hook")
+   (load-java-relate-lib)))
 
 
 
