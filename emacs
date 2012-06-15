@@ -231,26 +231,28 @@ try-complete-lisp-symbol-partially
 ;; for object-c.
 (add-hook 'objc-mode-hook
 '(lambda ()
-   (print "with objc mode hook")
+   (message "objc mode hook start")
    (setq cscope-do-not-update-database nil)
    (load-c-relate-lib)
+   (setq-default indent-tabs-mode nil) ;; 不用table
    (glasses-mode t) ;; ThisIsAVarInJava
    (c-set-style "cc-mode")
-   (print "objc mode hook finish")))
+   (message "objc mode hook finish")))
 
 ;; lazy evaluate accelerate boot speed
 (add-hook 'c-mode-hook
 '(lambda ()
 ;;(setq commento-style 'mutil-line)
-(print "with c mode hook")
+(message "with c mode hook")
 (load-c-relate-lib)
 (setq-default indent-tabs-mode t) ;; 在kernel模式下默认用table
 (c-set-style "linux")
+(message "c mode finished")
 ))
 
 (add-hook 'c++-mode-hook
 '(lambda ()
-   (print "with cpp mode hook")
+   (message "with cpp mode hook")
 ;;	(setq comment-style 'mutil-line)
 (load-c-relate-lib)
 (setq-default indent-tabs-mode nil) ;; 在kernel模式下默认用table
@@ -258,7 +260,7 @@ try-complete-lisp-symbol-partially
 
 (add-hook 'java-mode-hook
 '(lambda ()
-   (print "with java mode hook")
+   (message "with java mode hook")
    (load-java-relate-lib)))
 
 
@@ -332,13 +334,10 @@ Zhang Jiejing")
 ;; Full screen settings.
 (if (eq system-type 'darwin)
     ;; Needs Mac configure of full screen
-    nil
+    ((lambda ()
+       (global-set-key (kbd "M-RET")  'ns-toggle-fullscreen)))
     ((lambda () 
-      (global-set-key [f11] 'toggle-fullscreen-nonmac)
-    ; Make new frames fullscreen by default. Note: this hook doesn't do
-    ; anything to the initial frame if it's in your .emacs, since that file is
-    ; read _after_ the initial frame is created.
-      (add-hook 'after-make-frame-functions 'toggle-fullscreen-nonmac))))
+      (global-set-key (kbd "M-RET") 'toggle-fullscreen-nonmac))))
 
 ;;(load "desktop")
 ;;(desktop-load-default)
