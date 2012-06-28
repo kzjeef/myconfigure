@@ -1,3 +1,4 @@
+;;-*- mode: emacs-lisp -*-
 ;; .emacs
 ;;; uncomment this line to disable loading of "default.el" at startup
 ;; (setq inhibit-default-init t)
@@ -232,7 +233,7 @@ try-complete-lisp-symbol-partially
 (add-hook 'objc-mode-hook
 '(lambda ()
    (message "objc mode hook start")
-   (setq cscope-do-not-update-database nil)
+   (setq cscope-do-not-update-data1base nil)
    (load-c-relate-lib)
    (setq-default indent-tabs-mode nil) ;; 不用table
    (glasses-mode t) ;; ThisIsAVarInJava
@@ -262,6 +263,8 @@ try-complete-lisp-symbol-partially
 '(lambda ()
    (message "with java mode hook")
    (load-java-relate-lib)))
+
+(remove-hook 'find-file-hooks 'vc-find-file-hook)
 
 
 
@@ -335,9 +338,10 @@ Zhang Jiejing")
 (if (eq system-type 'darwin)
     ;; Needs Mac configure of full screen
     ((lambda ()
-       (global-set-key (kbd "M-RET")  'ns-toggle-fullscreen)))
+       (global-set-key (kbd "C-M-RET")  'ns-toggle-fullscreen)))
     ((lambda () 
-      (global-set-key (kbd "M-RET") 'toggle-fullscreen-nonmac))))
+      (global-set-key (kbd "C-M-RET") 'toggle-fullscreen-nonmac))))
+
 
 ;;(load "desktop")
 ;;(desktop-load-default)
