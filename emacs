@@ -233,7 +233,7 @@ try-complete-lisp-symbol-partially
 (add-hook 'objc-mode-hook
 '(lambda ()
    (message "objc mode hook start")
-   (setq cscope-do-not-update-data1base nil)
+   (setq cscope-do-not-update-database nil)
    (load-c-relate-lib)
    (setq-default indent-tabs-mode nil) ;; 不用table
    (glasses-mode t) ;; ThisIsAVarInJava
