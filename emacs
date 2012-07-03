@@ -338,7 +338,8 @@ Zhang Jiejing")
 (if (eq system-type 'darwin)
     ;; Needs Mac configure of full screen
     ((lambda ()
-       (global-set-key (kbd "C-M-RET")  'ns-toggle-fullscreen)))
+       (global-set-key (kbd "C-M-RET")  'ns-toggle-fullscreen)
+       (global-set-key (kbd "C-M-f") 'ns-toggle-fullscreen)))
     ((lambda () 
       (global-set-key (kbd "C-M-RET") 'toggle-fullscreen-nonmac))))
 
