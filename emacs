@@ -339,9 +339,10 @@ Zhang Jiejing")
     ;; Needs Mac configure of full screen
     ((lambda ()
        (global-set-key (kbd "C-M-RET")  'ns-toggle-fullscreen)
-       (global-set-key (kbd "C-M-f") 'ns-toggle-fullscreen)))
+       (global-set-key (kbd "C-M-<return>") 'ns-toggle-fullscreen)))
     ((lambda () 
-      (global-set-key (kbd "C-M-RET") 'toggle-fullscreen-nonmac))))
+      (global-set-key (kbd "C-M-RET") 'toggle-fullscreen-nonmac)
+      (global-set-key (kbd "C-M-<return>") 'toggle-fullscreen-nonmac))))
 
 
 ;;(load "desktop")
