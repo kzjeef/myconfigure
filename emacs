@@ -23,7 +23,7 @@
 ;; my git setup codes.
 (defun cedet-configure()
 ; load once
- (if (featurep 'cedet)
+ (if (and (featurep 'cedet) (not (if-in-tty))))
      nil
    ((lambda ()
    (load-file "~/.emacs.d/site-lisp/cedet-1.1/common/cedet.el")
@@ -31,6 +31,17 @@
 	 (list
 	  (expand-file-name "/")))
    ;; enable source code folding
+   (global-ede-mode t)
+   (require 'semantic-ia)
+   (require 'semantic-gcc)
+   (semantic-load-enable-excessive-code-helpers))))
+
+(defun my-c-mode-cedet-hook ()
+ (local-set-key "." 'semantic-complete-self-insert)
+ (local-set-key ">" 'semantic-complete-self-insert))
+(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
+
+
    (global-semantic-tag-folding-mode 1)))))
 
 (defun git-setup ()
