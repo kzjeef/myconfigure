@@ -62,19 +62,6 @@
     (global-set-key (kbd "C-c s") 'signed-off-by-me)
     )))
 
-(defun cedet-configure()
-; load once
- (if (featurep 'cedet)
-     nil
-   ((lambda ()
-   (load-file "~/.emacs.d/site-lisp/cedet-1.1/common/cedet.el")
-   (setq sematicdb-project-roots
-	 (list
-	  (expand-file-name "/")))
-   ;; enable source code folding
-   (global-semantic-tag-folding-mode 1)))))
-
-
 (defun generic-programming-realted-config ()
 (safe-wrap ((lambda () (require 'doxymacs)
 	     (doxymacs-font-lock))))
