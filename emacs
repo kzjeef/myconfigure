@@ -54,7 +54,7 @@
     (require 'magit)
     ;; add signed off by;
 
-    (defun signed-off-by-me n()
+    (defun signed-off-by-me ()
       (interactive)		
       (insert "Signed-off-by Zhang Jiejing \<jiejing.zhang@freescale.com\>")
       )
