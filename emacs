@@ -34,15 +34,15 @@
    (global-ede-mode t)
    (require 'semantic-ia)
    (require 'semantic-gcc)
-   (semantic-load-enable-excessive-code-helpers))))
+   (semantic-load-enable-excessive-code-helpers)
 
-(defun my-c-mode-cedet-hook ()
- (local-set-key "." 'semantic-complete-self-insert)
- (local-set-key ">" 'semantic-complete-self-insert))
-(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
-
-
-   (global-semantic-tag-folding-mode 1)))))
+   (defun my-c-mode-cedet-hook ()
+     (local-set-key "." 'semantic-complete-self-insert)
+     (local-set-key ">" 'semantic-complete-self-insert))
+   (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
+   
+   
+   (global-semantic-tag-folding-mode 1))))
 
 (defun git-setup ()
  (featurep 'git)
