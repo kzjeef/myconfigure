@@ -330,7 +330,8 @@ Zhang Jiejing")
 (setq ispell-dictionary "en")
 (add-hook 'comint-output-filter-functions
 'comint-watch-for-password-prompt) ;; 密码的相关的提示密码
-(display-battery-mode) ;; 显示电池容量， 全屏的时候很需要
+
+(safe-wrap (display-battery-mode)) ;; 显示电池容量， 全屏的时候很需要
 
 ;; Full screen settings.
 (if (eq system-type 'darwin)
