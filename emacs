@@ -281,11 +281,44 @@ try-complete-lisp-symbol-partially
 ;;(setq commento-style 'mutil-line)
 ; (message "with c mode hook")
  (load-c-relate-lib)
- (setq-default indent-tabs-mode t) ;; 在kernel模式下默认用table
+ (setq-default indent-tabs-mode nil)
  (c-set-style "linux")
 ; (message "c mode finished")
  (setq c-mode-hook-loaded t)
 ))
+
+;; For linux kernel
+(defun c-lineup-arglist-tabs-only (ignored)
+  "Line up argument lists by tabs, not spaces"
+  (let* ((anchor (c-langelem-pos c-syntactic-element))
+	 (column (c-langelem-2nd-pos c-syntactic-element))
+	 (offset (- (1+ column) anchor))
+	 (steps (floor offset c-basic-offset)))
+    (* (max steps 1)
+       c-basic-offset)))
+
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            ;; Add kernel style
+            (c-add-style
+             "linux-tabs-only"
+             '("linux" (c-offsets-alist
+                        (arglist-cont-nonempty
+                         c-lineup-gcc-asm-reg
+                         c-lineup-arglist-tabs-only))))))
+
+(add-hook 'c-mode-hook
+          (lambda ()
+            (let ((filename (buffer-file-name)))
+              ;; Enable kernel mode for the appropriate files
+              (when (and filename
+                         (or
+                          (string-match (expand-file-name "~/proj/ics/kernel_imx")
+                                       filename)
+                          (string-match (expand-file-name "~/proj/jb/kernel_imx")
+                                       filename)))
+                (setq indent-tabs-mode t)
+                (c-set-style "linux-tabs-only")))))
 
 (add-hook 'c++-mode-hook
 '(lambda ()
@@ -301,8 +334,6 @@ try-complete-lisp-symbol-partially
    (load-java-relate-lib)))
 
 (remove-hook 'find-file-hooks 'vc-find-file-hook)
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;	 日常的配置
