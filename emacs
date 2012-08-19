@@ -26,12 +26,58 @@
  (if (featurep 'cedet)
      nil
    ((lambda ()
-   (load-file "~/.emacs.d/site-lisp/cedet-1.1/common/cedet.el")
-   (setq sematicdb-project-roots
-	 (list
-	  (expand-file-name "/")))
-   ;; enable source code folding
-   (global-semantic-tag-folding-mode 1)))))
+(load-file "~/.emacs.d/site-lisp/cedet-1.1/common/cedet.el")
+(setq semanticdb-default-save-directory "~/.emacs.d/semanticdb")
+(semantic-load-enable-code-helpers)
+(global-set-key [(control tab)] 'semantic-ia-complete-symbol-menu) 
+;(setq semanticdb-project-roots
+;(list (expand-file-name "/")))
+
+(local-set-key "." 'semantic-complete-self-insert)
+(local-set-key ">" 'semantic-complete-self-insert)
+(semanticdb-enable-gnu-global-databases 'c-mode t)
+(semanticdb-enable-gnu-global-databases 'c++-mode t)
+(setq sematicdb-project-roots "/home/b33651/jb")
+
+(global-ede-mode 1)
+(ede-enable-generic-projects)
+))))
+
+(safe-wrap (cedet-configure))
+
+(defun cedet-not-configure()
+  (require 'semantic/analyze/refs)
+  (require 'semantic/bovine/c)
+  (require 'semantic/bovine/gcc)
+  (require 'semantic/bovine/clang)
+  (require 'semantic/ia)
+  (require 'semantic/decorate/include)
+  (require 'semantic/lex-spp)
+  (require 'eassist)
+
+  (add-to-list  'Info-directory-list "~/projects/cedet-git/doc/info")
+
+;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
+(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
+;(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
+(add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
+
+  (semantic-mode 1)
+  (global-semantic-highlight-edits-mode (if window-system 1 -1))
+;  (global-semantic-show-unmatched-syntax-mode 1)
+  (semantic-complete-analyze-inline-idle t)
+  (global-semantic-show-parser-state-mode 1)
+
+;  (globad-sematicdb-minor-mode t)
+  (setq semantic-idle-completions-mode t)
+  (setq semantic-complete-inline-analyzer-idle-displayor-class 'semantic-displayor-tooltip)
+  (global-semantic-idle-completions-mode t)
+
+  (semantic-mode 1))
+
 
 (defun git-setup ()
  (featurep 'git)
@@ -43,7 +89,7 @@
     (require 'magit)
     ;; add signed off by;
 
-    (defun signed-off-by-me n()
+    (defun signed-off-by-me ()
       (interactive)		
       (insert "Signed-off-by Zhang Jiejing \<jiejing.zhang@freescale.com\>")
       )
@@ -51,21 +97,10 @@
     (global-set-key (kbd "C-c s") 'signed-off-by-me)
     )))
 
-(defun cedet-configure()
-; load once
- (if (featurep 'cedet)
-     nil
-   ((lambda ()
-   (load-file "~/.emacs.d/site-lisp/cedet-1.1/common/cedet.el")
-   (setq sematicdb-project-roots
-	 (list
-	  (expand-file-name "/")))
-   ;; enable source code folding
-   (global-semantic-tag-folding-mode 1)))))
-
-
 (defun generic-programming-realted-config ()
-(safe-wrap ((lambda () (require 'doxymacs)
+(safe-wrap ((lambda ()
+              (add-to-list 'load-path "/usr/share/emacs/site-lisp/doxymacs")
+              (require 'doxymacs)
 	     (doxymacs-font-lock))))
 
 ;; Remeber artist-mode can draw picutre !!!
@@ -73,7 +108,6 @@
 (setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
 (c-toggle-hungry-state t)	 ;; hungry delete
 (which-func-mode t)	 ;; 在状态栏显示当前函数
-(safe-wrap (cedet-configure))
   ;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
 (font-lock-add-keywords 'python-mode
 			  '(("\\&lt;\\(FIXME\\|HACK\\|XXX\\|TODO\\)" 1 font-lock-warning-face prepend)))
@@ -316,7 +350,7 @@ t
 (put 'upcase-region 'disabled nil)	;; 打开C－x c－u把区域变成大写的功能
 ;; 自动补全的尝试列表
 ;; (global-set-key [(meta ?/)] 'hippie-expand)
-(autoload 'senator-try-expand-sematic "senator")
+;(autoload 'senator-try-expand-sematic "senator")
 (setq hippie-expand-try-functions-list
 '(
 senator-try-expand-sematic
@@ -338,7 +372,7 @@ try-complete-lisp-symbol-partially
 ;; for object-c.
 (add-hook 'objc-mode-hook
 '(lambda ()
-   (message "objc mode hook start")
+;   (message "objc modeb hook start")
    (setq cscope-do-not-update-database nil)
    (load-c-relate-lib)
    (setq-default indent-tabs-mode nil) ;; 不用table
@@ -352,16 +386,50 @@ try-complete-lisp-symbol-partially
 (add-hook 'c-mode-hook
 '(lambda ()
 ;;(setq commento-style 'mutil-line)
-(message "with c mode hook")
-(load-c-relate-lib)
-(setq-default indent-tabs-mode t) ;; 在kernel模式下默认用table
-(c-set-style "linux")
-(message "c mode finished")
+; (message "with c mode hook")
+ (load-c-relate-lib)
+ (setq-default indent-tabs-mode nil)
+ (c-set-style "linux")
+; (message "c mode finished")
+ (setq c-mode-hook-loaded t)
 ))
+
+;; For linux kernel
+(defun c-lineup-arglist-tabs-only (ignored)
+  "Line up argument lists by tabs, not spaces"
+  (let* ((anchor (c-langelem-pos c-syntactic-element))
+	 (column (c-langelem-2nd-pos c-syntactic-element))
+	 (offset (- (1+ column) anchor))
+	 (steps (floor offset c-basic-offset)))
+    (* (max steps 1)
+       c-basic-offset)))
+
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            ;; Add kernel style
+            (c-add-style
+             "linux-tabs-only"
+             '("linux" (c-offsets-alist
+                        (arglist-cont-nonempty
+                         c-lineup-gcc-asm-reg
+                         c-lineup-arglist-tabs-only))))))
+
+(add-hook 'c-mode-hook
+          (lambda ()
+            (let ((filename (buffer-file-name)))
+              ;; Enable kernel mode for the appropriate files
+              (when (and filename
+                         (or
+                          (string-match (expand-file-name "~/proj/ics/kernel_imx")
+                                       filename)
+                          (string-match (expand-file-name "~/proj/jb/kernel_imx")
+                                       filename)))
+                (setq indent-tabs-mode t)
+                (c-set-style "linux-tabs-only")))))
 
 (add-hook 'c++-mode-hook
 '(lambda ()
-   (message "with cpp mode hook")
+;   (message "with cpp mode hook")
 ;;	(setq comment-style 'mutil-line)
 (load-c-relate-lib)
 (setq-default indent-tabs-mode nil) ;; 在kernel模式下默认用table
@@ -369,12 +437,10 @@ try-complete-lisp-symbol-partially
 
 (add-hook 'java-mode-hook
 '(lambda ()
-   (message "with java mode hook")
+;   (message "with java mode hook")
    (load-java-relate-lib)))
 
 (remove-hook 'find-file-hooks 'vc-find-file-hook)
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;	 日常的配置
@@ -440,16 +506,18 @@ Zhang Jiejing")
 (setq ispell-dictionary "en")
 (add-hook 'comint-output-filter-functions
 'comint-watch-for-password-prompt) ;; 密码的相关的提示密码
-(display-battery-mode) ;; 显示电池容量， 全屏的时候很需要
+
+(safe-wrap (display-battery-mode)) ;; 显示电池容量， 全屏的时候很需要
 
 ;; Full screen settings.
 (if (eq system-type 'darwin)
     ;; Needs Mac configure of full screen
     ((lambda ()
        (global-set-key (kbd "C-M-RET")  'ns-toggle-fullscreen)
-       (global-set-key (kbd "C-M-f") 'ns-toggle-fullscreen)))
+       (global-set-key (kbd "C-M-<return>") 'ns-toggle-fullscreen)))
     ((lambda () 
-      (global-set-key (kbd "C-M-RET") 'toggle-fullscreen-nonmac))))
+      (global-set-key (kbd "C-M-RET") 'toggle-fullscreen-nonmac)
+      (global-set-key (kbd "C-M-<return>") 'toggle-fullscreen-nonmac))))
 
 
 ;;(load "desktop")
