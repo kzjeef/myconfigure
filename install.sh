@@ -14,5 +14,5 @@ mkdir -p ~/.emacs.d/site-lisp/auto-complete/
 (cd auto-complete; make; make install DIR=~/.emacs.d/site-lisp/auto-complete/)
 #cp -ra auto-complete	~/emacs.d/site-lisp/auto-complete
 
-cp xcscope.elc ~/.emacs.d/site-lisp/
+cp xcscope/xcscope.el* ~/.emacs.d/site-lisp/
 sudo cp xcscope/cscope-indexer /usr/bin/cscope-indexer
