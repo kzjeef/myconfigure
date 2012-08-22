@@ -203,7 +203,7 @@
 (add-hook 'java-mode-hook (function cscope:hook))
 (cscope-minor-mode)
 (setq-default indent-tabs-mode nil) ;; 使用空格代替tab
-(glasses-mode t) ;; ThisIsAVarInJava
+;;(glasses-mode nil) ;; ThisIsAVarInJava
 )
 
 (defun load-c-relate-lib ()
@@ -326,7 +326,7 @@ try-complete-lisp-symbol-partially
    (setq cscope-do-not-update-database nil)
    (load-c-relate-lib)
    (setq-default indent-tabs-mode nil) ;; 不用table
-   (glasses-mode t) ;; ThisIsAVarInJava
+;;   (glasses-mode nil) ;; ThisIsAVarInJava
    (c-set-style "cc-mode")
 ;   (message "objc mode hook finish")
    ))
