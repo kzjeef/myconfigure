@@ -20,10 +20,10 @@
          retval)
      ,@clean-up))
 
-(add-to-list 'load-path "/home/b33651/.emacs.d/site-lisp/")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/")
 
 (defun ecb-init()
-  (add-to-list 'load-path "/home/b33651/.emacs.d/site-lisp/ecb/")
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/ecb/")
   (require 'ecb)
   (require 'ecb-autoloads)
   (setq ecb-tip-of-the-day nil)
@@ -69,9 +69,9 @@
 
 
 (defun complete-func-init()
-(add-to-list 'load-path "/home/b33651/.emacs.d/site-lisp/auto-complete/")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/")
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "/home/b33651/.emacs.d/site-lisp/auto-complete/ac-dict")
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
 (ac-config-default))
 
 ;; my git setup codes.
@@ -91,7 +91,7 @@
 (local-set-key ">" 'semantic-complete-self-insert)
 (semanticdb-enable-gnu-global-databases 'c-mode t)
 (semanticdb-enable-gnu-global-databases 'c++-mode t)
-(setq sematicdb-project-roots "/home/b33651/jb")
+(setq sematicdb-project-roots "~/jb")
 (global-ede-mode 1)
 (ede-enable-generic-projects)))))
 
