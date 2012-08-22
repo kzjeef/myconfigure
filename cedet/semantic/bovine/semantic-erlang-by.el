@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 2002, 2003 Vladimir G. Sekissov
 
-;; Author:  <b33651@shdroid1.ap.freescale.net>
-;; Created: 2012-08-21 17:51:08+0800
+;; Author: b33651 <b33651@shdroid2.am.freescale.net>
+;; Created: 2012-08-22 11:08:50+0800
 ;; Keywords: syntax
 ;; X-RCS: $Id$
 

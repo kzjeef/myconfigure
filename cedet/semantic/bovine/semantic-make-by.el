@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2008 Eric M. Ludlam
 
-;; Author:  <b33651@shdroid1.ap.freescale.net>
-;; Created: 2012-08-21 17:51:07+0800
+;; Author: b33651 <b33651@shdroid2.am.freescale.net>
+;; Created: 2012-08-22 11:08:50+0800
 ;; Keywords: syntax
 ;; X-RCS: $Id$
 

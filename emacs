@@ -20,11 +20,58 @@
          retval)
      ,@clean-up))
 
+(add-to-list 'load-path "/home/b33651/.emacs.d/site-lisp/")
+
+(defun ecb-init()
+  (add-to-list 'load-path "/home/b33651/.emacs.d/site-lisp/ecb/")
+  (require 'ecb)
+  (require 'ecb-autoloads)
+  (setq ecb-tip-of-the-day nil)
+  ;; set up cscope windown in ecb.
+  (ecb-layout-define "my-cscope-layout" left nil
+                   (ecb-set-methods-buffer)
+                   (ecb-split-ver 0.5 t)
+                   (other-window 1)
+                   (ecb-set-history-buffer)
+                   (ecb-split-ver 0.25 t)
+                   (other-window 1)
+                   (ecb-set-cscope-buffer))
+  
+  (defecb-window-dedicator ecb-set-cscope-buffer " *ECB cscope-buf*"
+    (switch-to-buffer "*cscope*"))
+  (setq ecb-layout-name "my-cscope-layout")
+  
+  ;; Disable buckets so that history buffer can display more entries
+  (setq ecb-history-make-buckets 'never)
+  (setq-default my-ecb-already-active nil)
+
+  (custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+    '(ecb-options-version "2.40")
+   '(ecb-layout-window-sizes (quote (("my-cscope-layout"
+                                      (0.2559241706161137 . 0.4888888888888889)
+                                      (0.2559241706161137 . 0.1111111111111111)))))))
+
+
+
+(defun toggle-ecb-activate()
+  (interactive)
+  (if (eq my-ecb-already-active t)
+      (ecb-deactivate)
+    (ecb-activate))
+  (if (eq my-ecb-already-active t)
+      (setq my-ecb-already-active nil)
+    (setq my-ecb-already-active t)))
+
+
 
 (defun complete-func-init()
-(add-to-list 'load-path "/home/b33651/emacs.d/site-lisp/auto-complete/")
+(add-to-list 'load-path "/home/b33651/.emacs.d/site-lisp/auto-complete/")
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "/home/b33651/emacs.d/site-lisp/auto-complete//ac-dict")
+(add-to-list 'ac-dictionary-directories "/home/b33651/.emacs.d/site-lisp/auto-complete/ac-dict")
 (ac-config-default))
 
 ;; my git setup codes.
@@ -33,7 +80,7 @@
  (if (featurep 'cedet)
      nil
    ((lambda ()
-(load-file "~/.emacs.d/site-lisp/cedet-1.1/common/cedet.el")
+(load-file "~/.emacs.d/site-lisp/cedet/common/cedet.el")
 (setq semanticdb-default-save-directory "~/.emacs.d/semanticdb")
 (semantic-load-enable-code-helpers)
 (global-set-key [(control tab)] 'semantic-ia-complete-symbol-menu) 
@@ -45,14 +92,14 @@
 (semanticdb-enable-gnu-global-databases 'c-mode t)
 (semanticdb-enable-gnu-global-databases 'c++-mode t)
 (setq sematicdb-project-roots "/home/b33651/jb")
-
 (global-ede-mode 1)
-(ede-enable-generic-projects)
-))))
+(ede-enable-generic-projects)))))
 
 (safe-wrap (complete-func-init))
 
 (safe-wrap (cedet-configure))
+
+(safe-wrap (ecb-init))
 
 (defun cedet-not-configure()
   (require 'semantic/analyze/refs)
@@ -245,7 +292,7 @@ t
 (global-set-key [f7] 'grep-find)
 (global-set-key [f8] 'compile)	 ;; 在 Emacs 中编译
 (global-set-key [f9] 'gdb)	 ;; 在 Emacs 中调试
-(global-set-key [f12] 'speedbar)
+(global-set-key [f12] 'toggle-ecb-activate)
 ;(global-set-key [f12] 'todo-show)
 (global-set-key "\C-z" 'undo)	 ;; 撤销命令
 ;(global-set-key "\C-xl" 'goto-line)	;; used to goto line
@@ -449,7 +496,5 @@ Zhang Jiejing")
 ;(server-force-delete)
 ;(server-start)
 ;; 用Daemon替代
-
-
 
 

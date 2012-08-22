@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 2005, 2007, 2008, 2009, 2010 Eric M. Ludlam
 
-;; Author:  <b33651@shdroid1.ap.freescale.net>
-;; Created: 2012-08-21 17:50:52+0800
+;; Author: b33651 <b33651@shdroid2.am.freescale.net>
+;; Created: 2012-08-22 11:08:54+0800
 ;; Keywords: syntax
 ;; X-RCS: $Id$
 
@@ -233,11 +233,9 @@
 ;;
 (require 'semantic-lex)
 
-(define-lex-string-type-analyzer srecode-template-wy--<punctuation>-string-analyzer
-  "string analyzer for <punctuation> tokens."
-  "\\s.+"
-  nil
-  'punctuation)
+(define-lex-keyword-type-analyzer srecode-template-wy--<keyword>-keyword-analyzer
+  "keyword analyzer for <keyword> tokens."
+  "\\(\\sw\\|\\s_\\)+")
 
 (define-lex-regex-type-analyzer srecode-template-wy--<symbol>-regexp-analyzer
   "regexp analyzer for <symbol> tokens."
@@ -245,20 +243,22 @@
   nil
   'symbol)
 
+(define-lex-sexp-type-analyzer srecode-template-wy--<string>-sexp-analyzer
+  "sexp analyzer for <string> tokens."
+  "\\s\""
+  'string)
+
 (define-lex-regex-type-analyzer srecode-template-wy--<number>-regexp-analyzer
   "regexp analyzer for <number> tokens."
   semantic-lex-number-expression
   nil
   'number)
 
-(define-lex-sexp-type-analyzer srecode-template-wy--<string>-sexp-analyzer
-  "sexp analyzer for <string> tokens."
-  "\\s\""
-  'string)
-
-(define-lex-keyword-type-analyzer srecode-template-wy--<keyword>-keyword-analyzer
-  "keyword analyzer for <keyword> tokens."
-  "\\(\\sw\\|\\s_\\)+")
+(define-lex-string-type-analyzer srecode-template-wy--<punctuation>-string-analyzer
+  "string analyzer for <punctuation> tokens."
+  "\\s.+"
+  nil
+  'punctuation)
 
 (define-lex-regex-type-analyzer srecode-template-wy--<property>-regexp-analyzer
   "regexp analyzer for <property> tokens."
