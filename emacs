@@ -20,6 +20,13 @@
          retval)
      ,@clean-up))
 
+
+(defun complete-func-init()
+(add-to-list 'load-path "/home/b33651/emacs.d/site-lisp/auto-complete/")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "/home/b33651/emacs.d/site-lisp/auto-complete//ac-dict")
+(ac-config-default))
+
 ;; my git setup codes.
 (defun cedet-configure()
 ; load once
@@ -42,6 +49,8 @@
 (global-ede-mode 1)
 (ede-enable-generic-projects)
 ))))
+
+(safe-wrap (complete-func-init))
 
 (safe-wrap (cedet-configure))
 
