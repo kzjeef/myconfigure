@@ -3,7 +3,7 @@
 mkdir -p ~/.emacs.d/site-lisp/cedet/
 mkdir -p ~/.emacs.d/site-lisp/ecb/
 
-(cd cedet; make clean; make)
+(cd cedet; find . | xargs touch;  make clean-all; make)
 
 cp -ra cedet/* ~/.emacs.d/site-lisp/cedet/
 cp -ra ecb/*	~/.emacs.d/site-lisp/ecb/

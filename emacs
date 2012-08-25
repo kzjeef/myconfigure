@@ -22,6 +22,13 @@
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/")
 
+(setq load-path
+      (remove (concat "/usr/share/emacs/"
+		      (substring emacs-version 0 -2) "/lisp/cedet")
+	      load-path))
+
+(setq stack-trace-on-error t)
+
 (defun ecb-init()
   (add-to-list 'load-path "~/.emacs.d/site-lisp/ecb/")
   (require 'ecb)
@@ -95,10 +102,9 @@
 (global-ede-mode 1)
 (ede-enable-generic-projects)))))
 
-(safe-wrap (complete-func-init))
 
 (safe-wrap (cedet-configure))
-
+(safe-wrap (complete-func-init))
 (safe-wrap (ecb-init))
 
 (defun cedet-not-configure()
@@ -154,10 +160,12 @@
     )))
 
 (defun generic-programming-realted-config ()
-(safe-wrap ((lambda ()
-              (add-to-list 'load-path "/usr/share/emacs/site-lisp/doxymacs")
-              (require 'doxymacs)
-	     (doxymacs-font-lock))))
+
+; diable doxymacs for conflict of cedet.  
+;(safe-wrap ((lambda ()
+;              (require 'doxymacs)
+;	     (doxymacs-font-lock)
+;	     )))
 
 ;; Remeber artist-mode can draw picutre !!!
 (define-key c-mode-base-map [(return)] 'newline-and-indent)
@@ -337,7 +345,7 @@ nil))
 (setq ecb-layout-name "my-cscope-layout"))
 
 (defun cscope-setup ()
-  (print "cscope setup")
+;  (print "cscope setup")
   (require 'xcscope)
   (setq cscope-do-not-update-database t)
   (ecb-cscope-window)
