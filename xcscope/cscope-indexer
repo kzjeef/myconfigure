@@ -120,6 +120,14 @@ done
 
 cd $DIR
 
+EXCLUDE=''
+export EXCLUDE
+
+if [ -f .cscope.exclude ]
+then
+    export EXCLUDE=`cat .cscope.exclude`;
+fi
+
 if [ "X$VERBOSE" != "X" ]
 then
     echo "Creating list of files to index ..."
@@ -134,7 +142,7 @@ fi
 	    echo "$DIR/$f"
 	done
     else
-	find $DIR \( -type f -o -type l \)
+	find $DIR \( -type f -o -type l \) -or -name ${EXCLUDE} -prune
     fi
 ) | \
     egrep -i '\.([chly](xx|pp)*|cc|java|hh)$' | \
