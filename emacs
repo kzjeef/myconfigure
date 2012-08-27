@@ -20,10 +20,17 @@
          retval)
      ,@clean-up))
 
-(add-to-list 'load-path "/home/b33651/.emacs.d/site-lisp/")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/")
+
+(setq load-path
+      (remove (concat "/usr/share/emacs/"
+		      (substring emacs-version 0 -2) "/lisp/cedet")
+	      load-path))
+
+(setq stack-trace-on-error t)
 
 (defun ecb-init()
-  (add-to-list 'load-path "/home/b33651/.emacs.d/site-lisp/ecb/")
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/ecb/")
   (require 'ecb)
   (require 'ecb-autoloads)
   (setq ecb-tip-of-the-day nil)
@@ -69,9 +76,9 @@
 
 
 (defun complete-func-init()
-(add-to-list 'load-path "/home/b33651/.emacs.d/site-lisp/auto-complete/")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/")
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "/home/b33651/.emacs.d/site-lisp/auto-complete/ac-dict")
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
 (ac-config-default))
 
 ;; my git setup codes.
@@ -91,14 +98,13 @@
 (local-set-key ">" 'semantic-complete-self-insert)
 (semanticdb-enable-gnu-global-databases 'c-mode t)
 (semanticdb-enable-gnu-global-databases 'c++-mode t)
-(setq sematicdb-project-roots "/home/b33651/jb")
+(setq sematicdb-project-roots "~/jb")
 (global-ede-mode 1)
 (ede-enable-generic-projects)))))
 
-(safe-wrap (complete-func-init))
 
 (safe-wrap (cedet-configure))
-
+(safe-wrap (complete-func-init))
 (safe-wrap (ecb-init))
 
 (defun cedet-not-configure()
@@ -154,10 +160,12 @@
     )))
 
 (defun generic-programming-realted-config ()
-(safe-wrap ((lambda ()
-              (add-to-list 'load-path "/usr/share/emacs/site-lisp/doxymacs")
-              (require 'doxymacs)
-	     (doxymacs-font-lock))))
+
+; diable doxymacs for conflict of cedet.  
+;(safe-wrap ((lambda ()
+;              (require 'doxymacs)
+;	     (doxymacs-font-lock)
+;	     )))
 
 ;; Remeber artist-mode can draw picutre !!!
 (define-key c-mode-base-map [(return)] 'newline-and-indent)
@@ -169,6 +177,75 @@
 			  '(("\\&lt;\\(FIXME\\|HACK\\|XXX\\|TODO\\)" 1 font-lock-warning-face prepend)))
   ;; (add-hook 'before-save-hook 'whitespace-cleanup) ;;在保存之前清除空字符
   ;; (setq-default indent-tabs-mode t)	;; 在kernel模式下默认用table
+
+(ffap-bindings)
+;; 设定搜索的路径 ffap-c-path
+;; (setq ffap-c-path
+;;     '("/usr/include" "/usr/local/include"))
+;; 如果是新文件要确认
+(setq ffap-newfile-prompt t)
+;; ffap-kpathsea-expand-path 展开路径的深度
+(setq ffap-kpathsea-depth 5)
+)
+
+(defun flymode-init()
+" init flymode related things."
+
+(require 'flymake)
+(defvar xcode:gccver "4.2")
+(defvar xcode:sdkver "5.1")
+(defvar xcode:sdkpath "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/")
+(defvar xcode:sdk (concat xcode:sdkpath "/SDKs/iPhoneSimulator" xcode:sdkver ".sdk"))
+;(defvar flymake-objc-compiler (concat xcode:sdkpath "/usr/bin/llvm-gcc-" xcode:gccver))
+(defvar flymake-objc-compiler (concat xcode:sdkpath "/usr/bin/i686-apple-darwin11-llvm-gcc-" xcode:gccver))
+(defvar flymake-objc-compile-default-options (list "-Wall" "-Wextra" "-fsyntax-only" "-ObjC" "-std=c99" "-isysroot" xcode:sdk))
+(defvar flymake-last-position nil)
+(defvar flymake-objc-compile-options '("-I."))
+(defun flymake-objc-init ()
+  (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                    'flymake-create-temp-inplace))
+         (local-file (file-relative-name
+                     temp-file
+                     (file-name-directory buffer-file-name))))
+    (list flymake-objc-compiler (append flymake-objc-compile-default-options flymake-objc-compile-options (list local-file)))))
+
+(add-hook 'objc-mode-hook
+         (lambda ()
+           (push '("\\.m$" flymake-objc-init) flymake-allowed-file-name-masks)
+           (push '("\\.h$" flymake-objc-init) flymake-allowed-file-name-masks)
+           (if (and (not (null buffer-file-name)) (file-writable-p buffer-file-name))
+               (flymake-mode t))
+         ))
+(defun flymake-display-err-minibuffer ()
+  "改行有 error 或 warinig 显示在 minibuffer"
+  (interactive)
+  (let* ((line-no (flymake-current-line-no))
+         (line-err-info-list (nth 0 (flymake-find-err-info flymake-err-info line-no)))
+         (count (length line-err-info-list)))
+    (while (> count 0)
+      (when line-err-info-list
+        (let* ((file (flymake-ler-file (nth (1- count) line-err-info-list)))
+               (full-file (flymake-ler-full-file (nth (1- count) line-err-info-list)))
+               (text (flymake-ler-text (nth (1- count) line-err-info-list)))
+               (line (flymake-ler-line (nth (1- count) line-err-info-list))))
+          (message "[%s] %s" line text)))
+      (setq count (1- count)))))
+
+(defadvice flymake-goto-next-error (after display-message activate compile)
+  "下一个错误"
+  (flymake-display-err-minibuffer))
+
+(defadvice flymake-goto-prev-error (after display-message activate compile)
+  "前一个错误"
+  (flymake-display-err-minibuffer))
+
+(defadvice flymake-mode (before post-command-stuff activate compile)
+  "为了将问题行自动显示到 minibuffer 中，添加 post command hook "
+  (set (make-local-variable 'post-command-hook)
+       (add-hook 'post-command-hook 'flymake-display-err-minibuffer)))
+
+;; post-command-hook 与 anything.el 有冲突时使用
+(define-key global-map (kbd "C-c d") 'flymake-display-err-minibuffer)
 )
 
 (defun color-init()
@@ -203,7 +280,7 @@
 (add-hook 'java-mode-hook (function cscope:hook))
 (cscope-minor-mode)
 (setq-default indent-tabs-mode nil) ;; 使用空格代替tab
-(glasses-mode t) ;; ThisIsAVarInJava
+;;(glasses-mode nil) ;; ThisIsAVarInJava
 )
 
 (defun load-c-relate-lib ()
@@ -252,11 +329,27 @@ nil))
 				 (if (boundp 'old-fullscreen) old-fullscreen nil)
 			       (progn (setq old-fullscreen current-value)
 				      'fullboth)))))
+;; Put cscope windows into ecb windows.
+(defun ecb-cscope-window()
+  (require 'ecb)
+(ecb-layout-define "my-cscope-layout" left nil
+(ecb-set-methods-buffer)
+(ecb-split-ver 0.5 t)
+(other-window 1)
+;(ecb-set-history-buffer)       
+;(ecb-split-ver 0.5 t)		
+;(other-window 1)	
+(ecb-set-cscope-buffer))
+(defecb-window-dedicator ecb-set-cscope-buffer " *ECB cscope-buf*"
+(switch-to-buffer "*cscope*"))
+(setq ecb-layout-name "my-cscope-layout"))
 
 (defun cscope-setup ()
-  (print "cscope setup")
+;  (print "cscope setup")
   (require 'xcscope)
-  (setq cscope-do-not-update-database t))
+  (setq cscope-do-not-update-database t)
+  (ecb-cscope-window)
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; start configure work here
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -277,6 +370,27 @@ nil))
                 :family "Monaco" :height 130 :weight 'normal)
 t
 )) nil)
+
+;; Objective C settings.
+(add-to-list 'auto-mode-alist '("\\.mm?$" . objc-mode))
+;(add-to-list 'auto-mode-alist '("\\.h$" . objc-mode))
+(add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@implementation" . objc-mode))
+(add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@interface" . objc-mode))
+(add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
+
+(defun xcode:buildandrun ()
+ (interactive)
+ (do-applescript
+  (format
+   (concat
+    "tell application \"Xcode\" to activate \r"
+    "tell application \"System Events\" \r"
+    "     tell process \"Xcode\" \r"
+    "          key code 36 using {command down, command shift} \r"
+    "    end tell \r"
+    "end tell \r"
+    ))))
+
 
 (safe-wrap (cscope-setup))
 (safe-wrap (git-setup))
@@ -326,10 +440,11 @@ try-complete-lisp-symbol-partially
    (setq cscope-do-not-update-database nil)
    (load-c-relate-lib)
    (setq-default indent-tabs-mode nil) ;; 不用table
-   (glasses-mode t) ;; ThisIsAVarInJava
+;;   (glasses-mode nil) ;; ThisIsAVarInJava
    (c-set-style "cc-mode")
-;   (message "objc mode hook finish")
-   ))
+   (define-key objc-mode-map (kbd "C-c C-r") 'xcode:buildandrun)
+;;   (flymode-init)
+   (message "objc mode hook finish")))
 
 ;; lazy evaluate accelerate boot speed
 (add-hook 'c-mode-hook
@@ -496,5 +611,3 @@ Zhang Jiejing")
 ;(server-force-delete)
 ;(server-start)
 ;; 用Daemon替代
-
-
