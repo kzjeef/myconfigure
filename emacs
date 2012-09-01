@@ -27,7 +27,7 @@
 		      (substring emacs-version 0 -2) "/lisp/cedet")
 	      load-path))
 
-(setq stack-trace-on-error t)
+(setq stack-trace-on-error nil)
 
 (defun ecb-init()
   (add-to-list 'load-path "~/.emacs.d/site-lisp/ecb/")
