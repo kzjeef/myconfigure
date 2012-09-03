@@ -93,14 +93,14 @@
 (global-set-key [(control tab)] 'semantic-ia-complete-symbol-menu) 
 ;(setq semanticdb-project-roots
 ;(list (expand-file-name "/")))
-
 (local-set-key "." 'semantic-complete-self-insert)
 (local-set-key ">" 'semantic-complete-self-insert)
 (semanticdb-enable-gnu-global-databases 'c-mode t)
 (semanticdb-enable-gnu-global-databases 'c++-mode t)
-(setq sematicdb-project-roots "~/jb")
-(global-ede-mode 1)
-(ede-enable-generic-projects)))))
+;;(setq sematicdb-project-roots "~/jb")
+;;(global-ede-mode 1)
+;;(ede-enable-generic-projects)
+))))
 
 
 (safe-wrap (cedet-configure))
