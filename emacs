@@ -140,6 +140,16 @@
 
   (semantic-mode 1))
 
+(defun fic-mode-setup()
+;;; highlight TODO, etc mode.
+  (require 'fic-mode)
+  (add-hook 'c++-mode-hook 'turn-on-fic-mode)
+  (add-hook 'c-mode-hook 'turn-on-fic-mode)
+  (add-hook 'java-mode-hook 'turn-on-fic-mode)
+  (add-hook 'objc-mode-hook 'turn-on-fic-mode)
+  (add-hook 'emacs-lisp-mode-hook 'turn-on-fic-mode)
+)
+
 
 (defun git-setup ()
  (featurep 'git)
@@ -394,6 +404,7 @@ t
 
 (safe-wrap (cscope-setup))
 (safe-wrap (git-setup))
+(safe-wrap (fic-mode-setup))
 (setq Man-notify-method 'pushy)
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
 
