@@ -27,7 +27,7 @@
 		      (substring emacs-version 0 -2) "/lisp/cedet")
 	      load-path))
 
-(setq stack-trace-on-error t)
+(setq stack-trace-on-error nil)
 
 (defun ecb-init()
   (add-to-list 'load-path "~/.emacs.d/site-lisp/ecb/")
@@ -179,6 +179,7 @@
 
 ;; Remeber artist-mode can draw picutre !!!
 (define-key c-mode-base-map [(return)] 'newline-and-indent)
+(c-set-offset 'inextern-lang '0)
 (setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
 (c-toggle-hungry-state t)	 ;; hungry delete
 (which-func-mode t)	 ;; 在状态栏显示当前函数
@@ -401,9 +402,13 @@ t
     "end tell \r"
     ))))
 
+(defun google-style()
+  (require 'google-c-style)
+  (add-hook 'c-mode-common-hook 'google-set-c-style))
 
 (safe-wrap (cscope-setup))
 (safe-wrap (git-setup))
+(safe-wrap (google-style))
 (safe-wrap (fic-mode-setup))
 (setq Man-notify-method 'pushy)
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
@@ -482,6 +487,7 @@ try-complete-lisp-symbol-partially
 (add-hook 'c-mode-common-hook
           (lambda ()
             ;; Add kernel style
+            (c-set-offset 'inextern-lang 0)
             (c-add-style
              "linux-tabs-only"
              '("linux" (c-offsets-alist

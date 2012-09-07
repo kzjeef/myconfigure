@@ -18,3 +18,8 @@ cp xcscope/xcscope.el* ~/.emacs.d/site-lisp/
 sudo cp xcscope/cscope-indexer /usr/bin/cscope-indexer
 
 cp fic-mode.el ~/.emacs.d/site-lisp/
+cp google-c-style.el ~/.emacs.d/site-lisp/
+
+(cd  magit; make ; sudo make install)
+
+(cd git; make ; make install DESTDIR=~/.emacs.d/)
