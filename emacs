@@ -93,14 +93,14 @@
 (global-set-key [(control tab)] 'semantic-ia-complete-symbol-menu) 
 ;(setq semanticdb-project-roots
 ;(list (expand-file-name "/")))
-
 (local-set-key "." 'semantic-complete-self-insert)
 (local-set-key ">" 'semantic-complete-self-insert)
 (semanticdb-enable-gnu-global-databases 'c-mode t)
 (semanticdb-enable-gnu-global-databases 'c++-mode t)
-(setq sematicdb-project-roots "~/jb")
-(global-ede-mode 1)
-(ede-enable-generic-projects)))))
+;;(setq sematicdb-project-roots "~/jb")
+;;(global-ede-mode 1)
+;;(ede-enable-generic-projects)
+))))
 
 
 (safe-wrap (cedet-configure))
@@ -140,6 +140,16 @@
 
   (semantic-mode 1))
 
+(defun fic-mode-setup()
+;;; highlight TODO, etc mode.
+  (require 'fic-mode)
+  (add-hook 'c++-mode-hook 'turn-on-fic-mode)
+  (add-hook 'c-mode-hook 'turn-on-fic-mode)
+  (add-hook 'java-mode-hook 'turn-on-fic-mode)
+  (add-hook 'objc-mode-hook 'turn-on-fic-mode)
+  (add-hook 'emacs-lisp-mode-hook 'turn-on-fic-mode)
+)
+
 
 (defun git-setup ()
  (featurep 'git)
@@ -169,6 +179,7 @@
 
 ;; Remeber artist-mode can draw picutre !!!
 (define-key c-mode-base-map [(return)] 'newline-and-indent)
+(c-set-offset 'inextern-lang '0)
 (setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
 (c-toggle-hungry-state t)	 ;; hungry delete
 (which-func-mode t)	 ;; 在状态栏显示当前函数
@@ -391,9 +402,14 @@ t
     "end tell \r"
     ))))
 
+(defun google-style()
+  (require 'google-c-style)
+  (add-hook 'c-mode-common-hook 'google-set-c-style))
 
 (safe-wrap (cscope-setup))
 (safe-wrap (git-setup))
+(safe-wrap (google-style))
+(safe-wrap (fic-mode-setup))
 (setq Man-notify-method 'pushy)
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
 
@@ -471,6 +487,7 @@ try-complete-lisp-symbol-partially
 (add-hook 'c-mode-common-hook
           (lambda ()
             ;; Add kernel style
+            (c-set-offset 'inextern-lang 0)
             (c-add-style
              "linux-tabs-only"
              '("linux" (c-offsets-alist

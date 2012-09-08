@@ -6,7 +6,7 @@ ELC = git.elc git-blame.elc
 INSTALL ?= install
 INSTALL_ELC = $(INSTALL) -m 644
 prefix ?= $(HOME)
-emacsdir = $(prefix)/share/emacs/site-lisp
+emacsdir = site-lisp
 RM ?= rm -f
 
 all: $(ELC)
