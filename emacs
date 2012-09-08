@@ -156,7 +156,7 @@
       (insert "Signed-off-by Zhang Jiejing \<jiejing.zhang@freescale.com\>")
       )
 
-    (global-set-key (kbd "C-c s") 'signed-off-by-me)
+    (global-set-key (kbd "C-c C-s s") 'signed-off-by-me)
     )))
 
 (defun generic-programming-realted-config ()
