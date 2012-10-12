@@ -510,7 +510,8 @@ try-complete-lisp-symbol-partially
             (let ((filename (buffer-file-name)))
               ;; Enable kernel mode for the appropriate files
               (when (and filename
-                          (string-match "kernel_imx" (expand-file-name filename)))
+                          (string-match "kernel_imx" filename))
+;; or like this: (string-match (expand-file-name "~/src/linux-trees")
                 (setq indent-tabs-mode t)
                 (c-set-style "linux-tabs-only")))))
 
