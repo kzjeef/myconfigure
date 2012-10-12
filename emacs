@@ -500,11 +500,7 @@ try-complete-lisp-symbol-partially
             (let ((filename (buffer-file-name)))
               ;; Enable kernel mode for the appropriate files
               (when (and filename
-                         (or
-                          (string-match (expand-file-name "~/proj/ics/kernel_imx")
-                                       filename)
-                          (string-match (expand-file-name "~/proj/jb/kernel_imx")
-                                       filename)))
+                          (string-match "kernel_imx" (expand-file-name filename)))
                 (setq indent-tabs-mode t)
                 (c-set-style "linux-tabs-only")))))
 
