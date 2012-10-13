@@ -197,7 +197,16 @@
 (setq ffap-newfile-prompt t)
 ;; ffap-kpathsea-expand-path 展开路径的深度
 (setq ffap-kpathsea-depth 5)
+
+
+;; This cc style disable the name space indent.
+(defconst my-cc-style
+  '("cc-mode"
+    (c-offsets-alist . ((innamespace . [0])))))
+
+(c-add-style "cc-mode-nonamespace-indent" my-cc-style)
 )
+;; end generic programming config.
 
 (defun flymode-init()
 " init flymode related things."
@@ -402,6 +411,7 @@ t
     "end tell \r"
     ))))
 
+
 (defun google-style()
   (require 'google-c-style)
   (add-hook 'c-mode-common-hook 'google-set-c-style))
@@ -500,11 +510,8 @@ try-complete-lisp-symbol-partially
             (let ((filename (buffer-file-name)))
               ;; Enable kernel mode for the appropriate files
               (when (and filename
-                         (or
-                          (string-match (expand-file-name "~/proj/ics/kernel_imx")
-                                       filename)
-                          (string-match (expand-file-name "~/proj/jb/kernel_imx")
-                                       filename)))
+                          (string-match "kernel_imx" filename))
+;; or like this: (string-match (expand-file-name "~/src/linux-trees")
                 (setq indent-tabs-mode t)
                 (c-set-style "linux-tabs-only")))))
 
@@ -514,7 +521,7 @@ try-complete-lisp-symbol-partially
 ;;	(setq comment-style 'mutil-line)
 (load-c-relate-lib)
 (setq-default indent-tabs-mode nil) ;; 在kernel模式下默认用table
-(c-set-style "cc-mode")))
+(c-set-style "cc-mode-nonamespace-indent")))
 
 (add-hook 'java-mode-hook
 '(lambda ()
