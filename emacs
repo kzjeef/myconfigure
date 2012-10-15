@@ -272,8 +272,9 @@
 "init the color theme"
 (require 'color-theme)
 (color-theme-initialize)
-(color-theme-clarity)
+;(color-theme-clarity)
 ;(color-theme-calm-forest)
+(color-theme-blue-mood)
 
 (defun toggle-night-color-theme ()
   "Switch to/from night color scheme."
