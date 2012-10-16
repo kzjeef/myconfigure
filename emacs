@@ -273,6 +273,7 @@
 (require 'color-theme)
 (color-theme-initialize)
 (color-theme-clarity)
+(color-theme-blue-mood)
 ;(color-theme-calm-forest)
 
 (defun toggle-night-color-theme ()
@@ -416,10 +417,42 @@ t
   (require 'google-c-style)
   (add-hook 'c-mode-common-hook 'google-set-c-style))
 
+(defun cflow-configure()
+  ;; For Flow graph draw
+  (autoload 'cflow-mode "cflow-mode")
+  (setq auto-mode-alist (append auto-mode-alist
+                                '(("\\.cflow$" . cflow-mode))))
+
+  (require 'cflow-mode)
+  (defvar cmd nil nil)
+  (defvar cflow-buf nil nil)
+  (defvar cflow-buf-name nil nil)
+  
+  (defun yyc/cflow-function (function-name)
+    "Get call graph of inputed function. "
+                                        ;(interactive "sFunction name:\n")
+    (interactive (list (car (senator-jump-interactive "Function name: "
+                                                      nil nil nil))))
+    (setq cmd (format "cflow  -b --main=%s %s" function-name buffer-file-name))
+    (setq cflow-buf-name (format "**cflow-%s:%s**"
+                                 (file-name-nondirectory buffer-file-name)
+                                 function-name))
+    (setq cflow-buf (get-buffer-create cflow-buf-name))
+    (set-buffer cflow-buf)
+    (setq buffer-read-only nil)
+    (erase-buffer)
+    (insert (shell-command-to-string cmd))
+    (pop-to-buffer cflow-buf)
+    (goto-char (point-min))
+    (cflow-mode)
+    )
+  )
+
 (safe-wrap (cscope-setup))
 (safe-wrap (git-setup))
 (safe-wrap (google-style))
 (safe-wrap (fic-mode-setup))
+(safe-wrap (cflow-configure))
 (setq Man-notify-method 'pushy)
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
 
@@ -517,6 +550,7 @@ try-complete-lisp-symbol-partially
                                        filename)))
                 (setq indent-tabs-mode t)
                 (c-set-style "linux-tabs-only")))))
+
 
 (add-hook 'c++-mode-hook
 '(lambda ()
