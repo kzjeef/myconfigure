@@ -23,3 +23,5 @@ cp google-c-style.el ~/.emacs.d/site-lisp/
 (cd  magit; make ; sudo make install)
 
 (cd git; make ; make install DESTDIR=~/.emacs.d/)
+
+(cd cflow-1.4; ./configure &&  make && make install)
