@@ -100,6 +100,12 @@
 ;;(setq sematicdb-project-roots "~/jb")
 ;;(global-ede-mode 1)
 ;;(ede-enable-generic-projects)
+
+;; This Book Mark use F2 as navigater, F2 set/clear a bookmark, 
+;; Shift F2 pervious book mark, 
+;; C-F2 next bookmark
+;; S-C-F2 clear all bookmark.
+(enable-visual-studio-bookmarks)
 ))))
 
 
@@ -205,6 +211,9 @@
     (c-offsets-alist . ((innamespace . [0])))))
 
 (c-add-style "cc-mode-nonamespace-indent" my-cc-style)
+
+;; Hide & Show minor mode, usually good when looking big source file.
+(hs-minor-mode)
 )
 ;; end generic programming config.
 
