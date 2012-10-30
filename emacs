@@ -140,6 +140,16 @@
 
   (semantic-mode 1))
 
+(defun elscreen-setup()
+;;; The tabbar.
+  (load "elscreen" "ElScreen" t)
+  (elscreen-start)
+  (global-set-key (kbd "C-c t a b e") 'elscreen-create)
+  (global-set-key (kbd "C-c t a b d") 'elscreen-kill)
+
+  (global-set-key (kbd "C-M-_") 'elscreen-previous)
+  (global-set-key (kbd "C-M-+") 'elscreen-next))
+
 (defun fic-mode-setup()
 ;;; highlight TODO, etc mode.
   (require 'fic-mode)
@@ -451,6 +461,7 @@ t
 (safe-wrap (cscope-setup))
 (safe-wrap (git-setup))
 (safe-wrap (google-style))
+(safe-wrap (elscreen-setup))
 (safe-wrap (fic-mode-setup))
 (safe-wrap (cflow-configure))
 (setq Man-notify-method 'pushy)

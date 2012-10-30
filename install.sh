@@ -25,3 +25,5 @@ cp google-c-style.el ~/.emacs.d/site-lisp/
 (cd git; make ; make install DESTDIR=~/.emacs.d/)
 
 (cd cflow-1.4; ./configure &&  make && make install)
+
+(cd elscreen-1.4.6; emacs --batch --eval '(byte-compile-file "elscreen.el")';  cp elscreen.el* ~/.emacs.d/site-lisp/)
