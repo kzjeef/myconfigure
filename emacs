@@ -284,7 +284,10 @@
 (color-theme-initialize)
 ;(color-theme-clarity)
 ;(color-theme-calm-forest)
-(color-theme-blue-mood)
+;(color-theme-blue-mood)
+(if (eq system-type 'darwin)
+    (color-theme-classic)
+  (color-theme-xemacs))
 
 (defun toggle-night-color-theme ()
   "Switch to/from night color scheme."
@@ -514,7 +517,7 @@ try-complete-lisp-symbol-partially
    (c-set-style "cc-mode")
    (define-key objc-mode-map (kbd "C-c C-r") 'xcode:buildandrun)
 ;;   (flymode-init)
-   (message "objc mode hook finish")))
+   ))
 
 ;; lazy evaluate accelerate boot speed
 (add-hook 'c-mode-hook
