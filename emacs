@@ -683,3 +683,17 @@ Zhang Jiejing")
 ;(server-force-delete)
 ;(server-start)
 ;; 用Daemon替代
+
+
+;; Start useful functions.
+
+(defun dpi  (xres yres inch)
+  "return  screen dpi from resolution and inch of screen."
+   (/ (sqrt (+ (expt (float xres) 2)
+               (expt (float yres) 2)))
+      (float inch)))
+
+
+
+(defun long-edge (a b)
+  (sqrt (+ (* a a) (* b b))))
