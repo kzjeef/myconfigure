@@ -33,7 +33,7 @@
 ;; NOTE: If you manually turn on fic-mode, you you might need to force re-fontification initially
 ;;   M-x font-lock-fontify-buffer
 
-(defcustom fic-highlighted-words '("FIXME" "TODO" "BUG" "KLUDGE")
+(defcustom fic-highlighted-words '("FIXME" "TODO" "BUG" "XXX" "KLUDGE")
   "Words to highlight"
   :group 'fic-mode)
 
@@ -75,7 +75,7 @@
       t)))
 
 ;;;###autoload
-(define-minor-mode fic-mode "highlight FIXMEs in comments and strings (as well as TODO BUG and KLUDGE"
+(define-minor-mode fic-mode "highlight FIXMEs in comments and strings (as well as TODO BUG XXX and KLUDGE"
   :lighter " FIC" :group 'fic-mode
   (let ((kwlist '((fic-search-for-keyword (0 'font-lock-fic-face t)))))
     (if fic-mode
