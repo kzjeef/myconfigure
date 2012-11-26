@@ -146,6 +146,16 @@
 
   (semantic-mode 1))
 
+(defun elscreen-setup()
+;;; The tabbar.
+  (load "elscreen" "ElScreen" t)
+  (elscreen-start)
+  (global-set-key (kbd "C-c t a b e") 'elscreen-create)
+  (global-set-key (kbd "C-c t a b d") 'elscreen-kill)
+
+  (global-set-key (kbd "C-M-_") 'elscreen-previous)
+  (global-set-key (kbd "C-M-+") 'elscreen-next))
+
 (defun fic-mode-setup()
 ;;; highlight TODO, etc mode.
   (require 'fic-mode)
@@ -283,7 +293,10 @@
 (color-theme-initialize)
 ;(color-theme-clarity)
 ;(color-theme-calm-forest)
-(color-theme-blue-mood)
+;(color-theme-blue-mood)
+(if (eq system-type 'darwin)
+    (color-theme-classic)
+  (color-theme-xemacs))
 
 (defun toggle-night-color-theme ()
   "Switch to/from night color scheme."
@@ -460,6 +473,7 @@ t
 (safe-wrap (cscope-setup))
 (safe-wrap (git-setup))
 (safe-wrap (google-style))
+(safe-wrap (elscreen-setup))
 (safe-wrap (fic-mode-setup))
 (safe-wrap (cflow-configure))
 (setq Man-notify-method 'pushy)
@@ -512,7 +526,7 @@ try-complete-lisp-symbol-partially
    (c-set-style "cc-mode")
    (define-key objc-mode-map (kbd "C-c C-r") 'xcode:buildandrun)
 ;;   (flymode-init)
-   (message "objc mode hook finish")))
+   ))
 
 ;; lazy evaluate accelerate boot speed
 (add-hook 'c-mode-hook
@@ -678,3 +692,17 @@ Zhang Jiejing")
 ;(server-force-delete)
 ;(server-start)
 ;; 用Daemon替代
+
+
+;; Start useful functions.
+
+(defun dpi  (xres yres inch)
+  "return  screen dpi from resolution and inch of screen."
+   (/ (sqrt (+ (expt (float xres) 2)
+               (expt (float yres) 2)))
+      (float inch)))
+
+
+
+(defun long-edge (a b)
+  (sqrt (+ (* a a) (* b b))))
