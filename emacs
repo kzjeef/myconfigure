@@ -615,7 +615,7 @@ Zhang Jiejing")
 (setq require-final-newline t)
 (setq track-eol t)
 (setq suggest-key-bindings 1)	 ;; 当使用 M-x COMMAND 后，过 1 秒钟显示该 COMMAND 绑定的键。
-(setq line-number-display-limit 1000000);; 当行数超过一定数值，不再显示行号。
+(setq line-number-display-limit 100000000);; 当行数超过一定数值，不再显示行号。
 (setq kill-ring-max 200)	 ;; kill-ring 最多的记录个数。
 (setq bookmark-save-flag 1)
 ;; 每当设置书签的时候都保存书签文件，否则只在你退出 Emacs 时保存。
