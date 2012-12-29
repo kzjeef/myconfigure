@@ -21,6 +21,7 @@
      ,@clean-up))
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/")
+(setq exec-path (append exec-path '("/usr/local/bin" "/opt/local/bin")))
 
 (setq load-path
       (remove (concat "/usr/share/emacs/"
@@ -299,7 +300,8 @@
 ;(color-theme-calm-forest)
 ;(color-theme-blue-mood)
 (if (eq system-type 'darwin)
-    (color-theme-classic)
+;    (color-theme-classic)
+    (color-theme-xemacs)
   (color-theme-xemacs))
 
 (defun toggle-night-color-theme ()
@@ -528,7 +530,7 @@ try-complete-lisp-symbol-partially
    (load-c-relate-lib)
    (setq-default indent-tabs-mode nil) ;; 不用table
 ;;   (glasses-mode nil) ;; ThisIsAVarInJava
-   (c-set-style "cc-mode")
+   (c-set-style "java-mode")
    (define-key objc-mode-map (kbd "C-c C-r") 'xcode:buildandrun)
 ;;   (flymode-init)
    ))

@@ -3,6 +3,8 @@
 mkdir -p ~/.emacs.d/site-lisp/cedet/
 mkdir -p ~/.emacs.d/site-lisp/ecb/
 
+(cd color-theme-6.6.0/;cp -r color-theme* themes  ~/.emacs.d/site-lisp/) 
+
 (cd cedet; find . | xargs touch;  make clean-all; make)
 
 cp -r cedet/* ~/.emacs.d/site-lisp/cedet/
