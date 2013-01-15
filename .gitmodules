@@ -1,3 +1,6 @@
 [submodule "yasnippet"]
 	path = yasnippet
 	url = https://github.com/capitaomorte/yasnippet.git
+[submodule "emacs-clang-complete-async"]
+	path = emacs-clang-complete-async
+	url = https://github.com/Golevka/emacs-clang-complete-async.git

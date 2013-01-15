@@ -469,6 +469,7 @@ t
 (safe-wrap (cflow-configure))
 (setq Man-notify-method 'pushy)
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
+(defalias 'qrr 'query-replace-regexp)   ;; regexp query.
 
 (global-set-key [(f1)] (lambda() 
                  (interactive) 
