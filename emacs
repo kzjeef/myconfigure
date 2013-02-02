@@ -193,6 +193,10 @@
 ;	     (doxymacs-font-lock)
 ;	     )))
 
+;; Auto enable whitespace mode in diff mode
+(add-hook 'diff-mode-hook 
+          '(lambda () 
+            (whitespace-mode 1)))
 ;; Remeber artist-mode can draw picutre !!!
 (define-key c-mode-base-map [(return)] 'newline-and-indent)
 (c-set-offset 'inextern-lang '0)
