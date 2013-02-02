@@ -1797,7 +1797,7 @@ XEmacs color theme."
   (interactive)
   (color-theme-install
    '(color-theme-xemacs
-     ((background-color . "gray80")
+     ((background-color . "gray90")
       (background-mode . light)
       (background-toolbar-color . "#cf3ccf3ccf3c")
       (border-color . "#000000000000")
