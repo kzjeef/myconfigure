@@ -103,9 +103,9 @@
 ))))
 
 
-(safe-wrap (cedet-configure))
+;;(safe-wrap (cedet-configure))
 (safe-wrap (complete-func-init))
-(safe-wrap (ecb-init))
+;;(safe-wrap (ecb-init))
 
 (defun cedet-not-configure()
   (require 'semantic/analyze/refs)
