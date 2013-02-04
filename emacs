@@ -100,6 +100,12 @@
 ;;(setq sematicdb-project-roots "~/jb")
 ;;(global-ede-mode 1)
 ;;(ede-enable-generic-projects)
+
+;; This Book Mark use F2 as navigater, F2 set/clear a bookmark, 
+;; Shift F2 pervious book mark, 
+;; C-F2 next bookmark
+;; S-C-F2 clear all bookmark.
+(enable-visual-studio-bookmarks)
 ))))
 
 
@@ -176,7 +182,7 @@
       (insert "Signed-off-by Zhang Jiejing \<jiejing.zhang@freescale.com\>")
       )
 
-    (global-set-key (kbd "C-c s") 'signed-off-by-me)
+    (global-set-key (kbd "C-c C-s s") 'signed-off-by-me)
     )))
 
 (defun generic-programming-realted-config ()
@@ -187,6 +193,10 @@
 ;	     (doxymacs-font-lock)
 ;	     )))
 
+;; Auto enable whitespace mode in diff mode
+(add-hook 'diff-mode-hook 
+          '(lambda () 
+            (whitespace-mode 1)))
 ;; Remeber artist-mode can draw picutre !!!
 (define-key c-mode-base-map [(return)] 'newline-and-indent)
 (c-set-offset 'inextern-lang '0)
@@ -215,6 +225,9 @@
     (c-offsets-alist . ((innamespace . [0])))))
 
 (c-add-style "cc-mode-nonamespace-indent" my-cc-style)
+
+;; Hide & Show minor mode, usually good when looking big source file.
+(hs-minor-mode)
 )
 ;; end generic programming config.
 
