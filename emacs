@@ -30,6 +30,14 @@
 
 (setq stack-trace-on-error nil)
 
+(defun flex-bison-init()
+  (require 'flex-mode)
+  (require 'bison-mode)
+  )
+
+(safe-wrap (flex-bison-init))
+
+
 (defun ecb-init()
   (add-to-list 'load-path "~/.emacs.d/site-lisp/ecb/")
   (require 'ecb)
@@ -530,7 +538,7 @@ try-complete-lisp-symbol-partially
    (load-c-relate-lib)
    (setq-default indent-tabs-mode nil) ;; 不用table
 ;;   (glasses-mode nil) ;; ThisIsAVarInJava
-   (c-set-style "java-mode")
+;;   (c-set-style "java-mode")
    (define-key objc-mode-map (kbd "C-c C-r") 'xcode:buildandrun)
 ;;   (flymode-init)
    ))
@@ -655,7 +663,10 @@ Zhang Jiejing")
 (set-clipboard-coding-system 'chinese-iso-8bit) ;; 剪切板，用于和其他程序之间复制内容
 (set-clipboard-coding-system 'ctext) ;;解决firefox有时候复制文件有乱马
 (set-language-environment "UTF-8")
-(setq ispell-dictionary "en")
+
+(if (eq system-type 'darwin)
+    (setq ispell-dictionary "english")
+  (setq ispell-dictionary "en"))
 (add-hook 'comint-output-filter-functions
 'comint-watch-for-password-prompt) ;; 密码的相关的提示密码
 
