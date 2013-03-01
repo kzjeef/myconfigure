@@ -33,7 +33,10 @@
 (defun flex-bison-init()
   (require 'flex-mode)
   (require 'bison-mode)
-  )
+  (setq auto-mode-alist
+        (cons '("\.flex" . flex-mode) auto-mode-alist))
+  (setq auto-mode-alist
+        (cons '("\.bison" . bison-mode) auto-mode-alist)))
 
 (safe-wrap (flex-bison-init))
 
