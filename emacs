@@ -334,6 +334,9 @@
 ;(color-init)
 )
 
+(defun load-python-env()
+  (add-hook 'python-mode-hook (function cscope:hook))
+)
 
 (defun load-java-relate-lib ()
 (generic-programming-realted-config)
