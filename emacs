@@ -336,6 +336,10 @@
 
 (defun load-python-env()
   (add-hook 'python-mode-hook (function cscope:hook))
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/python/")
+  (setq py-install-directory "~/.emacs.d/site-lisp/python/")
+  (require 'python-mode)
+  (setq py-shell-name "ipython")
 )
 
 (defun load-java-relate-lib ()
