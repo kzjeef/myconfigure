@@ -336,11 +336,33 @@
 
 (defun load-python-env()
   (add-hook 'python-mode-hook (function cscope:hook))
+  (add-hook 'python-mode-hook
+	    '(lambda() 
+	       (setq-default indent-tabs-mode nil)    ; use only spaces and no tabs
+	       (setq default-tab-width 4)))
   (add-to-list 'load-path "~/.emacs.d/site-lisp/python/")
   (setq py-install-directory "~/.emacs.d/site-lisp/python/")
   (require 'python-mode)
   (setq py-shell-name "ipython")
+  (require 'pymacs)
+  (pymacs-load "ropemacs" "rope-")
+  (setq ropemacs-enable-autoimport t)
 )
+
+(defun load-web-env()
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/nxhtml/")
+  (autoload 'django-html-mumamo-mode "~/.emacs.d/site-lisp/nxhtml/autostart.el")
+  (setq
+   nxhtml-global-minor-mode t
+   mumamo-chunk-coloring 'submode-colored
+   nxhtml-skip-welcome t
+   indent-region-mode t
+   rng-nxml-auto-validate-flag nil
+   nxml-degraded t)
+  (add-to-list 'auto-mode-alist '("\\.html" . django-html-mumamo-mode))
+  ;; replace to ruby mode if mroe often using ruby.
+  ;; (add-to-list 'auto-mode-alist '("\\.html\\.erb\\'" . eruby-nxhtml-mumamo))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . eruby-nxhtml-mumamo)))
 
 (defun load-java-relate-lib ()
 (generic-programming-realted-config)
@@ -496,6 +518,8 @@ t
 
 (safe-wrap (cscope-setup))
 (safe-wrap (git-setup))
+(safe-wrap (load-python-env))
+(safe-wrap (load-web-env))
 (safe-wrap (google-style))
 (safe-wrap (elscreen-setup))
 (safe-wrap (fic-mode-setup))

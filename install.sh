@@ -35,3 +35,5 @@ cp google-c-style.el ~/.emacs.d/site-lisp/
 
 #python
 (cd python-mode.el-6.1.1;emacs --batch --eval '(byte-compile-file "python-mode.el")';mkdir -p ~/.emacs.d/site-lisp/python/; cp * -R ~/.emacs.d/site-lisp/python/);
+
+(cp -r  nxhtml-2.08 ~/.emacs.d/site-lisp/nxhtml)
