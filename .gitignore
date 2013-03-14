@@ -339,3 +339,5 @@
 ./git/git-emacs-autoloads.elc
 ./git/git--test.elc
 ./git/git-blame.elc
+
+*.elc

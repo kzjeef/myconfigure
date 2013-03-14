@@ -208,7 +208,7 @@
 ;; Auto enable whitespace mode in diff mode
 (add-hook 'diff-mode-hook 
           '(lambda () 
-            (whitespace-mode 1)))
+            (whitespace-mode t)))
 ;; Remeber artist-mode can draw picutre !!!
 (define-key c-mode-base-map [(return)] 'newline-and-indent)
 (c-set-offset 'inextern-lang '0)
@@ -351,6 +351,8 @@
 
 (defun load-web-env()
   (add-to-list 'load-path "~/.emacs.d/site-lisp/nxhtml/")
+  (autoload 'js2-mode "~/.emacs.d/site-lisp/js2-mode.el")
+  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
   (autoload 'django-html-mumamo-mode "~/.emacs.d/site-lisp/nxhtml/autostart.el")
   (setq
    nxhtml-global-minor-mode t
