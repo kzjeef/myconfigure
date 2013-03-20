@@ -702,7 +702,7 @@ Zhang Jiejing")
 
 (if (eq system-type 'darwin)
     (setq ispell-dictionary "english")
-  (setq ispell-dictionary "en"))
+  (setq ispell-dictionary "american"))
 (add-hook 'comint-output-filter-functions
 'comint-watch-for-password-prompt) ;; 密码的相关的提示密码
 
