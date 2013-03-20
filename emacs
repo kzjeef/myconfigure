@@ -351,9 +351,10 @@
 
 (defun load-web-env()
   (add-to-list 'load-path "~/.emacs.d/site-lisp/nxhtml/")
-  (autoload 'js2-mode "~/.emacs.d/site-lisp/js2-mode.el")
+  (autoload 'js2-mode "js2-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-  (autoload 'django-html-mumamo-mode "~/.emacs.d/site-lisp/nxhtml/autostart.el")
+
+  (autoload 'django-html-mumamo-mode "~/.emacs.d/site-lisp/nxhtml/autostart")
   (setq
    nxhtml-global-minor-mode t
    mumamo-chunk-coloring 'submode-colored
