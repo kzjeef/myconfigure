@@ -36,9 +36,9 @@
   (setq auto-mode-alist
         (cons '("\.flex" . flex-mode) auto-mode-alist))
   (setq auto-mode-alist
-        (cons '("\.bison" . bison-mode) auto-mode-alist)))
+        (cons '("\.y" . bison-mode) auto-mode-alist)))
 
-(safe-wrap (flex-bison-init))
+
 
 
 (defun ecb-init()
@@ -240,6 +240,7 @@
 
 ;; Hide & Show minor mode, usually good when looking big source file.
 (hs-minor-mode)
+(safe-wrap (flex-bison-init))
 )
 ;; end generic programming config.
 
@@ -302,6 +303,8 @@
 ;; post-command-hook 与 anything.el 有冲突时使用
 (define-key global-map (kbd "C-c d") 'flymake-display-err-minibuffer)
 )
+
+
 
 (defun color-init()
 "init the color theme"
@@ -428,6 +431,10 @@ nil))
 (setq exec-path (append exec-path '("/opt/local/bin")) )
 (set-face-attribute 'default nil
                 :family "Monaco" :height 130 :weight 'normal)
+
+;; Use command key as the meta key, it's save many time on switch from mac and linux...
+(setq mac-option-modifier 'super)
+(setq mac-command-modifier 'meta)
 t
 )) nil)
 
