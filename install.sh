@@ -31,3 +31,13 @@ cp google-c-style.el ~/.emacs.d/site-lisp/
 (cd cflow-1.4; ./configure &&  make && make install)
 
 (cd elscreen-1.4.6; emacs --batch --eval '(byte-compile-file "elscreen.el")';  cp elscreen.el* ~/.emacs.d/site-lisp/)
+
+
+#python
+(cd python-mode.el-6.1.1;emacs --batch --eval '(byte-compile-file "python-mode.el")';mkdir -p ~/.emacs.d/site-lisp/python/; cp * -R ~/.emacs.d/site-lisp/python/);
+
+(cp -r  nxhtml-2.08 ~/.emacs.d/site-lisp/nxhtml)
+
+emacs --batch --eval '(byte-compile-file "js2-mode.el")';
+cp js2-mode.elc ~/.emacs.d/site-lisp/
+

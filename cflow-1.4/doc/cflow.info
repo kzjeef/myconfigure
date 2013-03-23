@@ -31,7 +31,7 @@ File: cflow.info,  Node: Top,  Next: Intro,  Up: (dir)
 GNU cflow
 *********
 
-This edition of the `GNU Cflow Manual', last updated 11 October 2011,
+This edition of the `GNU Cflow Manual', last updated 28 February 2013,
 documents GNU cflow Version 1.4.
 
 * Menu:
@@ -2113,43 +2113,43 @@ This is a general index of all issues discussed in this manual
 
 Tag Table:
 Node: Top1130
-Node: Intro2380
-Node: Quick Start3407
-Ref: GNU Output Format4864
-Ref: omit signature parts5762
-Ref: start symbol6327
-Node: Direct and Reverse6958
-Ref: --brief8692
-Ref: --number9873
-Node: Output Formats11165
-Ref: POSIX Output Format11322
-Ref: Output Formats-Footnote-114273
-Node: Recursive Calls14370
-Ref: sample flowchart17562
-Node: Symbols18526
-Ref: --include19950
-Ref: x flowchart22009
-Ref: --symbol24280
-Ref: Symbols-Footnote-125917
-Node: Syntactic classes26106
-Node: Symbol aliases27377
-Node: GCC Initialization28038
-Node: Preprocessing28660
-Node: ASCII Tree30661
-Ref: setting indentation30842
-Ref: ascii tree34060
-Node: Cross-References35143
-Node: Configuration36287
-Node: Makefiles39108
-Node: Options41397
-Ref: --cpp42462
-Ref: symbol types45496
-Ref: --print-level46423
-Node: Emacs47064
-Ref: --emacs47690
-Node: Reporting Bugs49175
-Node: Source of wc command49788
-Node: Copying This Manual53154
-Node: Concept Index75597
+Node: Intro2381
+Node: Quick Start3408
+Ref: GNU Output Format4865
+Ref: omit signature parts5763
+Ref: start symbol6328
+Node: Direct and Reverse6959
+Ref: --brief8693
+Ref: --number9874
+Node: Output Formats11166
+Ref: POSIX Output Format11323
+Ref: Output Formats-Footnote-114274
+Node: Recursive Calls14371
+Ref: sample flowchart17563
+Node: Symbols18527
+Ref: --include19951
+Ref: x flowchart22010
+Ref: --symbol24281
+Ref: Symbols-Footnote-125918
+Node: Syntactic classes26107
+Node: Symbol aliases27378
+Node: GCC Initialization28039
+Node: Preprocessing28661
+Node: ASCII Tree30662
+Ref: setting indentation30843
+Ref: ascii tree34061
+Node: Cross-References35144
+Node: Configuration36288
+Node: Makefiles39109
+Node: Options41398
+Ref: --cpp42463
+Ref: symbol types45497
+Ref: --print-level46424
+Node: Emacs47065
+Ref: --emacs47691
+Node: Reporting Bugs49176
+Node: Source of wc command49789
+Node: Copying This Manual53155
+Node: Concept Index75598
 
 End Tag Table

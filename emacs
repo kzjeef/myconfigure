@@ -208,7 +208,7 @@
 ;; Auto enable whitespace mode in diff mode
 (add-hook 'diff-mode-hook 
           '(lambda () 
-            (whitespace-mode 1)))
+            (whitespace-mode t)))
 ;; Remeber artist-mode can draw picutre !!!
 (define-key c-mode-base-map [(return)] 'newline-and-indent)
 (c-set-offset 'inextern-lang '0)
@@ -337,6 +337,38 @@
 ;(color-init)
 )
 
+(defun load-python-env()
+  (add-hook 'python-mode-hook (function cscope:hook))
+  (add-hook 'python-mode-hook
+	    '(lambda() 
+	       (setq-default indent-tabs-mode nil)    ; use only spaces and no tabs
+	       (setq default-tab-width 4)))
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/python/")
+  (setq py-install-directory "~/.emacs.d/site-lisp/python/")
+  (require 'python-mode)
+;  (setq py-shell-name "ipython")
+;  (require 'pymacs)
+;  (pymacs-load "ropemacs" "rope-")
+;  (setq ropemacs-enable-autoimport t)
+)
+
+(defun load-web-env()
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/nxhtml/")
+  (autoload 'js2-mode "js2-mode" nil t)
+  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+
+  (autoload 'django-html-mumamo-mode "~/.emacs.d/site-lisp/nxhtml/autostart")
+  (setq
+   nxhtml-global-minor-mode t
+   mumamo-chunk-coloring 'submode-colored
+   nxhtml-skip-welcome t
+   indent-region-mode t
+   rng-nxml-auto-validate-flag nil
+   nxml-degraded t)
+  (add-to-list 'auto-mode-alist '("\\.html" . django-html-mumamo-mode))
+  ;; replace to ruby mode if mroe often using ruby.
+  ;; (add-to-list 'auto-mode-alist '("\\.html\\.erb\\'" . eruby-nxhtml-mumamo))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . eruby-nxhtml-mumamo)))
 
 (defun load-java-relate-lib ()
 (generic-programming-realted-config)
@@ -496,6 +528,8 @@ t
 
 (safe-wrap (cscope-setup))
 (safe-wrap (git-setup))
+(safe-wrap (load-python-env))
+(safe-wrap (load-web-env))
 (safe-wrap (google-style))
 (safe-wrap (elscreen-setup))
 (safe-wrap (fic-mode-setup))
@@ -676,7 +710,7 @@ Zhang Jiejing")
 
 (if (eq system-type 'darwin)
     (setq ispell-dictionary "english")
-  (setq ispell-dictionary "en"))
+  (setq ispell-dictionary "american"))
 (add-hook 'comint-output-filter-functions
 'comint-watch-for-password-prompt) ;; 密码的相关的提示密码
 
