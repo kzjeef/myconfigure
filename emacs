@@ -40,123 +40,13 @@
 
 
 
-
-(defun ecb-init()
-  (add-to-list 'load-path "~/.emacs.d/site-lisp/ecb/")
-  (require 'ecb)
-  (require 'ecb-autoloads)
-  (setq ecb-tip-of-the-day nil)
-  ;; set up cscope windown in ecb.
-  (ecb-layout-define "my-cscope-layout" left nil
-                   (ecb-set-methods-buffer)
-                   (ecb-split-ver 0.5 t)
-                   (other-window 1)
-                   (ecb-set-history-buffer)
-                   (ecb-split-ver 0.25 t)
-                   (other-window 1)
-                   (ecb-set-cscope-buffer))
-  
-  (defecb-window-dedicator ecb-set-cscope-buffer " *ECB cscope-buf*"
-    (switch-to-buffer "*cscope*"))
-  (setq ecb-layout-name "my-cscope-layout")
-  
-  ;; Disable buckets so that history buffer can display more entries
-  (setq ecb-history-make-buckets 'never)
-  (setq-default my-ecb-already-active nil)
-
-  (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
-    '(ecb-options-version "2.40")
-   '(ecb-layout-window-sizes (quote (("my-cscope-layout"
-                                      (0.2559241706161137 . 0.4888888888888889)
-                                      (0.2559241706161137 . 0.1111111111111111)))))))
-
-
-
-(defun toggle-ecb-activate()
-  (interactive)
-  (if (eq my-ecb-already-active t)
-      (ecb-deactivate)
-    (ecb-activate))
-  (if (eq my-ecb-already-active t)
-      (setq my-ecb-already-active nil)
-    (setq my-ecb-already-active t)))
-
-
-
 (defun complete-func-init()
 (add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/")
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
 (ac-config-default))
 
-;; my git setup codes.
-(defun cedet-configure()
-; load once
- (if (featurep 'cedet)
-     nil
-   ((lambda ()
-(load-file "~/.emacs.d/site-lisp/cedet/common/cedet.el")
-(setq semanticdb-default-save-directory "~/.emacs.d/semanticdb")
-(semantic-load-enable-code-helpers)
-(global-set-key [(control tab)] 'semantic-ia-complete-symbol-menu) 
-;(setq semanticdb-project-roots
-;(list (expand-file-name "/")))
-(local-set-key "." 'semantic-complete-self-insert)
-(local-set-key ">" 'semantic-complete-self-insert)
-(semanticdb-enable-gnu-global-databases 'c-mode t)
-(semanticdb-enable-gnu-global-databases 'c++-mode t)
-;;(setq sematicdb-project-roots "~/jb")
-;;(global-ede-mode 1)
-;;(ede-enable-generic-projects)
-
-;; This Book Mark use F2 as navigater, F2 set/clear a bookmark, 
-;; Shift F2 pervious book mark, 
-;; C-F2 next bookmark
-;; S-C-F2 clear all bookmark.
-(enable-visual-studio-bookmarks)
-))))
-
-
-;;(safe-wrap (cedet-configure))
 (safe-wrap (complete-func-init))
-;;(safe-wrap (ecb-init))
-
-(defun cedet-not-configure()
-  (require 'semantic/analyze/refs)
-  (require 'semantic/bovine/c)
-  (require 'semantic/bovine/gcc)
-  (require 'semantic/bovine/clang)
-  (require 'semantic/ia)
-  (require 'semantic/decorate/include)
-  (require 'semantic/lex-spp)
-  (require 'eassist)
-
-  (add-to-list  'Info-directory-list "~/projects/cedet-git/doc/info")
-
-;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
-(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
-;(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
-(add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
-
-  (semantic-mode 1)
-  (global-semantic-highlight-edits-mode (if window-system 1 -1))
-;  (global-semantic-show-unmatched-syntax-mode 1)
-  (semantic-complete-analyze-inline-idle t)
-  (global-semantic-show-parser-state-mode 1)
-
-;  (globad-sematicdb-minor-mode t)
-  (setq semantic-idle-completions-mode t)
-  (setq semantic-complete-inline-analyzer-idle-displayor-class 'semantic-displayor-tooltip)
-  (global-semantic-idle-completions-mode t)
-
-  (semantic-mode 1))
 
 (defun elscreen-setup()
 ;;; The tabbar.
@@ -173,6 +63,8 @@
   (require 'fic-mode)
   (add-hook 'c++-mode-hook 'turn-on-fic-mode)
   (add-hook 'c-mode-hook 'turn-on-fic-mode)
+  (add-hook 'python-mode-hook 'turn-on-fic-mode)
+  (add-hook 'js2-mode-hook 'turn-on-fic-mode)
   (add-hook 'java-mode-hook 'turn-on-fic-mode)
   (add-hook 'objc-mode-hook 'turn-on-fic-mode)
   (add-hook 'emacs-lisp-mode-hook 'turn-on-fic-mode)
@@ -193,18 +85,16 @@
       (interactive)		
       (insert "Signed-off-by Zhang Jiejing \<jiejing.zhang@freescale.com\>")
       )
-
     (global-set-key (kbd "C-c C-s s") 'signed-off-by-me)
     )))
 
 (defun generic-programming-realted-config ()
 
 ; diable doxymacs for conflict of cedet.  
-;(safe-wrap ((lambda ()
-;              (require 'doxymacs)
-;	     (doxymacs-font-lock)
-;	     )))
-
+(safe-wrap ((lambda ()
+              (require 'doxymacs)
+	     (doxymacs-font-lock)
+	     )))
 ;; Auto enable whitespace mode in diff mode
 (add-hook 'diff-mode-hook 
           '(lambda () 
@@ -215,12 +105,10 @@
 (setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
 (c-toggle-hungry-state t)	 ;; hungry delete
 (which-func-mode t)	 ;; 在状态栏显示当前函数
-  ;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
-(font-lock-add-keywords 'python-mode
-			  '(("\\&lt;\\(FIXME\\|HACK\\|XXX\\|TODO\\)" 1 font-lock-warning-face prepend)))
-  ;; (add-hook 'before-save-hook 'whitespace-cleanup) ;;在保存之前清除空字符
-  ;; (setq-default indent-tabs-mode t)	;; 在kernel模式下默认用table
+;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
+;; (add-hook 'before-save-hook 'whitespace-cleanup) ;;在保存之前清除空字符
 
+;; FFAP, find the related file.
 (ffap-bindings)
 ;; 设定搜索的路径 ffap-c-path
 ;; (setq ffap-c-path
@@ -244,69 +132,17 @@
 )
 ;; end generic programming config.
 
-(defun flymode-init()
-" init flymode related things."
+(defun color-init()
+(if (>= emacs-major-version 24) (color-init-24)
+  (color-init-color-theme)))
 
-(require 'flymake)
-(defvar xcode:gccver "4.2")
-(defvar xcode:sdkver "5.1")
-(defvar xcode:sdkpath "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/")
-(defvar xcode:sdk (concat xcode:sdkpath "/SDKs/iPhoneSimulator" xcode:sdkver ".sdk"))
-;(defvar flymake-objc-compiler (concat xcode:sdkpath "/usr/bin/llvm-gcc-" xcode:gccver))
-(defvar flymake-objc-compiler (concat xcode:sdkpath "/usr/bin/i686-apple-darwin11-llvm-gcc-" xcode:gccver))
-(defvar flymake-objc-compile-default-options (list "-Wall" "-Wextra" "-fsyntax-only" "-ObjC" "-std=c99" "-isysroot" xcode:sdk))
-(defvar flymake-last-position nil)
-(defvar flymake-objc-compile-options '("-I."))
-(defun flymake-objc-init ()
-  (let* ((temp-file (flymake-init-create-temp-buffer-copy
-                    'flymake-create-temp-inplace))
-         (local-file (file-relative-name
-                     temp-file
-                     (file-name-directory buffer-file-name))))
-    (list flymake-objc-compiler (append flymake-objc-compile-default-options flymake-objc-compile-options (list local-file)))))
 
-(add-hook 'objc-mode-hook
-         (lambda ()
-           (push '("\\.m$" flymake-objc-init) flymake-allowed-file-name-masks)
-           (push '("\\.h$" flymake-objc-init) flymake-allowed-file-name-masks)
-           (if (and (not (null buffer-file-name)) (file-writable-p buffer-file-name))
-               (flymake-mode t))
-         ))
-(defun flymake-display-err-minibuffer ()
-  "改行有 error 或 warinig 显示在 minibuffer"
+(defun color-init-24()
   (interactive)
-  (let* ((line-no (flymake-current-line-no))
-         (line-err-info-list (nth 0 (flymake-find-err-info flymake-err-info line-no)))
-         (count (length line-err-info-list)))
-    (while (> count 0)
-      (when line-err-info-list
-        (let* ((file (flymake-ler-file (nth (1- count) line-err-info-list)))
-               (full-file (flymake-ler-full-file (nth (1- count) line-err-info-list)))
-               (text (flymake-ler-text (nth (1- count) line-err-info-list)))
-               (line (flymake-ler-line (nth (1- count) line-err-info-list))))
-          (message "[%s] %s" line text)))
-      (setq count (1- count)))))
-
-(defadvice flymake-goto-next-error (after display-message activate compile)
-  "下一个错误"
-  (flymake-display-err-minibuffer))
-
-(defadvice flymake-goto-prev-error (after display-message activate compile)
-  "前一个错误"
-  (flymake-display-err-minibuffer))
-
-(defadvice flymake-mode (before post-command-stuff activate compile)
-  "为了将问题行自动显示到 minibuffer 中，添加 post command hook "
-  (set (make-local-variable 'post-command-hook)
-       (add-hook 'post-command-hook 'flymake-display-err-minibuffer)))
-
-;; post-command-hook 与 anything.el 有冲突时使用
-(define-key global-map (kbd "C-c d") 'flymake-display-err-minibuffer)
+  (load-theme 'tsdh-light)
 )
 
-
-
-(defun color-init()
+(defun color-init-color-theme()
 "init the color theme"
 (require 'color-theme)
 (color-theme-initialize)
@@ -316,9 +152,22 @@
 (if (eq system-type 'darwin)
 ;    (color-theme-classic)
     (color-theme-xemacs)
-  (color-theme-xemacs))
+  (color-theme-xemacs)))
 
-(defun toggle-night-color-theme ()
+;; Auto disable theme setup before...
+(defadvice load-theme 
+  (before theme-dont-propagate activate)
+  (mapcar #'disable-theme custom-enabled-themes))
+
+(eq (car custom-enabled-themes) 'tsdh-dark)
+
+(defun toggle-night-color-theme-24()
+  (interactive)
+  (if (eq (car custom-enabled-themes) 'tsdh-dark)
+      (load-theme 'tsdh-light)
+    (load-theme 'tsdh-dark)))
+
+(defun toggle-night-color-theme-theme ()
   "Switch to/from night color scheme."
   (interactive)
   (require 'color-theme)
@@ -329,8 +178,13 @@
       (fset 'color-theme-snapshot (color-theme-make-snapshot)))
         (color-theme-clarity)))
 
+(defun toggle-night-color-theme()
+  (interactive)
+  (if (>= emacs-major-version 24)
+      (toggle-night-color-theme-24)
+    (toggle-night-color-theme-theme)))
+
 (global-set-key [f10] 'toggle-night-color-theme)
-)
 
 (defun config-in-tty-mode ()
 ;; don't load color in tty mode.
@@ -355,9 +209,20 @@
 (defun load-web-env()
   (add-to-list 'load-path "~/.emacs.d/site-lisp/nxhtml/")
   (autoload 'js2-mode "js2-mode" nil t)
-  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+  (add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
+  (message "load js2 mode")
+  (add-hook 'js2-mode-hook '(lambda() 
+         			     (custom-set-variables  
+         			      '(js2-basic-offset 8)  
+         			      '(js2-bounce-indent-p nil)  
+         			      )))
   (autoload 'django-html-mumamo-mode "~/.emacs.d/site-lisp/nxhtml/autostart")
+
+  ;; Css mode indent
+  (setq cssm-indent-function #'cssm-c-style-indenter)
+  (setq cssm-indent-level 2)
+
   (setq
    nxhtml-global-minor-mode t
    mumamo-chunk-coloring 'submode-colored
@@ -375,6 +240,12 @@
 (add-hook 'java-mode-hook (function cscope:hook))
 (cscope-minor-mode)
 (setq-default indent-tabs-mode nil) ;; 使用空格代替tab
+(setq c-comment-start-regexp "(@|/(/|[*][*]?))")
+                (modify-syntax-entry ?@ "< b" java-mode-syntax-table)
+(setq c-basic-offset 4)
+(setq c-basic-offset 4
+        tab-width 4
+        indent-tabs-mode t)
 ;;(glasses-mode nil) ;; ThisIsAVarInJava
 )
 
@@ -397,8 +268,10 @@ nil))
 ;; use monaco fonts default, want to switch to Lucida, change this to nil
       (if t
 	  (if (>= (x-display-pixel-width) 1920)
-	      (set-default-font "Monaco-12")
-	    (set-default-font "Monaco-12"))
+;	      (set-default-font "Monaco-11")
+	      (set-face-attribute 'default nil
+				  :family "Monaco" :height 110 :weight 'normal)
+	    (set-default-font "Monaco-11"))
 	(if (>= (x-display-pixel-width) 1920)
 	    (set-default-font "Lucida Sans Typewriter-13")
 	  (set-default-font "Lucida Sans Typewriter-12"))))) nil)
@@ -424,21 +297,6 @@ nil))
 				 (if (boundp 'old-fullscreen) old-fullscreen nil)
 			       (progn (setq old-fullscreen current-value)
 				      'fullboth)))))
-;; Put cscope windows into ecb windows.
-(defun ecb-cscope-window()
-  (require 'ecb)
-(ecb-layout-define "my-cscope-layout" left nil
-(ecb-set-methods-buffer)
-(ecb-split-ver 0.5 t)
-(other-window 1)
-;(ecb-set-history-buffer)       
-;(ecb-split-ver 0.5 t)		
-;(other-window 1)	
-(ecb-set-cscope-buffer))
-(defecb-window-dedicator ecb-set-cscope-buffer " *ECB cscope-buf*"
-(switch-to-buffer "*cscope*"))
-(setq ecb-layout-name "my-cscope-layout"))
-
 (defun cscope-setup ()
 ;  (print "cscope setup")
   (require 'xcscope)
@@ -453,7 +311,7 @@ nil))
 
 
 ;; Config for Mac
-(if (eq system-type 'darwin)
+`(if (eq system-type 'darwin)
 ((lambda ()
 ;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
 ;; need find-file to do this
@@ -476,20 +334,6 @@ t
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@implementation" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@interface" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
-
-(defun xcode:buildandrun ()
- (interactive)
- (do-applescript
-  (format
-   (concat
-    "tell application \"Xcode\" to activate \r"
-    "tell application \"System Events\" \r"
-    "     tell process \"Xcode\" \r"
-    "          key code 36 using {command down, command shift} \r"
-    "    end tell \r"
-    "end tell \r"
-    ))))
-
 
 (defun google-style()
   (require 'google-c-style)
@@ -625,7 +469,7 @@ try-complete-lisp-symbol-partially
             (let ((filename (buffer-file-name)))
               ;; Enable kernel mode for the appropriate files
               (when (and filename
-                          (string-match "kernel_imx" filename))
+                          (string-match "kernel" filename))
 ;; or like this: (string-match (expand-file-name "~/src/linux-trees")
                 (setq indent-tabs-mode t)
                 (c-set-style "linux-tabs-only")))))
@@ -670,7 +514,6 @@ Zhang Jiejing")
 (setq font-lock-verbose t)
 (setq font-lock-maximum-size '((t . 1048576)
 (vm-mode . 5250000)))
-(setq-default line-spacing 1)	 ;; 行距设置， 中文行距更大一些
 
 (setq transient-mark-mode nil)	 ;; 两次按C－space以后高亮显示区域
 (setq inhibit-startup-message t)	;; 不显示 Emacs 的开始画面
@@ -732,7 +575,7 @@ Zhang Jiejing")
 ;;(desktop-read)
 
 ;; Ask question when C-x, C-c.
-(setq kill-emacs-query-functions
+(setq ki-ll-emacs-query-functions
 (lambda() (y-or-n-p "Do you really want to quit?")))
 
 ;; For daemon mode
