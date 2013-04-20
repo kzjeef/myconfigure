@@ -304,6 +304,16 @@
 )
 
 (defun color-init()
+(if (>= emacs-major-version 24) (color-init-24)
+  (color-init-color-theme)))
+
+
+(defun color-init-24()
+  (interactive)
+  (load-theme 'wheatgrass)
+)
+
+(defun color-init-color-theme()
 "init the color theme"
 (require 'color-theme)
 (color-theme-initialize)
@@ -313,9 +323,22 @@
 (if (eq system-type 'darwin)
 ;    (color-theme-classic)
     (color-theme-xemacs)
-  (color-theme-xemacs))
+  (color-theme-xemacs)))
 
-(defun toggle-night-color-theme ()
+
+
+;; Auto disable theme setup before...
+(defadvice load-theme 
+  (before theme-dont-propagate activate)
+  (mapcar #'disable-theme custom-enabled-themes))
+
+(defun toggle-night-color-theme-24()
+  (interactive)
+  (if (eq (frame-parameter (next-frame) 'background-mode) 'dark)
+      (load-theme 'tango)
+    (load-theme 'wheatgrass)))
+
+(defun toggle-night-color-theme-theme ()
   "Switch to/from night color scheme."
   (interactive)
   (require 'color-theme)
@@ -326,8 +349,15 @@
       (fset 'color-theme-snapshot (color-theme-make-snapshot)))
         (color-theme-clarity)))
 
+
+(defun toggle-night-color-theme()
+  (interactive)
+  (if (>= emacs-major-version 24)
+      (toggle-night-color-theme-24)
+    (toggle-night-color-theme-theme)))
+
 (global-set-key [f10] 'toggle-night-color-theme)
-)
+
 
 (defun config-in-tty-mode ()
 ;; don't load color in tty mode.
@@ -352,9 +382,20 @@
 (defun load-web-env()
   (add-to-list 'load-path "~/.emacs.d/site-lisp/nxhtml/")
   (autoload 'js2-mode "js2-mode" nil t)
-  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+  (add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
+  (message "load js2 mode")
+  (add-hook 'js2-mode-hook '(lambda() 
+         			     (custom-set-variables  
+         			      '(js2-basic-offset 8)  
+         			      '(js2-bounce-indent-p nil)  
+         			      )))
   (autoload 'django-html-mumamo-mode "~/.emacs.d/site-lisp/nxhtml/autostart")
+
+  ;; Css mode indent
+  (setq cssm-indent-function #'cssm-c-style-indenter)
+  (setq cssm-indent-level 2)
+
   (setq
    nxhtml-global-minor-mode t
    mumamo-chunk-coloring 'submode-colored
@@ -372,6 +413,12 @@
 (add-hook 'java-mode-hook (function cscope:hook))
 (cscope-minor-mode)
 (setq-default indent-tabs-mode nil) ;; 使用空格代替tab
+(setq c-comment-start-regexp "(@|/(/|[*][*]?))")
+                (modify-syntax-entry ?@ "< b" java-mode-syntax-table)
+(setq c-basic-offset 4)
+(setq c-basic-offset 4
+        tab-width 4
+        indent-tabs-mode t)
 ;;(glasses-mode nil) ;; ThisIsAVarInJava
 )
 
@@ -394,7 +441,7 @@ nil))
 ;; use monaco fonts default, want to switch to Lucida, change this to nil
       (if t
 	  (if (>= (x-display-pixel-width) 1920)
-	      (set-default-font "Monaco-12")
+	      (set-default-font "Monaco-11")
 	    (set-default-font "Monaco-12"))
 	(if (>= (x-display-pixel-width) 1920)
 	    (set-default-font "Lucida Sans Typewriter-13")
