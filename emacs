@@ -311,7 +311,7 @@ nil))
 
 
 ;; Config for Mac
-`(if (eq system-type 'darwin)
+(if (eq system-type 'darwin)
 ((lambda ()
 ;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
 ;; need find-file to do this
