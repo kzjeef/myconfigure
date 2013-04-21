@@ -575,7 +575,7 @@ Zhang Jiejing")
 ;;(desktop-read)
 
 ;; Ask question when C-x, C-c.
-(setq ki-ll-emacs-query-functions
+(setq kill-emacs-query-functions
 (lambda() (y-or-n-p "Do you really want to quit?")))
 
 ;; For daemon mode
