@@ -31,12 +31,12 @@
 (setq stack-trace-on-error nil)
 
 (defun flex-bison-init()
-  (require 'flex-mode)
-  (require 'bison-mode)
+  (autoload 'flex-mode "flex-mode" nil t)
+  (autoload 'bison-mode "bison-mode" nil t)
   (setq auto-mode-alist
-        (cons '("\.flex" . flex-mode) auto-mode-alist))
+        (cons '("\\.flex" . flex-mode) auto-mode-alist))
   (setq auto-mode-alist
-        (cons '("\.y" . bison-mode) auto-mode-alist)))
+        (cons '("\\.y" . bison-mode) auto-mode-alist)))
 
 
 
@@ -472,6 +472,7 @@ try-complete-lisp-symbol-partially
                           (string-match "kernel" filename))
 ;; or like this: (string-match (expand-file-name "~/src/linux-trees")
                 (setq indent-tabs-mode t)
+                (setq-default indent-tabs-mode t)
                 (c-set-style "linux-tabs-only")))))
 
 
