@@ -4,3 +4,6 @@
 [submodule "emacs-clang-complete-async"]
 	path = emacs-clang-complete-async
 	url = https://github.com/Golevka/emacs-clang-complete-async.git
+[submodule "multiple-cursors"]
+	path = multiple-cursors
+	url = https://github.com/emacsmirror/multiple-cursors.git
