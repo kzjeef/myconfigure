@@ -120,15 +120,14 @@
 ;; (add-hook 'before-save-hook 'whitespace-cleanup) ;;在保存之前清除空字符
 
 ;; FFAP, find the related file.
-(ffap-bindings)
+;; (ffap-bindings)
 ;; 设定搜索的路径 ffap-c-path
 ;; (setq ffap-c-path
 ;;     '("/usr/include" "/usr/local/include"))
 ;; 如果是新文件要确认
-(setq ffap-newfile-prompt t)
+;; (setq ffap-newfile-prompt t)
 ;; ffap-kpathsea-expand-path 展开路径的深度
-(setq ffap-kpathsea-depth 5)
-
+;; (setq ffap-kpathsea-depth 5)
 
 ;; This cc style disable the name space indent.
 (defconst my-cc-style
@@ -139,7 +138,7 @@
 
 ;; Hide & Show minor mode, usually good when looking big source file.
 (hs-minor-mode)
-(safe-wrap (flex-bison-init))
+;;  (safe-wrap (flex-bison-init)) ; cause editor hang, remove it.
 )
 ;; end generic programming config.
 
@@ -157,11 +156,7 @@
 "init the color theme"
 (require 'color-theme)
 (color-theme-initialize)
-;(color-theme-clarity)
-;(color-theme-calm-forest)
-;(color-theme-blue-mood)
 (if (eq system-type 'darwin)
-;    (color-theme-classic)
     (color-theme-xemacs)
   (color-theme-xemacs)))
 
@@ -211,10 +206,6 @@
   (add-to-list 'load-path "~/.emacs.d/site-lisp/python/")
   (setq py-install-directory "~/.emacs.d/site-lisp/python/")
   (require 'python-mode)
-;  (setq py-shell-name "ipython")
-;  (require 'pymacs)
-;  (pymacs-load "ropemacs" "rope-")
-;  (setq ropemacs-enable-autoimport t)
 )
 
 (defun load-web-env()
@@ -222,7 +213,6 @@
   (autoload 'js2-mode "js2-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   (add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
-  (message "load js2 mode")
   (add-hook 'js2-mode-hook '(lambda() 
          			     (custom-set-variables  
          			      '(js2-basic-offset 8)  
@@ -256,7 +246,7 @@
 (setq c-basic-offset 4)
 (setq c-basic-offset 4
         tab-width 4
-        indent-tabs-mode t)
+        indent-tabs-mode nil)
 ;;(glasses-mode nil) ;; ThisIsAVarInJava
 )
 
