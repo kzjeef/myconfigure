@@ -102,10 +102,10 @@
 (defun generic-programming-realted-config ()
 
 ; diable doxymacs for conflict of cedet.  
-(safe-wrap ((lambda ()
-              (require 'doxymacs)
-	     (doxymacs-font-lock)
-	     )))
+;; (safe-wrap ((lambda ()
+;;              (require 'doxymacs)
+;;	     (doxymacs-font-lock)
+;;	     )))
 ;; Auto enable whitespace mode in diff mode
 (add-hook 'diff-mode-hook 
           '(lambda () 
@@ -397,6 +397,7 @@ t
                  (interactive) 
                  (let ((woman-topic-at-point t))
                  (woman))))
+;; (global-set-key [kp-insert] 'overwrite-mode) ; [Ins] 
 (global-set-key [f5] 'revert-buffer)	;; 恢复文件
 (global-set-key [f6] 'ff-find-related-file) ;; 找到对应的头文件
 (global-set-key [f7] 'grep-find)
