@@ -2,7 +2,7 @@
 ;; .emacs
 ;;; uncomment this line to disable loading of "default.el" at startup
 ;; (setq inhibit-default-init t)
-;; Time-stamp: 
+;; Time-stamp:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;	 编程相关的配置
@@ -12,12 +12,12 @@
 (defmacro safe-wrap (fn &rest clean-up)
   `(unwind-protect
        (let (retval)
-         (condition-case ex
-             (setq retval (progn ,fn))
-           ('error
-            (message (format "Caught exception: [%s]" ex))
-            (setq retval (cons 'exception (list ex)))))
-         retval)
+	 (condition-case ex
+	     (setq retval (progn ,fn))
+	   ('error
+	    (message (format "Caught exception: [%s]" ex))
+	    (setq retval (cons 'exception (list ex)))))
+	 retval)
      ,@clean-up))
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/")
@@ -39,15 +39,15 @@
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
-(safe-wrap (multi-cursors-init))  
+(safe-wrap (multi-cursors-init))
 
 (defun flex-bison-init()
   (autoload 'flex-mode "flex-mode" nil t)
   (autoload 'bison-mode "bison-mode" nil t)
   (setq auto-mode-alist
-        (cons '("\\.flex" . flex-mode) auto-mode-alist))
+	(cons '("\\.flex" . flex-mode) auto-mode-alist))
   (setq auto-mode-alist
-        (cons '("\\.y" . bison-mode) auto-mode-alist)))
+	(cons '("\\.y" . bison-mode) auto-mode-alist)))
 
 
 
@@ -93,7 +93,7 @@
     ;; add signed off by;
 
     (defun signed-off-by-me ()
-      (interactive)		
+      (interactive)
       (insert "Signed-off-by Zhang Jiejing \<jiejing.zhang@freescale.com\>")
       )
     (global-set-key (kbd "C-c C-s s") 'signed-off-by-me)
@@ -101,15 +101,15 @@
 
 (defun generic-programming-realted-config ()
 
-; diable doxymacs for conflict of cedet.  
+; diable doxymacs for conflict of cedet.
 ;; (safe-wrap ((lambda ()
 ;;              (require 'doxymacs)
 ;;	     (doxymacs-font-lock)
 ;;	     )))
 ;; Auto enable whitespace mode in diff mode
-(add-hook 'diff-mode-hook 
-          '(lambda () 
-            (whitespace-mode t)))
+(add-hook 'diff-mode-hook
+	  '(lambda ()
+	    (whitespace-mode t)))
 ;; Remeber artist-mode can draw picutre !!!
 (define-key c-mode-base-map [(return)] 'newline-and-indent)
 (c-set-offset 'inextern-lang '0)
@@ -161,7 +161,7 @@
   (color-theme-xemacs)))
 
 ;; Auto disable theme setup before...
-(defadvice load-theme 
+(defadvice load-theme
   (before theme-dont-propagate activate)
   (mapcar #'disable-theme custom-enabled-themes))
 
@@ -182,7 +182,7 @@
     ;; create the snapshot if necessary
     (when (not (commandp 'color-theme-snapshot))
       (fset 'color-theme-snapshot (color-theme-make-snapshot)))
-        (color-theme-clarity)))
+	(color-theme-clarity)))
 
 (defun toggle-night-color-theme()
   (interactive)
@@ -200,7 +200,7 @@
 (defun load-python-env()
   (add-hook 'python-mode-hook (function cscope:hook))
   (add-hook 'python-mode-hook
-	    '(lambda() 
+	    '(lambda()
 	       (setq-default indent-tabs-mode nil)    ; use only spaces and no tabs
 	       (setq default-tab-width 4)))
   (add-to-list 'load-path "~/.emacs.d/site-lisp/python/")
@@ -213,11 +213,11 @@
   (autoload 'js2-mode "js2-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   (add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
-  (add-hook 'js2-mode-hook '(lambda() 
-         			     (custom-set-variables  
-         			      '(js2-basic-offset 8)  
-         			      '(js2-bounce-indent-p nil)  
-         			      )))
+  (add-hook 'js2-mode-hook '(lambda()
+				     (custom-set-variables
+				      '(js2-basic-offset 8)
+				      '(js2-bounce-indent-p nil)
+				      )))
   (autoload 'django-html-mumamo-mode "~/.emacs.d/site-lisp/nxhtml/autostart")
 
   ;; Css mode indent
@@ -242,11 +242,11 @@
 (cscope-minor-mode)
 (setq-default indent-tabs-mode nil) ;; 使用空格代替tab
 (setq c-comment-start-regexp "(@|/(/|[*][*]?))")
-                (modify-syntax-entry ?@ "< b" java-mode-syntax-table)
+		(modify-syntax-entry ?@ "< b" java-mode-syntax-table)
 (setq c-basic-offset 4)
 (setq c-basic-offset 4
-        tab-width 4
-        indent-tabs-mode nil)
+	tab-width 4
+	indent-tabs-mode nil)
 ;;(glasses-mode nil) ;; ThisIsAVarInJava
 )
 
@@ -268,11 +268,14 @@ nil))
     ((lambda ()
 ;; use monaco fonts default, want to switch to Lucida, change this to nil
       (if t
-	  (if (>= (x-display-pixel-width) 1920)
-;	      (set-default-font "Monaco-11")
-	      (set-face-attribute 'default nil
-				  :family "Monaco" :height 110 :weight 'normal)
+	  (if (>= (x-display-pixel-height) 1080)
+	      (set-default-font "Monaco-10") ;bigger screen, smaller font;
 	    (set-default-font "Monaco-11"))
+;	      (set-default-font "Ubuntu mono-11")
+;	      (set-face-attribute 'default nil
+;				  :family "Monaco" :height 100 :weight 'normal)
+;              (set-default-font "Inconsolata-12")
+;	    (set-default-font "Inconsolata-12"))
 	(if (>= (x-display-pixel-width) 1920)
 	    (set-default-font "Lucida Sans Typewriter-13")
 	  (set-default-font "Lucida Sans Typewriter-12"))))) nil)
@@ -321,7 +324,7 @@ nil))
 (setq mac-right-option-modifier nil)
 (setq exec-path (append exec-path '("/opt/local/bin")) )
 (set-face-attribute 'default nil
-                :family "Monaco" :height 130 :weight 'normal)
+		:family "Monaco" :height 130 :weight 'normal)
 
 ;; Use command key as the meta key, it's save many time on switch from mac and linux...
 (setq mac-option-modifier 'super)
@@ -344,22 +347,22 @@ t
   ;; For Flow graph draw
   (autoload 'cflow-mode "cflow-mode")
   (setq auto-mode-alist (append auto-mode-alist
-                                '(("\\.cflow$" . cflow-mode))))
+				'(("\\.cflow$" . cflow-mode))))
 
   (require 'cflow-mode)
   (defvar cmd nil nil)
   (defvar cflow-buf nil nil)
   (defvar cflow-buf-name nil nil)
-  
+
   (defun yyc/cflow-function (function-name)
     "Get call graph of inputed function. "
-                                        ;(interactive "sFunction name:\n")
+					;(interactive "sFunction name:\n")
     (interactive (list (car (senator-jump-interactive "Function name: "
-                                                      nil nil nil))))
+						      nil nil nil))))
     (setq cmd (format "cflow  -b --main=%s %s" function-name buffer-file-name))
     (setq cflow-buf-name (format "**cflow-%s:%s**"
-                                 (file-name-nondirectory buffer-file-name)
-                                 function-name))
+				 (file-name-nondirectory buffer-file-name)
+				 function-name))
     (setq cflow-buf (get-buffer-create cflow-buf-name))
     (set-buffer cflow-buf)
     (setq buffer-read-only nil)
@@ -383,11 +386,11 @@ t
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
 (defalias 'qrr 'query-replace-regexp)   ;; regexp query.
 
-(global-set-key [(f1)] (lambda() 
-                 (interactive) 
-                 (let ((woman-topic-at-point t))
-                 (woman))))
-;; (global-set-key [kp-insert] 'overwrite-mode) ; [Ins] 
+(global-set-key [(f1)] (lambda()
+		 (interactive)
+		 (let ((woman-topic-at-point t))
+		 (woman))))
+;; (global-set-key [kp-insert] 'overwrite-mode) ; [Ins]
 (global-set-key [f5] 'revert-buffer)	;; 恢复文件
 (global-set-key [f6] 'ff-find-related-file) ;; 找到对应的头文件
 (global-set-key [f7] 'grep-find)
@@ -440,6 +443,7 @@ try-complete-lisp-symbol-partially
 ; (message "with c mode hook")
  (load-c-relate-lib)
  (setq-default indent-tabs-mode nil)
+; (whitespace-mode -1)
  (c-set-style "linux")
 ; (message "c mode finished")
  (setq c-mode-hook-loaded t)
@@ -456,26 +460,26 @@ try-complete-lisp-symbol-partially
        c-basic-offset)))
 
 (add-hook 'c-mode-common-hook
-          (lambda ()
-            ;; Add kernel style
-            (c-set-offset 'inextern-lang 0)
-            (c-add-style
-             "linux-tabs-only"
-             '("linux" (c-offsets-alist
-                        (arglist-cont-nonempty
-                         c-lineup-gcc-asm-reg
-                         c-lineup-arglist-tabs-only))))))
+	  (lambda ()
+	    ;; Add kernel style
+	    (c-set-offset 'inextern-lang 0)
+	    (c-add-style
+	     "linux-tabs-only"
+	     '("linux" (c-offsets-alist
+			(arglist-cont-nonempty
+			 c-lineup-gcc-asm-reg
+			 c-lineup-arglist-tabs-only))))))
 
 (add-hook 'c-mode-hook
-          (lambda ()
-            (let ((filename (buffer-file-name)))
-              ;; Enable kernel mode for the appropriate files
-              (when (and filename
-                          (string-match "kernel" filename))
+	  (lambda ()
+	    (let ((filename (buffer-file-name)))
+	      ;; Enable kernel mode for the appropriate files
+	      (when (and filename
+			  (string-match "kernel" filename))
 ;; or like this: (string-match (expand-file-name "~/src/linux-trees")
-                (setq indent-tabs-mode t)
-                (setq-default indent-tabs-mode t)
-                (c-set-style "linux-tabs-only")))))
+		(setq indent-tabs-mode t)
+		(setq-default indent-tabs-mode t)
+		(c-set-style "linux-tabs-only")))))
 
 
 (add-hook 'c++-mode-hook
@@ -483,12 +487,14 @@ try-complete-lisp-symbol-partially
 ;   (message "with cpp mode hook")
 ;;	(setq comment-style 'mutil-line)
 (load-c-relate-lib)
+
 (setq-default indent-tabs-mode nil) ;; 在kernel模式下默认用table
 (c-set-style "cc-mode-nonamespace-indent")))
 
 (add-hook 'java-mode-hook
 '(lambda ()
 ;   (message "with java mode hook")
+;    (whitespace-mode -1)
    (load-java-relate-lib)))
 
 (remove-hook 'find-file-hooks 'vc-find-file-hook)
@@ -508,15 +514,10 @@ Zhang Jiejing")
 (blink-cursor-mode -1) ;; 光标不要闪烁
 (show-paren-mode 1) ;; 高亮显示匹配的括号
 (icomplete-mode t)	 ;; 给出用 M-x foo-bar-COMMAND 输入命令的提示。
-;(iswitchb-mode t)	 ;; buffer切换的时候有字符匹配
+(iswitchb-mode t)	 ;; buffer切换的时候有字符匹配
 ;; (menu-bar-mode -1)	 ;; 不要 menu-bar。
 ;;(autoload 'big5togb-region "big5togb" "Big5 to GB2312" t)
 ;;【big5togb.el】ZSH 写的将 big5 文本转为 gb2312 的包。
-(global-font-lock-mode t)	 ;; open font lock
-(setq font-lock-maximum-decoration t)
-(setq font-lock-verbose t)
-(setq font-lock-maximum-size '((t . 1048576)
-(vm-mode . 5250000)))
 
 (setq transient-mark-mode nil)	 ;; 两次按C－space以后高亮显示区域
 (setq inhibit-startup-message t)	;; 不显示 Emacs 的开始画面
@@ -568,7 +569,7 @@ Zhang Jiejing")
     ((lambda ()
        (global-set-key (kbd "C-M-RET")  'ns-toggle-fullscreen)
        (global-set-key (kbd "C-M-<return>") 'ns-toggle-fullscreen)))
-    ((lambda () 
+    ((lambda ()
       (global-set-key (kbd "C-M-RET") 'toggle-fullscreen-nonmac)
       (global-set-key (kbd "C-M-<return>") 'toggle-fullscreen-nonmac))))
 
@@ -607,7 +608,7 @@ Zhang Jiejing")
 (defun dpi  (xres yres inch)
   "return  screen dpi from resolution and inch of screen."
    (/ (sqrt (+ (expt (float xres) 2)
-               (expt (float yres) 2)))
+	       (expt (float yres) 2)))
       (float inch)))
 
 
