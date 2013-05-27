@@ -269,9 +269,10 @@ nil))
 ;; use monaco fonts default, want to switch to Lucida, change this to nil
       (if t
 	  (if (>= (x-display-pixel-height) 1080)
-	      (set-default-font "Monaco-10") ;bigger screen, smaller font;
+              (set-default-font "Ubuntu mono-12")
+;	      (set-default-font "Monaco-10") ;bigger screen, smaller font;
 	    (set-default-font "Monaco-11"))
-;	      (set-default-font "Ubuntu mono-11")
+;	      (set-default-font "Ubuntu mono-12")
 ;	      (set-face-attribute 'default nil
 ;				  :family "Monaco" :height 100 :weight 'normal)
 ;              (set-default-font "Inconsolata-12")
