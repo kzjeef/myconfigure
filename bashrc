@@ -30,3 +30,28 @@ alias gix="gitx --all"
 
 alias resrc="source ~/.bash_profile"
 
+function usepckeyboard
+{
+cat | xmodmap - <<EOF
+keycode 66 = Control_L
+clear Lock
+add Control = Control_L
+keycode 117 = Caps_Lock
+add Lock = Caps_Lock
+keycode  51 = BackSpace NoSymbol BackSpace
+keycode  22 = backslash bar backslash bar
+EOF
+}
+
+function usehhkb 
+{
+cat | xmodmap - << EOF
+keycode  22 = BackSpace NoSymbol BackSpace
+keycode  51 = backslash bar backslash bar
+keycode 117 = Control_L
+clear Lock
+add Control = Control_L
+keycode 66 = Caps_Lock
+add Lock = Caps_Lock
+EOF
+}
