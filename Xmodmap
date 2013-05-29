@@ -1,2 +1,10 @@
-keycode 51=backslash
-keycode 22=BackSpace
+# add a caps lock to the control key.
+keycode 66 = Control_L
+clear Lock
+add Control = Control_L
+keycode 117 = Caps_Lock
+add Lock = Caps_Lock
+
+# switch backslash and backspace.
+keycode  51 = BackSpace NoSymbol BackSpace
+keycode  22 = backslash bar backslash bar
