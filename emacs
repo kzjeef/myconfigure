@@ -112,7 +112,7 @@
 	    (whitespace-mode t)))
 ;; Remeber artist-mode can draw picutre !!!
 (define-key c-mode-base-map [(return)] 'newline-and-indent)
-(c-set-offset 'inextern-lang '0)
+;(c-set-offset 'inextern-lang '0)
 (setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
 (c-toggle-hungry-state t)	 ;; hungry delete
 (which-func-mode t)	 ;; 在状态栏显示当前函数
@@ -137,28 +137,13 @@
 (c-add-style "cc-mode-nonamespace-indent" my-cc-style)
 
 ;; Hide & Show minor mode, usually good when looking big source file.
-(hs-minor-mode)
+;(hs-minor-mode)
 ;;  (safe-wrap (flex-bison-init)) ; cause editor hang, remove it.
 )
 ;; end generic programming config.
 
 (defun color-init()
-(if (>= emacs-major-version 24) (color-init-24)
-  (color-init-color-theme)))
-
-
-(defun color-init-24()
-  (interactive)
-  (load-theme 'tsdh-light)
-)
-
-(defun color-init-color-theme()
-"init the color theme"
-(require 'color-theme)
-(color-theme-initialize)
-(if (eq system-type 'darwin)
-    (color-theme-xemacs)
-  (color-theme-xemacs)))
+  (load-theme 'tsdh-light))
 
 ;; Auto disable theme setup before...
 (defadvice load-theme
@@ -173,22 +158,9 @@
       (load-theme 'tsdh-light)
     (load-theme 'tsdh-dark)))
 
-(defun toggle-night-color-theme-theme ()
-  "Switch to/from night color scheme."
-  (interactive)
-  (require 'color-theme)
-  (if (eq (frame-parameter (next-frame) 'background-mode) 'dark)
-      (color-theme-snapshot) ; restore default (light) colors
-    ;; create the snapshot if necessary
-    (when (not (commandp 'color-theme-snapshot))
-      (fset 'color-theme-snapshot (color-theme-make-snapshot)))
-	(color-theme-clarity)))
-
 (defun toggle-night-color-theme()
   (interactive)
-  (if (>= emacs-major-version 24)
-      (toggle-night-color-theme-24)
-    (toggle-night-color-theme-theme)))
+      (toggle-night-color-theme-24))
 
 (global-set-key [f10] 'toggle-night-color-theme)
 
@@ -253,9 +225,6 @@
 (defun load-c-relate-lib ()
 (generic-programming-realted-config)
 (cscope-minor-mode)
-(c-set-offset 'inline-open 0)
-(c-set-offset 'friend '-)
-(c-set-offset 'substatement-open 0)
 )
 
 (defun if-in-tty()
