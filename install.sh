@@ -5,14 +5,14 @@ mkdir -p ~/.emacs.d/site-lisp/ecb/
 
 (cp bison-flex/*.el ~/.emacs.d/site-lisp/)
 
-(cd color-theme-6.6.0/;cp -r color-theme* themes  ~/.emacs.d/site-lisp/) 
+#(cd color-theme-6.6.0/;cp -r color-theme* themes  ~/.emacs.d/site-lisp/) 
 
-(cd cedet; find . | xargs touch;  make clean-all; make)
+#(cd cedet; find . | xargs touch;  make clean-all; make)
 
-cp -r cedet/* ~/.emacs.d/site-lisp/cedet/
+#cp -r cedet/* ~/.emacs.d/site-lisp/cedet/
 
-(cd ecb; make CEDET=~/.emacs.d/site-lisp/cedet/)
-cp -r ecb/*	~/.emacs.d/site-lisp/ecb/
+#(cd ecb; make CEDET=~/.emacs.d/site-lisp/cedet/)
+#cp -r ecb/*	~/.emacs.d/site-lisp/ecb/
 
 mkdir -p ~/.emacs.d/site-lisp/auto-complete/
 (cd auto-complete; make; make install DIR=~/.emacs.d/site-lisp/auto-complete/)
@@ -28,7 +28,7 @@ cp google-c-style.el ~/.emacs.d/site-lisp/
 
 (cd git; make ; make install DESTDIR=~/.emacs.d/)
 
-(cd cflow-1.4; ./configure &&  make && make install)
+#(cd cflow-1.4; ./configure &&  make && make install)
 
 (cd elscreen-1.4.6; emacs --batch --eval '(byte-compile-file "elscreen.el")';  cp elscreen.el* ~/.emacs.d/site-lisp/)
 
@@ -41,5 +41,5 @@ cp google-c-style.el ~/.emacs.d/site-lisp/
 emacs --batch --eval '(byte-compile-file "js2-mode.el")';
 cp js2-mode.elc ~/.emacs.d/site-lisp/
 
-(cp -r multipe-cursors ~/.emacs.d/site-lisp/)
+#(cp -r multipe-cursors ~/.emacs.d/site-lisp/)
 
