@@ -110,7 +110,7 @@
 	  '(lambda ()
 	    (whitespace-mode t)))
 ;; Remeber artist-mode can draw picutre !!!
-(define-key c-mode-base-map [(return)] 'newline-and-indent)
+; (define-key c-mode-base-map [(return)] 'newline-and-indent)
 ;(c-set-offset 'inextern-lang '0)
 (setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
 (c-toggle-hungry-state t)	 ;; hungry delete
@@ -133,7 +133,7 @@
   '("cc-mode"
     (c-offsets-alist . ((innamespace . [0])))))
 
-(c-add-style "cc-mode-nonamespace-indent" my-cc-style)
+;(c-add-style "cc-mode-nonamespace-indent" my-cc-style)
 
 ;; Hide & Show minor mode, usually good when looking big source file.
 ;(hs-minor-mode)
@@ -142,20 +142,20 @@
 ;; end generic programming config.
 
 (defun color-init()
-  (load-theme 'tsdh-light))
+  (load-theme 'wheatgrass))
 
 ;; Auto disable theme setup before...
 (defadvice load-theme
   (before theme-dont-propagate activate)
   (mapcar #'disable-theme custom-enabled-themes))
 
-(eq (car custom-enabled-themes) 'tsdh-dark)
-
 (defun toggle-night-color-theme-24()
   (interactive)
-  (if (eq (car custom-enabled-themes) 'tsdh-dark)
+  (if (eq (car custom-enabled-themes) 'wheatgrass)
       (load-theme 'tsdh-light)
-    (load-theme 'tsdh-dark)))
+;;    (load-theme 'tsdh-dark)
+    (load-theme 'wheatgrass)
+    ))
 
 (defun toggle-night-color-theme()
   (interactive)
@@ -192,16 +192,10 @@
   (autoload 'django-html-mumamo-mode "~/.emacs.d/site-lisp/nxhtml/autostart")
 
   ;; Css mode indent
-  (setq cssm-indent-function #'cssm-c-style-indenter)
-  (setq cssm-indent-level 2)
+  (add-hook 'css-mode-hook '(lambda() 
+	(setq cssm-indent-function #'cssm-c-style-indenter)
+	(setq cssm-indent-level 2)))
 
-  (setq
-   nxhtml-global-minor-mode t
-   mumamo-chunk-coloring 'submode-colored
-   nxhtml-skip-welcome t
-   indent-region-mode t
-   rng-nxml-auto-validate-flag nil
-   nxml-degraded t)
   (add-to-list 'auto-mode-alist '("\\.html" . django-html-mumamo-mode))
   ;; replace to ruby mode if mroe often using ruby.
   ;; (add-to-list 'auto-mode-alist '("\\.html\\.erb\\'" . eruby-nxhtml-mumamo))
@@ -235,8 +229,8 @@ nil))
 ;; use monaco fonts default, want to switch to Lucida, change this to nil
       (if t
 	  (if (>= (x-display-pixel-height) 1080)
-              (set-default-font "Ubuntu mono-12")
-;	      (set-default-font "Monaco-10") ;bigger screen, smaller font;
+;          (set-default-font "Ubuntu mono-12")
+	      (set-default-font "Monaco-11") ;bigger screen, smaller font;
 	    (set-default-font "Monaco-11"))
 ;	      (set-default-font "Ubuntu mono-12")
 ;	      (set-face-attribute 'default nil
