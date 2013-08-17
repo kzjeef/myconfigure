@@ -31,7 +31,6 @@
 
 (setq stack-trace-on-error nil)
 
-
 (defun multi-cursors-init()
   (require 'multiple-cursors)
   (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
@@ -212,13 +211,11 @@
 (generic-programming-realted-config)
 (add-hook 'java-mode-hook (function cscope:hook))
 (cscope-minor-mode)
-(setq-default indent-tabs-mode nil) ;; 使用空格代替tab
 (setq c-comment-start-regexp "(@|/(/|[*][*]?))")
-		(modify-syntax-entry ?@ "< b" java-mode-syntax-table)
-(setq c-basic-offset 4)
+(modify-syntax-entry ?@ "< b" java-mode-syntax-table)
 (setq c-basic-offset 4
-	tab-width 4
-	indent-tabs-mode nil)
+      tab-width 4
+      indent-tabs-mode nil)
 ;;(glasses-mode nil) ;; ThisIsAVarInJava
 )
 
@@ -309,49 +306,19 @@ t
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@interface" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
 
-(defun google-style()
-  (require 'google-c-style)
-  (add-hook 'c-mode-common-hook 'google-set-c-style))
+; warn: google style will change indent-tabs-mode to nil....
+;(defun google-style()
+;  (require 'google-c-style)
+;  (add-hook 'c-mode-common-hook 'google-set-c-style))
 
-(defun cflow-configure()
-  ;; For Flow graph draw
-  (autoload 'cflow-mode "cflow-mode")
-  (setq auto-mode-alist (append auto-mode-alist
-				'(("\\.cflow$" . cflow-mode))))
-
-  (require 'cflow-mode)
-  (defvar cmd nil nil)
-  (defvar cflow-buf nil nil)
-  (defvar cflow-buf-name nil nil)
-
-  (defun yyc/cflow-function (function-name)
-    "Get call graph of inputed function. "
-					;(interactive "sFunction name:\n")
-    (interactive (list (car (senator-jump-interactive "Function name: "
-						      nil nil nil))))
-    (setq cmd (format "cflow  -b --main=%s %s" function-name buffer-file-name))
-    (setq cflow-buf-name (format "**cflow-%s:%s**"
-				 (file-name-nondirectory buffer-file-name)
-				 function-name))
-    (setq cflow-buf (get-buffer-create cflow-buf-name))
-    (set-buffer cflow-buf)
-    (setq buffer-read-only nil)
-    (erase-buffer)
-    (insert (shell-command-to-string cmd))
-    (pop-to-buffer cflow-buf)
-    (goto-char (point-min))
-    (cflow-mode)
-    )
-  )
 
 (safe-wrap (cscope-setup))
 (safe-wrap (git-setup))
 (safe-wrap (load-python-env))
 (safe-wrap (load-web-env))
-(safe-wrap (google-style))
+;(safe-wrap (google-style))
 (safe-wrap (elscreen-setup))
 (safe-wrap (fic-mode-setup))
-(safe-wrap (cflow-configure))
 (setq Man-notify-method 'pushy)
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
 (defalias 'qrr 'query-replace-regexp)   ;; regexp query.
@@ -400,24 +367,9 @@ try-complete-lisp-symbol-partially
    (setq cscope-do-not-update-database nil)
    (load-c-relate-lib)
    (setq-default indent-tabs-mode nil) ;; 不用table
-;;   (glasses-mode nil) ;; ThisIsAVarInJava
-;;   (c-set-style "java-mode")
-   (define-key objc-mode-map (kbd "C-c C-r") 'xcode:buildandrun)
 ;;   (flymode-init)
    ))
 
-;; lazy evaluate accelerate boot speed
-(add-hook 'c-mode-hook
-'(lambda ()
-;;(setq commento-style 'mutil-line)
-; (message "with c mode hook")
- (load-c-relate-lib)
- (setq-default indent-tabs-mode nil)
-; (whitespace-mode -1)
- (c-set-style "linux")
-; (message "c mode finished")
- (setq c-mode-hook-loaded t)
-))
 
 ;; For linux kernel
 (defun c-lineup-arglist-tabs-only (ignored)
@@ -430,7 +382,7 @@ try-complete-lisp-symbol-partially
        c-basic-offset)))
 
 (add-hook 'c-mode-common-hook
-	  (lambda ()
+	  '(lambda ()
 	    ;; Add kernel style
 	    (c-set-offset 'inextern-lang 0)
 	    (c-add-style
@@ -438,18 +390,31 @@ try-complete-lisp-symbol-partially
 	     '("linux" (c-offsets-alist
 			(arglist-cont-nonempty
 			 c-lineup-gcc-asm-reg
-			 c-lineup-arglist-tabs-only))))))
+			 c-lineup-arglist-tabs-only))
+            (setq-default indent-tabs-mode t)
+           ))))
 
 (add-hook 'c-mode-hook
-	  (lambda ()
+	  '(lambda ()
+        ;; lazy evaluate accelerate boot speed
+        ;;(setq commento-style 'mutil-line)
+        ; (message "with c mode hook")
+        (load-c-relate-lib)
+      ; (whitespace-mode -1)
+
+       (setq c-default-style "linux")
+       (c-set-style "linux")
+;  (setq c-mode-hook-loaded t)
 	    (let ((filename (buffer-file-name)))
 	      ;; Enable kernel mode for the appropriate files
 	      (when (and filename
 			  (string-match "kernel" filename))
 ;; or like this: (string-match (expand-file-name "~/src/linux-trees")
-		(setq indent-tabs-mode t)
-		(setq-default indent-tabs-mode t)
-		(c-set-style "linux-tabs-only")))))
+		(c-set-style "linux-tabs-only")))
+
+        (setq-default c-basic-offset 8
+                      tab-width 8
+                      indent-tabs-mode t)))
 
 
 (add-hook 'c++-mode-hook
@@ -457,9 +422,9 @@ try-complete-lisp-symbol-partially
 ;   (message "with cpp mode hook")
 ;;	(setq comment-style 'mutil-line)
 (load-c-relate-lib)
-
-(setq-default indent-tabs-mode nil) ;; 在kernel模式下默认用table
-(c-set-style "cc-mode-nonamespace-indent")))
+(setq-default indent-tabs-mode nil)
+(c-set-style "cc-mode-nonamespace-indent")
+))
 
 (add-hook 'java-mode-hook
 '(lambda ()
