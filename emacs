@@ -109,11 +109,13 @@
 (add-hook 'diff-mode-hook
 	  '(lambda ()
 	    (whitespace-mode t)))
-;; Remeber artist-mode can draw picutre !!!
+;; Remember artist-mode can draw picture !!!
 (define-key c-mode-base-map [(return)] 'newline-and-indent)
 ;(c-set-offset 'inextern-lang '0)
 (setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
 (c-toggle-hungry-state t)	 ;; hungry delete
+(flyspell-prog-mode)             ;; 会对程序中的注释做拼写检查
+(hightlight-change-mode)	 ;; 会对做的修改做Hight light
 (which-func-mode t)	 ;; 在状态栏显示当前函数
 ;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
 ;; (add-hook 'before-save-hook 'whitespace-cleanup) ;;在保存之前清除空字符
@@ -272,7 +274,6 @@ nil))
 ;  (print "cscope setup")
   (require 'xcscope)
   (setq cscope-do-not-update-database t)
-  (ecb-cscope-window)
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; start configure work here
@@ -317,7 +318,7 @@ t
 (safe-wrap (load-python-env))
 (safe-wrap (load-web-env))
 ;(safe-wrap (google-style))
-(safe-wrap (elscreen-setup))
+;;(safe-wrap (elscreen-setup))
 (safe-wrap (fic-mode-setup))
 (setq Man-notify-method 'pushy)
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
@@ -333,9 +334,9 @@ t
 (global-set-key [f7] 'grep-find)
 (global-set-key [f8] 'compile)	 ;; 在 Emacs 中编译
 (global-set-key [f9] 'gdb)	 ;; 在 Emacs 中调试
-(global-set-key [f12] 'toggle-ecb-activate)
 ;(global-set-key [f12] 'todo-show)
 (global-set-key "\C-z" 'undo)	 ;; 撤销命令
+(global-set-key "\C-\M-s" 'occur)	 ;; 找到这个表达式在这个buffer里面出现的地方. Really Good
 ;(global-set-key "\C-xl" 'goto-line)	;; used to goto line
 (global-set-key "\C-xj" [?\C-x ?b return]) ;; 跳到前一个buffer
 (put 'upcase-region 'disabled nil)	;; 打开C－x c－u把区域变成大写的功能
@@ -363,9 +364,10 @@ try-complete-lisp-symbol-partially
 ;; for object-c.
 (add-hook 'objc-mode-hook
 '(lambda ()
-;   (message "objc modeb hook start")
+;   (messagne "objc modeb hook start")
    (setq cscope-do-not-update-database nil)
    (load-c-relate-lib)
+   (turn-on-auto-revert-mode) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
    (setq-default indent-tabs-mode nil) ;; 不用table
 ;;   (flymode-init)
    ))
@@ -430,6 +432,7 @@ try-complete-lisp-symbol-partially
 '(lambda ()
 ;   (message "with java mode hook")
 ;    (whitespace-mode -1)
+   (turn-on-auto-revert-mode) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
    (load-java-relate-lib)))
 
 (remove-hook 'find-file-hooks 'vc-find-file-hook)
@@ -450,6 +453,9 @@ Zhang Jiejing")
 (show-paren-mode 1) ;; 高亮显示匹配的括号
 (icomplete-mode t)	 ;; 给出用 M-x foo-bar-COMMAND 输入命令的提示。
 (iswitchb-mode t)	 ;; buffer切换的时候有字符匹配
+(setq iswitchb-buffer-ignore '("^ " "*Completions*" "*Shell Command Output*"
+               "*Messages*" "Async Shell Command"))
+(defalias 'list-buffers 'ibuffer)
 ;; (menu-bar-mode -1)	 ;; 不要 menu-bar。
 ;;(autoload 'big5togb-region "big5togb" "Big5 to GB2312" t)
 ;;【big5togb.el】ZSH 写的将 big5 文本转为 gb2312 的包。
@@ -508,6 +514,14 @@ Zhang Jiejing")
       (global-set-key (kbd "C-M-RET") 'toggle-fullscreen-nonmac)
       (global-set-key (kbd "C-M-<return>") 'toggle-fullscreen-nonmac))))
 
+;; Set a visible bell function...
+;(setq visible-bell nil)
+;(setq ring-bell-function `(lambda ()
+;                            (set-face-background 'default "DodgerBlue")
+;                            (set-face-background 'default "black")))
+
+;; remove the startup message.
+(setq inhibit-splash-screen t)
 
 ;;(load "desktop")
 ;;(desktop-load-default)
@@ -532,6 +546,26 @@ Zhang Jiejing")
 (config-in-tty-mode))
 ;)
 
+;; tramp is a remote file access mode, default enable.
+(require 'tramp)
+(setq tramp-chunksize 500) ;;; maybe help on large trunk..
+(set-default 'tramp-default-proxies-alist (quote ((".*" "\\`root\\'" "/ssh:%h:"))))
+(defun sudo-edit-current-file ()
+  (interactive)
+  (let ((position (point)))
+    (find-alternate-file
+     (if (file-remote-p (buffer-file-name))
+         (let ((vec (tramp-dissect-file-name (buffer-file-name))))
+           (tramp-make-tramp-file-name
+            "sudo"
+            (tramp-file-name-user vec)
+            (tramp-file-name-host vec)
+            (tramp-file-name-localname vec)))
+       (concat "/sudo:root@localhost:" (buffer-file-name))))
+    (goto-char position)))
+
+
+
 ;; 开启服务器模式
 ;(server-force-delete)
 ;(server-start)
@@ -550,3 +584,32 @@ Zhang Jiejing")
 
 (defun long-edge (a b)
   (sqrt (+ (* a a) (* b b))))
+
+
+;;;  Tips Section ;;; 
+
+;;; M-^  -->   delete-indention: make current line connect with last line,
+;;; very usuful when change multi line to one line, which I often did.
+
+;;; M-m  -->   jump to first char in this line 's indent.
+
+;;; hightlight-change-mode: it will height light the changes you make in whole process.
+
+;;; M-x re-builder   --> this function can test the regex in live.
+
+;;; M-\             --> will delete all space around
+
+;;; save-buffers-kill-emacs’  --> without process-killing query, save all buffers and quit emacs directly.
+
+
+;;; use tramp to transpsete access a file in remote.
+;;; access file like this:
+;;; 
+;;; C-x C-f /remotehost:filename  RET (or /method:user@remotehost:filename)
+;;;
+;;; if you want sudo open some file, 
+;;; C-x C-f /sudo::/etc/host  RET
+;;;
+;;; will auto download the file, and save the file...
+;;; Wiki for full tricks: http://www.emacswiki.org/emacs/TrampMode
+
