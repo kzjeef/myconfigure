@@ -30,6 +30,11 @@ alias gix="gitx --all"
 
 alias resrc="source ~/.bash_profile"
 
+function wait-kmsg ()
+{
+        adb wait-for-device root; adb wait-for-device shell cat /proc/kmsg;
+}
+
 function usepckeyboard
 {
 # use Tab as Control, just "Menu" key as Caps.    
