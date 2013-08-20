@@ -89,13 +89,6 @@
     (require 'git-blame)
     (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
     (require 'magit)
-    ;; add signed off by;
-
-    (defun signed-off-by-me ()
-      (interactive)
-      (insert "Signed-off-by Zhang Jiejing \<jiejing.zhang@freescale.com\>")
-      )
-    (global-set-key (kbd "C-c C-s s") 'signed-off-by-me)
     )))
 
 (defun generic-programming-realted-config ()
@@ -115,7 +108,7 @@
 (setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
 (c-toggle-hungry-state t)	 ;; hungry delete
 (flyspell-prog-mode)             ;; 会对程序中的注释做拼写检查
-(hightlight-change-mode)	 ;; 会对做的修改做Hight light
+;(hightlight-change-mode)	 ;; 会对做的修改做Hight light
 (which-func-mode t)	 ;; 在状态栏显示当前函数
 ;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
 ;; (add-hook 'before-save-hook 'whitespace-cleanup) ;;在保存之前清除空字符
@@ -133,13 +126,25 @@
 ;; This cc style disable the name space indent.
 (defconst my-cc-style
   '("cc-mode"
-    (c-offsets-alist . ((innamespace . [0])))))
+    (c-offsets-alist . ((innamespace . [0])))
+    (c-electric-pound-behavior     . 'alignleft)
+    ;; Some more cc mode's cleanup settings.
+    (c-cleanup-list . (brace-else-brace
+                       brace-elseif-brace
+                       brace-catch-brace
+                       empty-defun-braces
+                       defun-close-semi
+                       list-close-comma
+                       scope-operator))))
 
-;(c-add-style "cc-mode-nonamespace-indent" my-cc-style)
+(c-add-style "my-cc-style" my-cc-style)
 
 ;; Hide & Show minor mode, usually good when looking big source file.
 ;(hs-minor-mode)
 ;;  (safe-wrap (flex-bison-init)) ; cause editor hang, remove it.
+
+(electric-layout-mode) ;; good control of space line.
+
 )
 ;; end generic programming config.
 
@@ -181,6 +186,17 @@
   (require 'python-mode)
 )
 
+(defun android-setup()
+
+  ;; android create project Notes:
+  ;; 1. if no build.xml, create it by
+  ;; $ android update project --name $(NAME) --target $(TARGET) --path ~/development/PowerShark/
+  ;; 2. The target parameter can find by 
+  ;; $ android list targets
+  ;; 3. then you can use android mode
+  (require 'android-mode))
+  
+
 (defun load-web-env()
   (add-to-list 'load-path "~/.emacs.d/site-lisp/nxhtml/")
   (autoload 'js2-mode "js2-mode" nil t)
@@ -213,6 +229,7 @@
       tab-width 4
       indent-tabs-mode nil)
 ;;(glasses-mode nil) ;; ThisIsAVarInJava
+(android-setup)
 )
 
 (defun load-c-relate-lib ()
@@ -306,17 +323,10 @@ t
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@interface" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
 
-; warn: google style will change indent-tabs-mode to nil....
-;(defun google-style()
-;  (require 'google-c-style)
-;  (add-hook 'c-mode-common-hook 'google-set-c-style))
-
-
 (safe-wrap (cscope-setup))
 (safe-wrap (git-setup))
 (safe-wrap (load-python-env))
 (safe-wrap (load-web-env))
-;(safe-wrap (google-style))
 ;;(safe-wrap (elscreen-setup))
 (safe-wrap (fic-mode-setup))
 (setq Man-notify-method 'pushy)
@@ -334,10 +344,11 @@ t
 (global-set-key [f8] 'compile)	 ;; 在 Emacs 中编译
 (global-set-key [f9] 'gdb)	 ;; 在 Emacs 中调试
 ;(global-set-key [f12] 'todo-show)
-(global-set-key "\C-z" 'undo)	 ;; 撤销命令
-(global-set-key "\C-\M-s" 'occur)	 ;; 找到这个表达式在这个buffer里面出现的地方. Really Good
+(global-set-key (kbd "C-z")  'undo)  ;; undo by C-z
+(global-set-key (kbd "M-s")  'occur)
+(global-set-key (kbd "C-x C-j")  [?\C-x ?b return]) ;; Switch back to pervious windows.
 ;(global-set-key "\C-xl" 'goto-line)	;; used to goto line
-(global-set-key "\C-xj" [?\C-x ?b return]) ;; 跳到前一个buffer
+
 (put 'upcase-region 'disabled nil)	;; 打开C－x c－u把区域变成大写的功能
 ;; 自动补全的尝试列表
 ;; (global-set-key [(meta ?/)] 'hippie-expand)
@@ -394,45 +405,30 @@ try-complete-lisp-symbol-partially
 			(arglist-cont-nonempty
 			 c-lineup-gcc-asm-reg
 			 c-lineup-arglist-tabs-only))
-            (setq-default indent-tabs-mode t)
-           ))))
+               (setq-default indent-tabs-mode t)))
+            (c-set-style "my-cc-style")
+            ))
 
 (add-hook 'c-mode-hook
 	  '(lambda ()
-        ;; lazy evaluate accelerate boot speed
-        ;;(setq commento-style 'mutil-line)
-        ; (message "with c mode hook")
-        (load-c-relate-lib)
-      ; (whitespace-mode -1)
-
-       (setq c-default-style "linux")
-       (c-set-style "linux")
-;  (setq c-mode-hook-loaded t)
-	    (let ((filename (buffer-file-name)))
-	      ;; Enable kernel mode for the appropriate files
-	      (when (and filename
+             (load-c-relate-lib)
+             (let ((filename (buffer-file-name)))
+               
+               ;; Enable kernel mode for the appropriate files
+               (when (and filename
 			  (string-match "kernel" filename))
-;; or like this: (string-match (expand-file-name "~/src/linux-trees")
-		(c-set-style "linux-tabs-only")))
-
-        (setq-default c-basic-offset 8
-                      tab-width 8
-                      indent-tabs-mode t)))
+                 ;; or like this: (string-match (expand-file-name "~/src/linux-trees")
+		(c-set-style "linux-tabs-only")))))
 
 
 (add-hook 'c++-mode-hook
 '(lambda ()
-;   (message "with cpp mode hook")
-;;	(setq comment-style 'mutil-line)
 (load-c-relate-lib)
-(setq-default indent-tabs-mode nil)
-(c-set-style "cc-mode-nonamespace-indent")
 ))
 
 (add-hook 'java-mode-hook
 '(lambda ()
 ;   (message "with java mode hook")
-;    (whitespace-mode -1)
    (turn-on-auto-revert-mode) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
    (load-java-relate-lib)))
 
@@ -469,6 +465,7 @@ Zhang Jiejing")
 (setq display-time-24hr-format t)
 (setq display-time-day-and-date t)
 (setq display-time-interval 10)	 ;; 在 mode-line 上显示时间。
+(display-time)
 (setq require-final-newline t)
 (setq track-eol t)
 (setq suggest-key-bindings 1)	 ;; 当使用 M-x COMMAND 后，过 1 秒钟显示该 COMMAND 绑定的键。
