@@ -273,7 +273,7 @@ nil))
 
 
 
-(defun toggle-fullscreen-nonmac (&optional f)
+(defun toggle-fullscreen (&optional f)
       (interactive)
       (let ((current-value (frame-parameter nil 'fullscreen)))
 	(set-frame-parameter nil 'fullscreen
@@ -503,14 +503,9 @@ Zhang Jiejing")
 (safe-wrap (display-battery-mode)) ;; 显示电池容量， 全屏的时候很需要
 
 ;; Full screen settings.
-(if (eq system-type 'darwin)
-    ;; Needs Mac configure of full screen
-    ((lambda ()
-       (global-set-key (kbd "C-M-RET")  'ns-toggle-fullscreen)
-       (global-set-key (kbd "C-M-<return>") 'ns-toggle-fullscreen)))
-    ((lambda ()
-      (global-set-key (kbd "C-M-RET") 'toggle-fullscreen-nonmac)
-      (global-set-key (kbd "C-M-<return>") 'toggle-fullscreen-nonmac))))
+;; Needs Mac configure of full screen
+(global-set-key (kbd "C-M-RET")		'toggle-fullscreen)
+(global-set-key (kbd "C-M-<return>")	'toggle-fullscreen)
 
 ;; Set a visible bell function...
 ;(setq visible-bell nil)
