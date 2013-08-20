@@ -1,0 +1,4 @@
+
+# Descrise the timeout to 45 seconds, not forever
+    ServerAliveInterval 15
+    ServerAliveCountMax 3
