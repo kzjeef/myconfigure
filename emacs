@@ -285,8 +285,13 @@ nil))
 (setq mac-option-key-is-meta t)
 (setq mac-right-option-modifier nil)
 (setq exec-path (append exec-path '("/opt/local/bin")) )
+
 (set-face-attribute 'default nil
-		:family "Monaco" :height 130 :weight 'normal)
+		:family "Inconsolata" :height 160 :weight 'normal)
+;(set-face-attribute 'default nil
+;		:family "Ubuntu mono" :height 160 :weight 'normal)
+;(set-face-attribute 'default nil
+;		:family "Monaco" :height 130 :weight 'normal)
 
 ;; Use command key as the meta key, it's save many time on switch from mac and linux...
 (setq mac-option-modifier 'super)
@@ -361,6 +366,8 @@ try-complete-lisp-symbol-partially
 ;   (messagne "objc modeb hook start")
    (setq cscope-do-not-update-database nil)
    (load-c-relate-lib)
+   (cscope-minor-mode)
+   (c-set-style "cc-mode")
    (turn-on-auto-revert-mode) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
    (setq-default indent-tabs-mode nil) ;; 不用table
 ;;   (flymode-init)
