@@ -41,5 +41,7 @@ cp google-c-style.el ~/.emacs.d/site-lisp/
 emacs --batch --eval '(byte-compile-file "js2-mode.el")';
 cp js2-mode.elc ~/.emacs.d/site-lisp/
 
+cp android-mode.el ~/.meacs.d/site-lisp/
+
 #(cp -r multipe-cursors ~/.emacs.d/site-lisp/)
 

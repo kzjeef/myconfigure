@@ -115,7 +115,7 @@
 (setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
 (c-toggle-hungry-state t)	 ;; hungry delete
 (flyspell-prog-mode)             ;; 会对程序中的注释做拼写检查
-(hightlight-change-mode)	 ;; 会对做的修改做Hight light
+;(hightlight-change-mode)	 ;; 会对做的修改做Hight light
 (which-func-mode t)	 ;; 在状态栏显示当前函数
 ;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
 ;; (add-hook 'before-save-hook 'whitespace-cleanup) ;;在保存之前清除空字符
@@ -181,6 +181,17 @@
   (require 'python-mode)
 )
 
+(defun android-setup()
+
+  ;; android create project Notes:
+  ;; 1. if no build.xml, create it by
+  ;; $ android update project --name $(NAME) --target $(TARGET) --path ~/development/PowerShark/
+  ;; 2. The target parameter can find by 
+  ;; $ android list targets
+  ;; 3. then you can use android mode
+  (require 'android-mode))
+  
+
 (defun load-web-env()
   (add-to-list 'load-path "~/.emacs.d/site-lisp/nxhtml/")
   (autoload 'js2-mode "js2-mode" nil t)
@@ -213,6 +224,7 @@
       tab-width 4
       indent-tabs-mode nil)
 ;;(glasses-mode nil) ;; ThisIsAVarInJava
+(android-setup)
 )
 
 (defun load-c-relate-lib ()
@@ -406,11 +418,7 @@ try-complete-lisp-symbol-partially
 	      (when (and filename
 			  (string-match "kernel" filename))
 ;; or like this: (string-match (expand-file-name "~/src/linux-trees")
-		(c-set-style "linux-tabs-only")))
-
-        (setq-default c-basic-offset 8
-                      tab-width 8
-                      indent-tabs-mode t)))
+		(c-set-style "linux-tabs-only")))))
 
 
 (add-hook 'c++-mode-hook
