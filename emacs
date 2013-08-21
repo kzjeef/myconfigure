@@ -249,16 +249,16 @@ nil))
       (if t
 	  (if (>= (x-display-pixel-height) 1080)
 ;          (set-default-font "Ubuntu mono-12")
-	      (set-default-font "Monaco-11") ;bigger screen, smaller font;
+;	    (set-default-font "Lucida Console-11")
+	    (set-default-font "Inconsolata-13")
+;	      (set-default-font "Monaco-11") ;bigger screen, smaller font;
 	    (set-default-font "Monaco-11"))
 ;	      (set-default-font "Ubuntu mono-12")
 ;	      (set-face-attribute 'default nil
 ;				  :family "Monaco" :height 100 :weight 'normal)
 ;              (set-default-font "Inconsolata-12")
 ;	    (set-default-font "Inconsolata-12"))
-	(if (>= (x-display-pixel-width) 1920)
-	    (set-default-font "Lucida Sans Typewriter-13")
-	  (set-default-font "Lucida Sans Typewriter-12"))))) nil)
+        ) nil)
 
 (mouse-avoidance-mode 'animate)	;; 光标靠近鼠标的时候，　鼠标自己就跑了
 (setq x-select-enable-clipboard t)	;;让X的剪切板和EMACS联系起来
@@ -305,6 +305,7 @@ nil))
 
 (set-face-attribute 'default nil
 		:family "Inconsolata" :height 160 :weight 'normal)
+
 ;(set-face-attribute 'default nil
 ;		:family "Ubuntu mono" :height 160 :weight 'normal)
 ;(set-face-attribute 'default nil
@@ -346,7 +347,7 @@ t
 ;(global-set-key [f12] 'todo-show)
 (global-set-key (kbd "C-z")  'undo)  ;; undo by C-z
 (global-set-key (kbd "M-s")  'occur)
-(global-set-key (kbd "C-x C-j")  [?\C-x ?b return]) ;; Switch back to pervious windows.
+(global-set-key (kbd "C-c C-j")  [?\C-x ?b return]) ;; Switch back to pervious windows.
 ;(global-set-key "\C-xl" 'goto-line)	;; used to goto line
 
 (put 'upcase-region 'disabled nil)	;; 打开C－x c－u把区域变成大写的功能

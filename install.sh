@@ -43,5 +43,8 @@ cp js2-mode.elc ~/.emacs.d/site-lisp/
 
 cp android-mode.el ~/.meacs.d/site-lisp/
 
+sudo apt-get install ttf-inconsolata
+sudo fc-cache -fv
+
 #(cp -r multipe-cursors ~/.emacs.d/site-lisp/)
 
