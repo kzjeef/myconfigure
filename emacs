@@ -258,7 +258,7 @@ nil))
 ;				  :family "Monaco" :height 100 :weight 'normal)
 ;              (set-default-font "Inconsolata-12")
 ;	    (set-default-font "Inconsolata-12"))
-        ) nil)
+        ) nil)))
 
 (mouse-avoidance-mode 'animate)	;; 光标靠近鼠标的时候，　鼠标自己就跑了
 (setq x-select-enable-clipboard t)	;;让X的剪切板和EMACS联系起来
@@ -517,6 +517,7 @@ Zhang Jiejing")
 ;; remove the startup message.
 (setq inhibit-splash-screen t)
 
+(global-visual-line-mode t)        ;; Auto truncate line  
 ;;(load "desktop")
 ;;(desktop-load-default)
 ;;(desktop-read)
