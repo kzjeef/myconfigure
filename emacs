@@ -248,16 +248,10 @@ nil))
 ;; use monaco fonts default, want to switch to Lucida, change this to nil
       (if t
 	  (if (>= (x-display-pixel-height) 1080)
-;          (set-default-font "Ubuntu mono-12")
+;       (set-default-font "Ubuntu mono-12")
 ;	    (set-default-font "Lucida Console-11")
-	    (set-default-font "Inconsolata-13")
-;	      (set-default-font "Monaco-11") ;bigger screen, smaller font;
+	    (set-default-font "Inconsolata-13") ;; this font is little thinner than monaco, better on big screen
 	    (set-default-font "Monaco-11"))
-;	      (set-default-font "Ubuntu mono-12")
-;	      (set-face-attribute 'default nil
-;				  :family "Monaco" :height 100 :weight 'normal)
-;              (set-default-font "Inconsolata-12")
-;	    (set-default-font "Inconsolata-12"))
         ) nil)))
 
 (mouse-avoidance-mode 'animate)	;; 光标靠近鼠标的时候，　鼠标自己就跑了
