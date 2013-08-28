@@ -1,0 +1,72 @@
+export P4CONFIG=.p4config
+
+
+function ceresready()
+{
+export TOP=$(pwd)
+. build/envsetup.sh
+setpaths
+choosecombo 1 ceres 3
+}
+
+function plutoready()
+{
+export TOP=$(pwd)
+. build/envsetup.sh
+setpaths
+choosecombo 1 pluto 3
+}
+
+function thorready ()
+{
+export TOP=$(pwd)
+. build/envsetup.sh;
+setpaths
+#choosecombo 2 roth 3;
+choosecombo 1 thor 3 # to buiild for P2454
+}
+
+
+function flashkernel ()
+{
+sudo $TOP/out/host/linux-x86/bin/nvflash  --download LNX $OUT/boot.img --bl $OUT/bootloader.bin --go
+}
+
+function enterforcerecovery()
+{
+adb reboot forced-recovery
+}
+
+function flashbootloader()
+{
+sudo $TOP/out/host/linux-x86/bin/nvflash  --download EBT $OUT/bootloader.bin --bl $OUT/bootloader.bin --go
+}
+
+function eraseeveryting()
+{
+sudo ./nvflash --blob blob.bin --format_all --bl bootloader.bin --go
+}
+
+
+function buildk()
+{
+    if [ -z $1 ]; then
+        echo "usage: buildk \${product}"
+    else
+        make -C `pwd`/kernel ARCH=arm CROSS_COMPILE=`pwd`/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi- O=`pwd`/out/debug/target/product/roth/obj/KERNEL   zImage
+        make -C `pwd`/kernel ARCH=arm CROSS_COMPILE=`pwd`/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi- O=`pwd`/out/debug/target/product/roth/obj/KERNEL   tegra114-$1.dtb
+        out/host/linux-x86/bin/acp -fp `pwd`/out/debug/target/product/$1/obj/KERNEL/arch/arm/boot/zImage out/debug/target/product/$1/kernel
+        out/host/linux-x86/bin/mkbootimg  --kernel out/debug/target/product/roth/kernel --ramdisk out/debug/target/product/$1/ramdisk.img  --output out/debug/target/product/$1/boot.img
+        echo "bootimage: out/debug/target/product/$1/boot.img"
+    fi
+}
+
+function capture_gyro_log()
+{
+        adb shell dmesg -c | tee dmesg_before_test ; adb shell inv_self_test | tee inv_self_test;  adb shell dmesg | tee dmesg_after_test
+}
+
+function gosharkapp()
+{
+	cd vendor/nvidia/tegra/power/powershark/app/;
+}
