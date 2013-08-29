@@ -145,7 +145,7 @@
 (defun toggle-night-color-theme-24()
   (interactive)
   (if (eq (car custom-enabled-themes) 'wheatgrass)
-      (load-theme 'tsdh-light)
+      (load-theme 'adwaita)
 ;;    (load-theme 'tsdh-dark)
     (load-theme 'wheatgrass)
     ))
