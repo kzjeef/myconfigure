@@ -267,6 +267,9 @@ nil))
   (require 'xcscope)
   (setq cscope-do-not-update-database t)
 )
+
+(defun hightlight-80+-setup()
+  (require 'highlight-80+))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; start configure work here
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -306,6 +309,7 @@ t
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
 
 (safe-wrap (cscope-setup))
+(safe-wrap (hightlight-80+-setup))
 (safe-wrap (git-setup))
 (safe-wrap (load-python-env))
 (safe-wrap (load-web-env))
@@ -414,7 +418,10 @@ try-complete-lisp-symbol-partially
                           (or (string-match "linux" filename)
                               (string-match "kernel" filename)))
                  ;; or like this: (string-match (expand-file-name "~/src/linux-trees")
-                 (c-set-style "linux-tabs-only")))))
+                 (c-set-style "linux-tabs-only")
+                 ;; for kernel, hightlight 80 chars more line.
+                 (highlight-80+-mode)
+                 ))))
 
 (add-hook 'c++-mode-hook
 '(lambda ()
