@@ -123,21 +123,7 @@
 ;; ffap-kpathsea-expand-path 展开路径的深度
 ;; (setq ffap-kpathsea-depth 5)
 
-;; This cc style disable the name space indent.
-(defconst my-cc-style
-  '("cc-mode"
-    (c-offsets-alist . ((innamespace . [0])))
-    (c-electric-pound-behavior     . 'alignleft)
-    ;; Some more cc mode's cleanup settings.
-    (c-cleanup-list . (brace-else-brace
-                       brace-elseif-brace
-                       brace-catch-brace
-                       empty-defun-braces
-                       defun-close-semi
-                       list-close-comma
-                       scope-operator))))
 
-(c-add-style "my-cc-style" my-cc-style)
 
 ;; Hide & Show minor mode, usually good when looking big source file.
 ;(hs-minor-mode)
@@ -395,6 +381,21 @@ try-complete-lisp-symbol-partially
 	  '(lambda ()
 	    ;; Add kernel style
 	    (c-set-offset 'inextern-lang 0)
+	    ;; This cc style disable the name space indent.
+	    (defconst my-cc-style
+	      '("cc-mode"
+		(c-offsets-alist . ((innamespace . [0])))
+		(c-electric-pound-behavior     . 'alignleft)
+		;; Some more cc mode's cleanup settings.
+		(c-cleanup-list . (brace-else-brace
+				   brace-elseif-brace
+				   brace-catch-brace
+				   empty-defun-braces
+				   defun-close-semi
+				   list-close-comma
+				   scope-operator))))
+        (c-add-style "my-cc-style" my-cc-style)
+
 	    (c-add-style
 	     "linux-tabs-only"
 	     '("linux" (c-offsets-alist
@@ -402,20 +403,18 @@ try-complete-lisp-symbol-partially
 			 c-lineup-gcc-asm-reg
 			 c-lineup-arglist-tabs-only))
                (setq-default indent-tabs-mode t)))
-            (c-set-style "my-cc-style")
-            ))
+        (c-set-style "my-cc-style")))
 
 (add-hook 'c-mode-hook
 	  '(lambda ()
              (load-c-relate-lib)
              (let ((filename (buffer-file-name)))
-               
                ;; Enable kernel mode for the appropriate files
                (when (and filename
-			  (string-match "kernel" filename))
+                          (or (string-match "linux" filename)
+                              (string-match "kernel" filename)))
                  ;; or like this: (string-match (expand-file-name "~/src/linux-trees")
-		(c-set-style "linux-tabs-only")))))
-
+                 (c-set-style "linux-tabs-only")))))
 
 (add-hook 'c++-mode-hook
 '(lambda ()
