@@ -49,7 +49,7 @@
   :group 'highlight-80+-line)
 
 (defface highlight-80+
-  '((((background dark)) (:background "green"))
+  '((((background dark)) (:background "blue"))
     (((background light)) (:background "dark gray")))
   "*Face for showing characters beyond column `highlight-80+-columns'."
   :group 'highlight-80+-line)
