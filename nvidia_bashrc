@@ -26,6 +26,15 @@ setpaths
 choosecombo 1 thor 3 # to buiild for P2454
 }
 
+function lokiready ()
+{
+export TOP=$(pwd)
+. build/envsetup.sh;
+setpaths
+#choosecombo 2 loki 3;
+choosecombo 1 loki 3 # to buiild for P2454
+}
+
 
 function flashkernel ()
 {
