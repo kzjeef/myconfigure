@@ -1,6 +1,9 @@
 #!/bin/sh -e
 
 TARGET_DIR=~/.emacs.d/site-lisp/
+
+mkdir -p ${TARGET_DIR}
+sudo apt-get install texinfo
 (cp bison-flex/*.el ${TARGET_DIR})
 
 mkdir -p ${TARGET_DIR}auto-complete/
