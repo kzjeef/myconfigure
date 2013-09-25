@@ -31,5 +31,9 @@ install js2-mode.elc ${TARGET_DIR}
 install android-mode.el ${TARGET_DIR}
 install highlight-80+.el ${TARGET_DIR}
 
+(cd web-mode; emacs --batch --eval '(byte-compile-file "web-mode.el")'; emacs --batch --eval '(byte-compile-file "wfs-mode.el")'; \
+ install web-mode.elc ${TARGET_DIR}; install wfs-mode.elc ${TARGET_DIR}; \
+);
+
 sudo apt-get install ttf-inconsolata
 sudo fc-cache -fv

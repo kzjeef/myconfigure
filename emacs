@@ -129,7 +129,7 @@
 ;(hs-minor-mode)
 ;;  (safe-wrap (flex-bison-init)) ; cause editor hang, remove it.
 
-(electric-layout-mode) ;; good control of space line.
+;(electric-layout-mode) ;; good control of space line.
 
 )
 ;; end generic programming config.
@@ -184,7 +184,6 @@
   
 
 (defun load-web-env()
-  (add-to-list 'load-path "~/.emacs.d/site-lisp/nxhtml/")
   (autoload 'js2-mode "js2-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   (add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
@@ -193,18 +192,27 @@
 				      '(js2-basic-offset 8)
 				      '(js2-bounce-indent-p nil)
 				      )))
-  (autoload 'django-html-mumamo-mode "~/.emacs.d/site-lisp/nxhtml/autostart")
-  (autoload 'eruby-nxhtml-mumamo  "~/.emacs.d/site-lisp/nxhtml/autostart")
-
   ;; Css mode indent
   (add-hook 'css-mode-hook '(lambda() 
 	(setq cssm-indent-function #'cssm-c-style-indenter)
 	(setq cssm-indent-level 2)))
 
-  (add-to-list 'auto-mode-alist '("\\.html" . django-html-mumamo-mode))
-  ;; replace to ruby mode if mroe often using ruby.
-  ;; (add-to-list 'auto-mode-alist '("\\.html\\.erb\\'" . eruby-nxhtml-mumamo))
-  (add-to-list 'auto-mode-alist '("\\.erb\\'" . eruby-nxhtml-mumamo)))
+  
+
+  
+;  (require 'hl-tags-mode)
+
+  
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+)
 
 (defun load-java-relate-lib ()
 (generic-programming-realted-config)
@@ -608,6 +616,13 @@ Zhang Jiejing")
                                  'git-grep-history))))
     (let ((grep-use-null-device nil))
       (grep command-args))))
+
+;; Kill warnning..
+(when (and (>= emacs-major-version 24)
+(>= emacs-minor-version 2))
+(eval-after-load "mumamo"
+'(setq mumamo-per-buffer-local-vars
+(delq 'buffer-file-name mumamo-per-buffer-local-vars))))
 
 
 ;; 开启服务器模式

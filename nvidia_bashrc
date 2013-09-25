@@ -79,3 +79,27 @@ function gosharkapp()
 {
 	cd vendor/nvidia/tegra/power/powershark/app/;
 }
+
+function openusb2()
+{
+sudo picocom -f -n -p n -b 115200 -i -r -l /dev/ttyUSB2
+}
+
+
+
+# ----------------------------------------------------------
+# ------------ T32 -----------------------------------------
+
+export T32ID=T32
+export T32SYS=/home/jasozhang/t32/
+export T32TMP=/tmp
+export TOP=/home/jasozhang/proj/android-kernel-rebases
+export TEGRA_TOP=${TOP}/vendor/nvidia/tegra
+export TARGET_BOARD=loki
+export TARGET_PRODUCT=loki
+export TARGET_SOC=t12x
+export TARGET_OS=android
+export BUILD_FLAVOR=release
+export BUILD_TOP=${TOP}
+export TARGET_BUILD_TYPE=release
+export PATH=${PATH}:/home/jasozhang/t32:/home/jasozhang/t32/bin/pc_linux/
