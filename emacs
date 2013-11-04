@@ -458,8 +458,14 @@ Zhang Jiejing")
 (setq org-agenda-files (list "~/org/app.org"
                              "~/Google 云端硬盘/Nvidia Notes/nvidia_notes.org"
                              "~/org/todo.org"
-			     "~/GDrive/Nvidia Notes/nvidia_notes.org"
+                             "~/GDrive/Nvidia Notes/nvidia_notes.org"
                              ))
+;; filter not exist files, otherwise agenda mode will report error
+(setq org-agenda-files (remove-if 'nil (mapcar (lambda (x) 
+	  (if (file-exists-p x)
+	      x
+	    nil))
+	org-agenda-files)))
 
 (global-set-key "\C-ca" 'org-agenda)
 
