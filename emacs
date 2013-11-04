@@ -455,11 +455,13 @@ Zhang Jiejing")
 (setq org-log-done 'time)
 ;(setq org-log-done 'note)
 
-(setq org-agenda-files (list "~/org/app.org" "~/Google 云端硬盘/Nvidia Notes/nvidia_notes.org" "~/org/todo.org"))
+(setq org-agenda-files (list "~/org/app.org"
+                             "~/Google 云端硬盘/Nvidia Notes/nvidia_notes.org"
+                             "~/org/todo.org"
+			     "~/GDrive/Nvidia Notes/nvidia_notes.org"
+                             ))
 
 (global-set-key "\C-ca" 'org-agenda)
-
-
 
 (setq-default truncate-lines nil) ;; 自动折行
 (auto-compression-mode 1) ;; 打开压缩文件时自动解压缩
