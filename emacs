@@ -460,6 +460,8 @@ Zhang Jiejing")
                              "~/org/todo.org"
                              "~/GDrive/Nvidia Notes/nvidia_notes.org"
                              ))
+
+(require 'cl)
 ;; filter not exist files, otherwise agenda mode will report error
 (setq org-agenda-files (remove-if 'nil (mapcar (lambda (x) 
 	  (if (file-exists-p x)
