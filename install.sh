@@ -37,3 +37,7 @@ install highlight-80+.el ${TARGET_DIR}
 
 sudo apt-get install ttf-inconsolata
 sudo fc-cache -fv
+
+
+# finally need to recompile all files under install dir.
+emacs --batch --eval '(byte-recompile-directory "~/.emacs.d/site-lisp/")'

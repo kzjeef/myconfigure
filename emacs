@@ -455,19 +455,16 @@ Zhang Jiejing")
 (setq org-log-done 'time)
 ;(setq org-log-done 'note)
 
-(setq org-agenda-files (list "~/org/app.org"
-                             "~/Google 云端硬盘/Nvidia Notes/nvidia_notes.org"
-                             "~/org/todo.org"
-                             "~/GDrive/Nvidia Notes/nvidia_notes.org"
-                             ))
-
 (require 'cl)
 ;; filter not exist files, otherwise agenda mode will report error
 (setq org-agenda-files (remove-if 'nil (mapcar (lambda (x) 
 	  (if (file-exists-p x)
 	      x
 	    nil))
-	org-agenda-files)))
+   (list "~/org/app.org"
+   "~/Google 云端硬盘/Nvidia Notes/nvidia_notes.org"
+   "~/org/todo.org"
+   "~/SyncDrive/Nvidia Notes/nvidia_notes.org"))))
 
 (global-set-key "\C-ca" 'org-agenda)
 
@@ -645,7 +642,7 @@ Zhang Jiejing")
 
 
 ;; 开启服务器模式
-;(server-force-delete)
+;(Server-force-delete)
 ;(server-start)
 ;; 用Daemon替代
 
@@ -690,4 +687,3 @@ Zhang Jiejing")
 ;;;
 ;;; will auto download the file, and save the file...
 ;;; Wiki for full tricks: http://www.emacswiki.org/emacs/TrampMode
-
