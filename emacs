@@ -31,14 +31,13 @@
 
 (setq stack-trace-on-error nil)
 
-(defun multi-cursors-init()
-  (require 'multiple-cursors)
-  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
-(safe-wrap (multi-cursors-init))
+;(defun multi-cursors-init()
+;  (require 'multiple-cursors)
+;  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+;  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+;  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+;  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
 (defun flex-bison-init()
   (autoload 'flex-mode "flex-mode" nil t)
@@ -47,8 +46,6 @@
 	(cons '("\\.flex" . flex-mode) auto-mode-alist))
   (setq auto-mode-alist
 	(cons '("\\.y" . bison-mode) auto-mode-alist)))
-
-
 
 (defun complete-func-init()
 (add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/")
@@ -169,7 +166,7 @@
 	       (setq default-tab-width 4)))
   (add-to-list 'load-path "~/.emacs.d/site-lisp/python/")
   (setq py-install-directory "~/.emacs.d/site-lisp/python/")
-  (require 'python-mode)
+  (add-to-list 'auto-mode-alist '("\\.py?$" . python-mode))
 )
 
 (defun android-setup()
@@ -457,7 +454,8 @@ Zhang Jiejing")
 
 (require 'cl)
 ;; filter not exist files, otherwise agenda mode will report error
-(setq org-agenda-files (remove-if 'nil (mapcar (lambda (x) 
+(require 'cl)
+(setq org-agenda-files (remove-if 'nil (mapcar (lambda (x)
 	  (if (file-exists-p x)
 	      x
 	    nil))
@@ -525,8 +523,6 @@ Zhang Jiejing")
   (setq ispell-dictionary "american"))
 (add-hook 'comint-output-filter-functions
 'comint-watch-for-password-prompt) ;; 密码的相关的提示密码
-
-(safe-wrap (display-battery-mode)) ;; 显示电池容量， 全屏的时候很需要
 
 ;; Full screen settings.
 ;; Needs Mac configure of full screen
@@ -687,3 +683,7 @@ Zhang Jiejing")
 ;;;
 ;;; will auto download the file, and save the file...
 ;;; Wiki for full tricks: http://www.emacswiki.org/emacs/TrampMode
+
+;;; Q: emacs init too slow ?
+;;; A: use this command to profile:
+;;;    emacs -Q -l ~/myconfigure/profile-dotemacs.el -f profile-dotemacs
