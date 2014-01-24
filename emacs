@@ -242,8 +242,9 @@ nil))
 	  (if (>= (x-display-pixel-height) 1080)
 ;       (set-default-font "Ubuntu mono-12")
 ;	    (set-default-font "Lucida Console-11")
-	    (set-default-font "Inconsolata-13") ;; this font is little thinner than monaco, better on big screen
-	    (set-default-font "Monaco-11"))
+	    (set-default-font "Monaco-11")
+	    (set-default-font "Inconsolata-13") 
+	    )
         ) nil)))
 
 (mouse-avoidance-mode 'animate)	;; 光标靠近鼠标的时候，　鼠标自己就跑了
@@ -445,9 +446,7 @@ try-complete-lisp-symbol-partially
 ;;	 日常的配置
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq mail-signature "
---
-Zhang Jiejing")
+(setq mail-signature "Jiejing")
 
 (setq org-log-done 'time)
 ;(setq org-log-done 'note)
@@ -608,7 +607,7 @@ Zhang Jiejing")
        (list (read-shell-command "Run git-grep (like this): "
                                  (format (concat
                                           "cd %s && "
-                                          "git grep %s -e %s")
+                                          "git --no-pager grep %s -e %s")
                                          root
                                          git-grep-switches
                                          (let ((thing (and
@@ -656,6 +655,9 @@ Zhang Jiejing")
 (defun long-edge (a b)
   (sqrt (+ (* a a) (* b b))))
 
+(defun average-ration(x y)
+  (/ (abs (- y x))  (/ (+ x y) 2)))
+
 
 ;;;  Tips Section ;;; 
 
@@ -687,3 +689,15 @@ Zhang Jiejing")
 ;;; Q: emacs init too slow ?
 ;;; A: use this command to profile:
 ;;;    emacs -Q -l ~/myconfigure/profile-dotemacs.el -f profile-dotemacs
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(send-mail-function (quote smtpmail-send-it)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
