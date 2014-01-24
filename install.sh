@@ -25,6 +25,7 @@ cp google-c-style.el ${TARGET_DIR}
 (cd python-mode.el-6.1.1;emacs --batch --eval '(byte-compile-file "python-mode.el")';mkdir -p ${TARGET_DIR}python/; cp * -R ${TARGET_DIR}python/);
 
 (cp -r  nxhtml-2.08 ${TARGET_DIR}nxhtml)
+(cp kermit.el $(TARGET_DIR})
 
 emacs --batch --eval '(byte-compile-file "js2-mode.el")';
 install js2-mode.elc ${TARGET_DIR}
@@ -41,3 +42,4 @@ sudo fc-cache -fv
 
 # finally need to recompile all files under install dir.
 emacs --batch --eval '(byte-recompile-directory "~/.emacs.d/site-lisp/")'
+

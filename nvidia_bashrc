@@ -1,38 +1,19 @@
 export P4CONFIG=.p4config
 
-
-function ceresready()
+function r()
 {
 export TOP=$(pwd)
 . build/envsetup.sh
 setpaths
-choosecombo 1 ceres 3
+choosecombo 1 $1 3
 }
 
-function plutoready()
+function rdebug()
 {
 export TOP=$(pwd)
 . build/envsetup.sh
 setpaths
-choosecombo 1 pluto 3
-}
-
-function thorready ()
-{
-export TOP=$(pwd)
-. build/envsetup.sh;
-setpaths
-#choosecombo 2 roth 3;
-choosecombo 1 thor 3 # to buiild for P2454
-}
-
-function lokiready ()
-{
-export TOP=$(pwd)
-. build/envsetup.sh;
-setpaths
-#choosecombo 2 loki 3;
-choosecombo 1 loki 3 # to buiild for P2454
+choosecombo 2 $1 3
 }
 
 
@@ -41,12 +22,45 @@ function flashkernel ()
 sudo $TOP/out/host/linux-x86/bin/nvflash  --download LNX $OUT/boot.img --bl $OUT/bootloader.bin --go
 }
 
+function t132flashkernel()
+{
+sudo $TOP/out/host/linux-x86/bin/nvflash --preboot mts_preboot_si --bootpack mts_si --download LNX $OUT/boot.img --bl $OUT/bootloader.bin --odmdata 0x0098000 --go
+}
+
+function t132flashbootloader()
+{
+sudo $TOP/out/host/linux-x86/bin/nvflash --preboot mts_preboot_si --bootpack mts_si --download EBT bootloader.bin --bl bootloader.bin --go
+}
+
+function t132formatdata()
+{
+sudo $TOP/out/host/linux-x86/bin/nvflash  --format_partition UDA  --bl $OUT/bootloader.bin --preboot mts_preboot_si --bootpack mts_si --go
+}
+
+function t132flashmts()
+{
+sudo $TOP/out/host/linux-x86/bin/nvflash --bl $OUT/bootloader.bin --wait --preboot mts_preboot_si --bootpack mts_si --download MPB mts_preboot_si --download MBP mts_si --go
+}
+
+
+function t132flashall()
+{
+sudo $TOP/out/host/linux-x86/bin/nvflash --bct bct_pm374_792.cfg --setbct --preboot mts_preboot_si --bootpack mts_si --odmdata 0x0098000 --configfile flash.cfg --create --bl bootloader.bin --go
+
+}
+
+function formatdata()
+{
+sudo nvflash --format_partition UDA --bl bootloader.bin --go
+}
+
 function enterforcerecovery()
 {
 adb reboot forced-recovery
 }
 
 function flashbootloader()
+
 {
 sudo $TOP/out/host/linux-x86/bin/nvflash  --download EBT $OUT/bootloader.bin --bl $OUT/bootloader.bin --go
 }
@@ -90,16 +104,15 @@ sudo picocom -f -n -p n -b 115200 -i -r -l /dev/ttyUSB2
 # ----------------------------------------------------------
 # ------------ T32 -----------------------------------------
 
-export T32ID=T32
-export T32SYS=/home/jasozhang/t32/
+export PATH=${PATH}:/home/jasozhang/t32/home/jasozhang/t32/bin/pc_linux/
+export PATH=${PATH}:/home/jasozhang/aa64arm/toolchaine/bin/
+export PATH=${PATH}:/home/jasozhang/development/browser-test/tests-browser/env/bin/
+
+
+
+# Lauterbach setup
 export T32TMP=/tmp
-export TOP=/home/jasozhang/proj/android-kernel-rebases
-export TEGRA_TOP=${TOP}/vendor/nvidia/tegra
-export TARGET_BOARD=loki
-export TARGET_PRODUCT=loki
-export TARGET_SOC=t12x
-export TARGET_OS=android
-export BUILD_FLAVOR=release
-export BUILD_TOP=${TOP}
-export TARGET_BUILD_TYPE=release
-export PATH=${PATH}:/home/jasozhang/t32:/home/jasozhang/t32/bin/pc_linux/
+export T32ID=T32
+export ADOBE_PATH=/opt/Adobe/Reader9
+xset +fp /home/jasozhang/t32/fonts
+xset fp rehash
