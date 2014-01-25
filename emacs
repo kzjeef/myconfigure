@@ -335,6 +335,8 @@ t
 (global-set-key [f7] 'grep-find)
 (global-set-key [f8] 'compile)	 ;; 在 Emacs 中编译
 (global-set-key [f9] 'gdb)	 ;; 在 Emacs 中调试
+(global-set-key [f12] 'git-grep)	 ;; Git grep.
+
 ;(global-set-key [f12] 'todo-show)
 (global-set-key (kbd "C-z")  'undo)  ;; undo by C-z
 (global-set-key (kbd "M-s")  'occur)
