@@ -31,6 +31,25 @@
 
 (setq stack-trace-on-error nil)
 
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                         ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+
+(global-set-key (kbd "<f1>") 'loop-alpha) 
+;当前窗口和非当前窗口时透明度 
+(setq alpha-list '((90 70) (100 100))) 
+(defun loop-alpha () 
+(interactive) 
+(let ((h (car alpha-list))) 
+((lambda (a ab) 
+(set-frame-parameter (selected-frame) 'alpha (list a ab)) 
+(add-to-list 'default-frame-alist (cons 'alpha (list a ab)))) 
+(car h) (car (cdr h))) 
+(setq alpha-list (cdr (append alpha-list (list h)))))) 
+;启动窗口时时自动开启窗口半透明效果 
+(loop-alpha)
+
+
 
 ;(defun multi-cursors-init()
 ;  (require 'multiple-cursors)
@@ -132,7 +151,7 @@
 ;; end generic programming config.
 
 (defun color-init()
-  (load-theme 'wheatgrass))
+  (load-theme 'wombat))
 
 ;; Auto disable theme setup before...
 (defadvice load-theme
@@ -141,17 +160,16 @@
 
 (defun toggle-night-color-theme-24()
   (interactive)
-  (if (eq (car custom-enabled-themes) 'wheatgrass)
-      (load-theme 'adwaita)
-;;    (load-theme 'tsdh-dark)
-    (load-theme 'wheatgrass)
+  (if (eq (car custom-enabled-themes) 'wombat)
+      (disable-theme 'wombat) ;; after diable theme, will use default theme.
+    (load-theme 'wombat)
     ))
 
 (defun toggle-night-color-theme()
   (interactive)
       (toggle-night-color-theme-24))
 
-(global-set-key [f10] 'toggle-night-color-theme)
+
 
 (defun config-in-tty-mode ()
 ;; don't load color in tty mode.
@@ -330,17 +348,21 @@ t
 		 (let ((woman-topic-at-point t))
 		 (woman))))
 ;; (global-set-key [kp-insert] 'overwrite-mode) ; [Ins]
-(global-set-key [f5] 'revert-buffer)	;; 恢复文件
-(global-set-key [f6] 'ff-find-related-file) ;; 找到对应的头文件
+(global-set-key [f2] 'git-grep)	 ;; Git grep.
+;; F3 start micro
+;; F4 reply micro
+(global-set-key [f5] 'revert-buffer)
+(global-set-key [f6] 'ff-find-related-file) ;; Find header file.
 (global-set-key [f7] 'grep-find)
-(global-set-key [f8] 'compile)	 ;; 在 Emacs 中编译
-(global-set-key [f9] 'gdb)	 ;; 在 Emacs 中调试
-(global-set-key [f12] 'git-grep)	 ;; Git grep.
+(global-set-key [f8] 'compile)
+(global-set-key [f9] 'gdb)
+(global-set-key [f10] 'toggle-night-color-theme)
+(global-set-key [f12] 'org-todo-list)
 
-;(global-set-key [f12] 'todo-show)
 (global-set-key (kbd "C-z")  'undo)  ;; undo by C-z
 (global-set-key (kbd "M-s")  'occur)
 (global-set-key (kbd "C-c C-j")  [?\C-x ?b return]) ;; Switch back to pervious windows.
+
 ;(global-set-key "\C-xl" 'goto-line)	;; used to goto line
 
 (put 'upcase-region 'disabled nil)	;; 打开C－x c－u把区域变成大写的功能
@@ -696,6 +718,9 @@ try-complete-lisp-symbol-partially
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes (quote ("0603fb5696ab4af05e7c8bb11498bd189bdb7930c7c88dd6ac1e5ec2fc3efb2b" default)))
+ '(gud-gdb-command-name "gdb --annotate=1")
+ '(large-file-warning-threshold nil)
  '(send-mail-function (quote smtpmail-send-it)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -703,3 +728,6 @@ try-complete-lisp-symbol-partially
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+
+
