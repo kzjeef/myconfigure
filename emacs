@@ -37,7 +37,7 @@
 
 (global-set-key (kbd "<f1>") 'loop-alpha) 
 ;当前窗口和非当前窗口时透明度 
-(setq alpha-list '((90 70) (100 100))) 
+(setq alpha-list '((95 89) (100 100))) 
 (defun loop-alpha () 
 (interactive) 
 (let ((h (car alpha-list))) 
@@ -116,7 +116,7 @@
 ;;	     )))
 ;; Auto enable whitespace mode in diff mode
 (add-hook 'diff-mode-hook
-	  '(lambda ()
+	  (lambda ()
 	    (whitespace-mode t)))
 ;; Remeber artist-mode can draw picutre !!!
 ; (define-key c-mode-base-map [(return)] 'newline-and-indent)
@@ -179,7 +179,7 @@
 (defun load-python-env()
   (add-hook 'python-mode-hook (function cscope:hook))
   (add-hook 'python-mode-hook
-	    '(lambda()
+	    (lambda()
 	       (setq-default indent-tabs-mode nil)    ; use only spaces and no tabs
 	       (setq default-tab-width 4)))
   (add-to-list 'load-path "~/.emacs.d/site-lisp/python/")
@@ -202,13 +202,13 @@
   (autoload 'js2-mode "js2-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   (add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
-  (add-hook 'js2-mode-hook '(lambda()
+  (add-hook 'js2-mode-hook (lambda()
 				     (custom-set-variables
 				      '(js2-basic-offset 8)
 				      '(js2-bounce-indent-p nil)
 				      )))
   ;; Css mode indent
-  (add-hook 'css-mode-hook '(lambda() 
+  (add-hook 'css-mode-hook (lambda() 
 	(setq cssm-indent-function #'cssm-c-style-indenter)
 	(setq cssm-indent-level 2)))
 
@@ -233,6 +233,7 @@
 (generic-programming-realted-config)
 (add-hook 'java-mode-hook (function cscope:hook))
 (cscope-minor-mode)
+(message "load java")
 (setq c-comment-start-regexp "(@|/(/|[*][*]?))")
 (modify-syntax-entry ?@ "< b" java-mode-syntax-table)
 (setq c-basic-offset 4
@@ -264,7 +265,7 @@ nil))
 	    (set-default-font "Inconsolata-13") 
 	    )
         ) nil)))
-
+(global-visual-line-mode t)        ;; Auto truncate line  
 (mouse-avoidance-mode 'animate)	;; 光标靠近鼠标的时候，　鼠标自己就跑了
 (setq x-select-enable-clipboard t)	;;让X的剪切板和EMACS联系起来
 (tool-bar-mode -1) ;; 不要工具按钮
@@ -326,6 +327,7 @@ t
 )) nil)
 
 ;; Objective C settings.
+(add-to-list 'auto-mode-alist '("\\.m?$" . objc-mode))
 (add-to-list 'auto-mode-alist '("\\.mm?$" . objc-mode))
 ;(add-to-list 'auto-mode-alist '("\\.h$" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@implementation" . objc-mode))
@@ -389,16 +391,18 @@ try-complete-lisp-symbol-partially
 
 ;; for object-c.
 (add-hook 'objc-mode-hook
-'(lambda ()
-;   (messagne "objc modeb hook start")
-   (setq cscope-do-not-update-database nil)
-   (load-c-relate-lib)
-   (cscope-minor-mode)
-   (c-set-style "cc-mode")
-   (turn-on-auto-revert-mode) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
-   (setq-default indent-tabs-mode nil) ;; 不用table
-;;   (flymode-init)
-   ))
+          (lambda ()
+;;          (message "objc modeb hook start")
+            (setq cscope-do-not-update-database nil)
+            (load-c-relate-lib)
+            (turn-on-auto-revert-mode) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
+            (setq indent-tabs-mode nil)
+;;          (flymode-init)
+            (setq c-basic-offset 2
+                  tab-width 2
+                  indent-tabs-mode nil)
+            (c-set-style "cc-mode")
+            (cscope-minor-mode)))
 
 
 ;; For linux kernel
@@ -412,7 +416,8 @@ try-complete-lisp-symbol-partially
        c-basic-offset)))
 
 (add-hook 'c-mode-common-hook
-	  '(lambda ()
+	  (lambda ()
+            (message "c common hook")
 	    ;; Add kernel style
 	    (c-set-offset 'inextern-lang 0)
 	    ;; This cc style disable the name space indent.
@@ -428,7 +433,7 @@ try-complete-lisp-symbol-partially
 				   defun-close-semi
 				   list-close-comma
 				   scope-operator))))
-        (c-add-style "my-cc-style" my-cc-style)
+            (c-add-style "my-cc-style" my-cc-style)
 
 	    (c-add-style
 	     "linux-tabs-only"
@@ -437,11 +442,14 @@ try-complete-lisp-symbol-partially
 			 c-lineup-gcc-asm-reg
 			 c-lineup-arglist-tabs-only))
                (setq-default indent-tabs-mode t)))
-        (c-set-style "my-cc-style")))
+))
 
 (add-hook 'c-mode-hook
-	  '(lambda ()
+	  (lambda ()
              (load-c-relate-lib)
+             (setq c-basic-offset 4
+                   tab-width 4
+                   indent-tabs-mode nil)
              (let ((filename (buffer-file-name)))
                ;; Enable kernel mode for the appropriate files
                (when (and filename
@@ -454,12 +462,16 @@ try-complete-lisp-symbol-partially
                  ))))
 
 (add-hook 'c++-mode-hook
-'(lambda ()
+(lambda ()
 (load-c-relate-lib)
+(c-set-style "my-cc-style")
+(setq c-basic-offset 4
+      tab-width 4
+      indent-tabs-mode nil)
 ))
 
 (add-hook 'java-mode-hook
-'(lambda ()
+(lambda ()
 ;   (message "with java mode hook")
    (turn-on-auto-revert-mode) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
    (load-java-relate-lib)))
@@ -561,7 +573,6 @@ try-complete-lisp-symbol-partially
 ;; remove the startup message.
 (setq inhibit-splash-screen t)
 
-(global-visual-line-mode t)        ;; Auto truncate line  
 ;;(load "desktop")
 ;;(desktop-load-default)
 ;;(desktop-read)
