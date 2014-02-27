@@ -72,7 +72,7 @@
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
 (ac-config-default))
 
-(safe-wrap (complete-func-init))
+;;  (safe-wrap (complete-func-init)) ;; disbale auto complete for better input speed.
 
 (defun elscreen-setup()
 ;;; The tabbar.
@@ -151,7 +151,8 @@
 ;; end generic programming config.
 
 (defun color-init()
-  (load-theme 'wombat))
+;  (load-theme 'wombat)
+  )
 
 ;; Auto disable theme setup before...
 (defadvice load-theme
@@ -185,6 +186,20 @@
   (add-to-list 'load-path "~/.emacs.d/site-lisp/python/")
   (setq py-install-directory "~/.emacs.d/site-lisp/python/")
   (add-to-list 'auto-mode-alist '("\\.py?$" . python-mode))
+)
+
+(defun load-ruby-env()
+  (autoload 'enh-ruby-mode "enh-ruby-mode" "Major mode for ruby files" t)
+
+   (add-to-list 'auto-mode-alist
+               '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . enh-ruby-mode))
+  (add-to-list 'auto-mode-alist
+               '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . enh-ruby-mode))
+;; optional
+  (setq enh-ruby-program "(path-to-ruby1.9)/bin/ruby") ; so that still works if ruby points to ruby1.8
+
+;; Enhanced Ruby Mode defines its own specific faces with the hook erm-define-faces. If your theme is already defining those faces, to not overwrite them, just remove the hook with:
+(remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
 )
 
 (defun android-setup()
@@ -272,13 +287,6 @@ nil))
 (scroll-bar-mode -1) ;; 不要缩放条
 (color-init))
 
-(defun page2mb (page-number)
-  "Define a function conv page number to MB"
- (/ (* page-number 4) 1024))
-(put 'set-goal-column 'disabled nil)
-
-
-
 (defun toggle-fullscreen (&optional f)
       (interactive)
       (let ((current-value (frame-parameter nil 'fullscreen)))
@@ -326,6 +334,25 @@ nil))
 t
 )) nil)
 
+(require 'find-file) ;; for the "cc-other-file-alist" variable
+(nconc (cadr (assoc "\\.h\\'" cc-other-file-alist)) '(".m" ".mm"))
+(defadvice ff-get-file-name (around ff-get-file-name-framework
+				    (search-dirs 
+				     fname-stub 
+				     &optional suffix-list))
+  "Search for Mac framework headers as well as POSIX headers."
+   (or
+    (if (string-match "\\(.*?\\)/\\(.*\\)" fname-stub)
+	(let* ((framework (match-string 1 fname-stub))
+	       (header (match-string 2 fname-stub))
+	       (fname-stub (concat framework ".framework/Headers/" header)))
+	  ad-do-it))
+      ad-do-it))
+(ad-enable-advice 'ff-get-file-name 'around 'ff-get-file-name-framework)
+(ad-activate 'ff-get-file-name)
+(setq cc-search-directories '("." "../include" "/usr/include" "/usr/local/include/*"
+			      "/System/Library/Frameworks" "/Library/Frameworks"))
+
 ;; Objective C settings.
 (add-to-list 'auto-mode-alist '("\\.m?$" . objc-mode))
 (add-to-list 'auto-mode-alist '("\\.mm?$" . objc-mode))
@@ -338,6 +365,7 @@ t
 (safe-wrap (hightlight-80+-setup))
 (safe-wrap (git-setup))
 (safe-wrap (load-python-env))
+(safe-wrap (load-ruby-env))
 (safe-wrap (load-web-env))
 ;;(safe-wrap (elscreen-setup))
 (safe-wrap (fic-mode-setup))
@@ -402,6 +430,9 @@ try-complete-lisp-symbol-partially
                   tab-width 2
                   indent-tabs-mode nil)
             (c-set-style "cc-mode")
+
+	    (highlight-80+-mode)
+	    (setq highlight-80+-columns 100) ;; hight light 100+ colums
             (cscope-minor-mode)))
 
 
@@ -693,6 +724,11 @@ try-complete-lisp-symbol-partially
 (defun average-ration(x y)
   (/ (abs (- y x))  (/ (+ x y) 2)))
 
+(defun page2mb (page-number)
+  "Define a function conv page number to MB"
+ (/ (* page-number 4) 1024))
+(put 'set-goal-column 'disabled nil)
+
 
 ;;;  Tips Section ;;; 
 
@@ -724,21 +760,5 @@ try-complete-lisp-symbol-partially
 ;;; Q: emacs init too slow ?
 ;;; A: use this command to profile:
 ;;;    emacs -Q -l ~/myconfigure/profile-dotemacs.el -f profile-dotemacs
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("0603fb5696ab4af05e7c8bb11498bd189bdb7930c7c88dd6ac1e5ec2fc3efb2b" default)))
- '(gud-gdb-command-name "gdb --annotate=1")
- '(large-file-warning-threshold nil)
- '(send-mail-function (quote smtpmail-send-it)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
 
 

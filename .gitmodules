@@ -10,3 +10,6 @@
 [submodule "web-mode"]
 	path = web-mode
 	url = https://github.com/fxbois/web-mode
+[submodule "enhanced-ruby-mode"]
+	path = enhanced-ruby-mode
+	url = https://github.com/zenspider/enhanced-ruby-mode.git

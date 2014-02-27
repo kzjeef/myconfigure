@@ -2,6 +2,10 @@
 
 TARGET_DIR=~/.emacs.d/site-lisp/
 
+git submodule init 
+git submodule update
+git submodule sync
+
 mkdir -p ${TARGET_DIR}
 sudo apt-get install texinfo
 (cp bison-flex/*.el ${TARGET_DIR})
@@ -40,6 +44,8 @@ sudo apt-get install ttf-inconsolata
 sudo fc-cache -fv
 
 (mkdir -p ${TARGET_DIR}/themes/; cp themes/* ${TARGET_DIR}/themes)
+
+(cp enhanced-ruby-mode/enh-ruby-mode.el ${TARGET_DIR}/)
 
 # finally need to recompile all files under install dir.
 emacs --batch --eval '(byte-recompile-directory "~/.emacs.d/site-lisp/")'
