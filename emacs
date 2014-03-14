@@ -31,11 +31,15 @@
 
 (setq stack-trace-on-error nil)
 
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (package-initialize)
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
 
-(global-set-key (kbd "<f1>") 'loop-alpha) 
+)
+
 ;当前窗口和非当前窗口时透明度 
 (setq alpha-list '((95 89) (100 100))) 
 (defun loop-alpha () 
@@ -96,6 +100,12 @@
   (add-hook 'emacs-lisp-mode-hook 'turn-on-fic-mode)
 )
 
+(defun dash-setup ()
+  (autoload 'dash-at-point "dash-at-point"
+    "Search the word at point with Dash." t nil)
+  (global-set-key "\C-cd" 'dash-at-point)
+  (global-set-key [f1] 'dash-at-point)
+  (global-set-key "\C-ce" 'dash-at-point-with-docset))
 
 (defun git-setup ()
  (featurep 'git)
@@ -123,8 +133,11 @@
 ;(c-set-offset 'inextern-lang '0)
 (setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
 (c-toggle-hungry-state t)	 ;; hungry delete
+
+(require 'flyspell)
 (flyspell-prog-mode)             ;; 会对程序中的注释做拼写检查
-;(hightlight-change-mode)	 ;; 会对做的修改做Hight light
+(ac-flyspell-workaround)
+                                        ;(hightlight-change-mode)	 ;; 会对做的修改做Hight light
 (which-func-mode t)	 ;; 在状态栏显示当前函数
 ;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
 ;; (add-hook 'before-save-hook 'whitespace-cleanup) ;;在保存之前清除空字符
@@ -139,13 +152,27 @@
 ;; ffap-kpathsea-expand-path 展开路径的深度
 ;; (setq ffap-kpathsea-depth 5)
 
-
-
+(require 'ido)
+(require 'ibuffer)
+(ido-mode t)                            ;Ido mode really good.
 ;; Hide & Show minor mode, usually good when looking big source file.
 ;(hs-minor-mode)
 ;;  (safe-wrap (flex-bison-init)) ; cause editor hang, remove it.
 
 ;(electric-layout-mode) ;; good control of space line.
+
+(require 'yasnippet)
+(yas/global-mode 1)
+
+(require 'smartparens-config)
+(require 'smartparens-ruby)
+(smartparens-global-mode)
+(show-smartparens-global-mode t)
+(sp-with-modes '(rhtml-mode)
+  (sp-local-pair "<" ">")
+  (sp-local-pair "<%" "%>"))
+(smartparens-global-mode t)
+
 
 )
 ;; end generic programming config.
@@ -153,6 +180,10 @@
 (defun color-init()
 ;  (load-theme 'wombat)
   )
+
+(defun term-init()
+  (require 'multi-term)
+  (setq multi-term-program "/bin/bash"))
 
 ;; Auto disable theme setup before...
 (defadvice load-theme
@@ -181,6 +212,10 @@
   (add-hook 'python-mode-hook (function cscope:hook))
   (add-hook 'python-mode-hook
 	    (lambda()
+          (jedi:setup) ;; JEDI document: http://tkf.github.io/emacs-jedi/latest/#jedi:key-complete
+          (setq jedi:complete-on-dot t)
+          (highlight-indentation-current-column-mode)
+          ;; also can complete by C-TAB
 	       (setq-default indent-tabs-mode nil)    ; use only spaces and no tabs
 	       (setq default-tab-width 4)))
   (add-to-list 'load-path "~/.emacs.d/site-lisp/python/")
@@ -189,17 +224,36 @@
 )
 
 (defun load-ruby-env()
-  (autoload 'enh-ruby-mode "enh-ruby-mode" "Major mode for ruby files" t)
+;;  (autoload 'enh-ruby-mode "enh-ruby-mode" "Major mode for ruby files" t)
 
-   (add-to-list 'auto-mode-alist
-               '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . enh-ruby-mode))
-  (add-to-list 'auto-mode-alist
-               '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . enh-ruby-mode))
+;;   (add-to-list 'auto-mode-alist
+;;               '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . enh-ruby-mode))
+;;  (add-to-list 'auto-mode-alist
+;;               '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . enh-ruby-mode))
 ;; optional
-  (setq enh-ruby-program "(path-to-ruby1.9)/bin/ruby") ; so that still works if ruby points to ruby1.8
+;;  (setq enh-ruby-program "(path-to-ruby1.9)/bin/ruby") ; so that still works if ruby points to ruby1.8
 
 ;; Enhanced Ruby Mode defines its own specific faces with the hook erm-define-faces. If your theme is already defining those faces, to not overwrite them, just remove the hook with:
+;;(remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
+(add-hook 'enh-ruby-mode-hook
+           (lambda () (highlight-indentation-current-column-mode)))
+
+ (add-hook 'coffee-mode-hook
+           (lambda () (highlight-indentation-current-column-mode)))
+(rvm-use-default)
+(add-hook 'ruby-mode-hook 'projectile-on)
+(require 'highlight-indentation)
+(add-hook 'enh-ruby-mode-hook
+          (lambda () (highlight-indentation-current-column-mode)))
+
+(add-hook 'coffee-mode-hook
+          (lambda () (highlight-indentation-current-column-mode)))
+(add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
 (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
+(require 'rinari)
+(global-rinari-mode)
+(add-hook 'rinari-minor-mode-hook
+          (lambda () (setq dash-at-point-docset "rails")))
 )
 
 (defun android-setup()
@@ -227,11 +281,7 @@
 	(setq cssm-indent-function #'cssm-c-style-indenter)
 	(setq cssm-indent-level 2)))
 
-  
-
-  
 ;  (require 'hl-tags-mode)
-
   
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
@@ -242,6 +292,12 @@
 (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+
+(add-hook 'enh-ruby-mode-hook
+          (lambda () (flyspell-prog-mode)))
+
+(add-hook 'web-mode-hook
+          (lambda () (flyspell-prog-mode)))
 )
 
 (defun load-java-relate-lib ()
@@ -319,6 +375,7 @@ nil))
 (setq mac-option-key-is-meta t)
 (setq mac-right-option-modifier nil)
 (setq exec-path (append exec-path '("/opt/local/bin")) )
+(setenv "LC_CTYPE" "UTF-8")
 
 (set-face-attribute 'default nil
 		:family "Inconsolata" :height 160 :weight 'normal)
@@ -361,6 +418,8 @@ t
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@interface" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
 
+(safe-wrap (dash-setup))
+(safe-wrap (term-init))
 (safe-wrap (cscope-setup))
 (safe-wrap (hightlight-80+-setup))
 (safe-wrap (git-setup))
@@ -373,10 +432,7 @@ t
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
 (defalias 'qrr 'query-replace-regexp)   ;; regexp query.
 
-(global-set-key [(f1)] (lambda()
-		 (interactive)
-		 (let ((woman-topic-at-point t))
-		 (woman))))
+
 ;; (global-set-key [kp-insert] 'overwrite-mode) ; [Ins]
 (global-set-key [f2] 'git-grep)	 ;; Git grep.
 ;; F3 start micro
@@ -388,11 +444,18 @@ t
 (global-set-key [f9] 'gdb)
 (global-set-key [f10] 'toggle-night-color-theme)
 (global-set-key [f12] 'org-todo-list)
+(global-set-key [\M-f12] 'org-todo-list) ;; mac use
+(global-set-key "\M-`" 'other-frame)
 
 (global-set-key (kbd "C-z")  'undo)  ;; undo by C-z
 (global-set-key (kbd "M-s")  'occur)
 (global-set-key (kbd "C-c C-j")  [?\C-x ?b return]) ;; Switch back to pervious windows.
-
+(global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
+(global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
+(global-set-key (kbd "S-C-<down>") 'shrink-window)
+(global-set-key (kbd "S-C-<up>") 'enlarge-window)
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+ 
 ;(global-set-key "\C-xl" 'goto-line)	;; used to goto line
 
 (put 'upcase-region 'disabled nil)	;; 打开C－x c－u把区域变成大写的功能
@@ -431,8 +494,8 @@ try-complete-lisp-symbol-partially
                   indent-tabs-mode nil)
             (c-set-style "cc-mode")
 
-	    (highlight-80+-mode)
-	    (setq highlight-80+-columns 100) ;; hight light 100+ colums
+;;	    (highlight-80+-mode)
+;;	    (setq highlight-80+-columns 200) ;; hight light 100+ colums
             (cscope-minor-mode)))
 
 
@@ -531,6 +594,21 @@ try-complete-lisp-symbol-partially
    "~/SyncDrive/Nvidia Notes/nvidia_notes.org"))))
 
 (global-set-key "\C-ca" 'org-agenda)
+(prefer-coding-system 'utf-8)
+;; Navigate between windows using Alt-1, Alt-2, Shift-left, shift-up, shift-right
+(windmove-default-keybindings)
+
+;; http://www.emacswiki.org/emacs/MultiTerm
+
+(projectile-global-mode t)   ;; project mode, https://github.com/bbatsov/projectile
+;; 
+(setq projectile-enable-caching t)
+(setq projectile-completion-system 'grizzl)
+(setq projectile-completion-system 'grizzl)
+ ;; Press Command-p for fuzzy find in project
+(global-set-key (kbd "s-p") 'projectile-find-file)
+ ;; Press Command-b for fuzzy switch buffer
+(global-set-key (kbd "s-b") 'projectile-switch-to-buffer)
 
 (setq-default truncate-lines nil) ;; 自动折行
 (auto-compression-mode 1) ;; 打开压缩文件时自动解压缩
@@ -539,9 +617,6 @@ try-complete-lisp-symbol-partially
 (blink-cursor-mode -1) ;; 光标不要闪烁
 (show-paren-mode 1) ;; 高亮显示匹配的括号
 (icomplete-mode t)	 ;; 给出用 M-x foo-bar-COMMAND 输入命令的提示。
-(iswitchb-mode t)	 ;; buffer切换的时候有字符匹配
-(setq iswitchb-buffer-ignore '("^ " "*Completions*" "*Shell Command Output*"
-               "*Messages*" "Async Shell Command"))
 (defalias 'list-buffers 'ibuffer)
 ;; (menu-bar-mode -1)	 ;; 不要 menu-bar。
 ;;(autoload 'big5togb-region "big5togb" "Big5 to GB2312" t)
@@ -582,7 +657,6 @@ try-complete-lisp-symbol-partially
 (set-terminal-coding-system 'chinese-iso-8bit) ;; 终端显示的编码方式。
 (set-clipboard-coding-system 'chinese-iso-8bit) ;; 剪切板，用于和其他程序之间复制内容
 (set-clipboard-coding-system 'ctext) ;;解决firefox有时候复制文件有乱马
-(set-language-environment "UTF-8")
 
 (if (eq system-type 'darwin)
     (setq ispell-dictionary "english")
@@ -607,6 +681,8 @@ try-complete-lisp-symbol-partially
 ;;(load "desktop")
 ;;(desktop-load-default)
 ;;(desktop-read)
+
+(setq search_highlight t)
 
 ;; Ask question when C-x, C-c.
 (setq kill-emacs-query-functions
@@ -761,4 +837,32 @@ try-complete-lisp-symbol-partially
 ;;; A: use this command to profile:
 ;;;    emacs -Q -l ~/myconfigure/profile-dotemacs.el -f profile-dotemacs
 
+(defun package-install-refrash-package()
+  (require 'package)
+  (interactive)
+  (package-refresh-contents)
+  (package-install 'dash-at-point)
+  (package-install 'rinari)
+  (package-install 'yasnippet)
+  (package-install 'yasnippet-bundle)
+  (package-install 'web-mode)
+  (package-install 'js2-mode)
+  (package-install 'multi-term)
+  (package-install 'python-mode)
+  (package-install 'jedi)
+  (jedi:install-server)
+  (package-install 'highlight-indentation)
+  (package-install 'rvm)
+  (package-install 'grizzl)
+  (package-install 'projectile)
+  (package-install 'smartparens)
+  (package-install 'yaml-mode)
+  (package-install 'ag)
+  (package-install 'magit)
+  (package-install 'enh-ruby-mode)
+  (pacakge-install 'rinari)
+)
+
+  
+    
 
