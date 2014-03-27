@@ -13,3 +13,7 @@
 [submodule "enhanced-ruby-mode"]
 	path = enhanced-ruby-mode
 	url = https://github.com/zenspider/enhanced-ruby-mode.git
+[submodule "ergoemacs-mode"]
+	path = ergoemacs-mode
+	url = https://github.com/ergoemacs/ergoemacs-mode.git
+	branch = master

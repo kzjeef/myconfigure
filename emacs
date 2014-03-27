@@ -22,6 +22,7 @@
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/")
 (add-to-list 'load-path "~/.emacs.d/site-lisp/multiple-cursors/")
+
 (setq exec-path (append exec-path '("/usr/local/bin" "/opt/local/bin")))
 
 (setq load-path
@@ -34,7 +35,7 @@
 (when (>= emacs-major-version 24)
   (require 'package)
   (package-initialize)
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+  (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
 
@@ -77,6 +78,15 @@
 (ac-config-default))
 
 ;;  (safe-wrap (complete-func-init)) ;; disbale auto complete for better input speed.
+
+(defun ergoemacs-setup()
+  (setq ergoemacs-theme "lvl1")
+  (setq ergoemacs-keyboard-layout "us")
+  ;; (require 'ergoemacs-mode)
+  
+  ;(ergoemacs-mode 0)
+  ;(cua-mode nil)
+  )
 
 (defun elscreen-setup()
 ;;; The tabbar.
@@ -136,7 +146,6 @@
 
 (require 'flyspell)
 (flyspell-prog-mode)             ;; 会对程序中的注释做拼写检查
-(ac-flyspell-workaround)
                                         ;(hightlight-change-mode)	 ;; 会对做的修改做Hight light
 (which-func-mode t)	 ;; 在状态栏显示当前函数
 ;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
@@ -154,12 +163,16 @@
 
 (require 'ido)
 (require 'ibuffer)
+(setq ido-auto-merge-work-directories-length -1)
 (ido-mode t)                            ;Ido mode really good.
 ;; Hide & Show minor mode, usually good when looking big source file.
 ;(hs-minor-mode)
 ;;  (safe-wrap (flex-bison-init)) ; cause editor hang, remove it.
 
-;(electric-layout-mode) ;; good control of space line.
+                                        ;(electric-layout-mode) ;; good control of space line.
+
+
+(defconst my-speedbar-buffer-name "SPEEDBAR")
 
 (require 'yasnippet)
 (yas/global-mode 1)
@@ -172,8 +185,6 @@
   (sp-local-pair "<" ">")
   (sp-local-pair "<%" "%>"))
 (smartparens-global-mode t)
-
-
 )
 ;; end generic programming config.
 
@@ -254,6 +265,13 @@
 (global-rinari-mode)
 (add-hook 'rinari-minor-mode-hook
           (lambda () (setq dash-at-point-docset "rails")))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(enh-ruby-op-face ((t (:foreground "#d9045a")))))
+
 )
 
 (defun android-setup()
@@ -372,8 +390,8 @@ nil))
 ;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
 ;; need find-file to do this
 (add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
-(setq mac-option-key-is-meta t)
-(setq mac-right-option-modifier nil)
+;(setq mac-option-key-is-meta t)
+;(setq mac-right-option-modifier nil)
 (setq exec-path (append exec-path '("/opt/local/bin")) )
 (setenv "LC_CTYPE" "UTF-8")
 
@@ -385,9 +403,9 @@ nil))
 ;(set-face-attribute 'default nil
 ;		:family "Monaco" :height 130 :weight 'normal)
 
-;; Use command key as the meta key, it's save many time on switch from mac and linux...
-(setq mac-option-modifier 'super)
-(setq mac-command-modifier 'meta)
+;; Change control and meta key under mac, make less pain...
+(setq mac-command-modifier 'control)
+(setq mac-control-modifier 'meta)
 t
 )) nil)
 
@@ -418,6 +436,7 @@ t
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@interface" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
 
+(safe-wrap (ergoemacs-setup))
 (safe-wrap (dash-setup))
 (safe-wrap (term-init))
 (safe-wrap (cscope-setup))
@@ -445,11 +464,25 @@ t
 (global-set-key [f10] 'toggle-night-color-theme)
 (global-set-key [f12] 'org-todo-list)
 (global-set-key [\M-f12] 'org-todo-list) ;; mac use
-(global-set-key "\M-`" 'other-frame)
 
 (global-set-key (kbd "C-z")  'undo)  ;; undo by C-z
 (global-set-key (kbd "M-s")  'occur)
-(global-set-key (kbd "C-c C-j")  [?\C-x ?b return]) ;; Switch back to pervious windows.
+(global-set-key (kbd "C-9")  'other-window)
+(global-set-key (kbd "C-0")  'delete-window)
+(global-set-key (kbd "C--")  'split-window-below)
+(global-set-key (kbd "C-=")  'split-window-right)
+
+(global-set-key (kbd "C-h") 'forward-char)
+(global-set-key (kbd "C-j") 'previous-line)
+(global-set-key (kbd "C-k") 'next-line)
+(global-set-key (kbd "C-l") 'backward-char)
+(global-set-key (kbd "M-SPC") 'set-mark-command)
+(global-set-key (kbd "M-a") 'execute-extended-command)
+(global-set-key (kbd "C-`") 'other-window)
+(global-set-key (kbd "M-`") 'other-window)
+
+
+(global-set-key (kbd "c-c c-j")  [?\c-x ?b return]) ;; Switch back to pervious windows.
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
 (global-set-key (kbd "S-C-<down>") 'shrink-window)
@@ -602,7 +635,7 @@ try-complete-lisp-symbol-partially
 
 (projectile-global-mode t)   ;; project mode, https://github.com/bbatsov/projectile
 ;; 
-(setq projectile-enable-caching t)
+(setq projectile-enable-caching nil)
 (setq projectile-completion-system 'grizzl)
 (setq projectile-completion-system 'grizzl)
  ;; Press Command-p for fuzzy find in project
@@ -861,8 +894,6 @@ try-complete-lisp-symbol-partially
   (package-install 'magit)
   (package-install 'enh-ruby-mode)
   (pacakge-install 'rinari)
+  (package-install 'ergoemacs-mode)
+
 )
-
-  
-    
-
