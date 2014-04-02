@@ -161,10 +161,6 @@
 ;; ffap-kpathsea-expand-path 展开路径的深度
 ;; (setq ffap-kpathsea-depth 5)
 
-(require 'ido)
-(require 'ibuffer)
-(setq ido-auto-merge-work-directories-length -1)
-(ido-mode t)                            ;Ido mode really good.
 ;; Hide & Show minor mode, usually good when looking big source file.
 ;(hs-minor-mode)
 ;;  (safe-wrap (flex-bison-init)) ; cause editor hang, remove it.
@@ -174,17 +170,7 @@
 
 (defconst my-speedbar-buffer-name "SPEEDBAR")
 
-(require 'yasnippet)
-(yas/global-mode 1)
 
-(require 'smartparens-config)
-(require 'smartparens-ruby)
-(smartparens-global-mode)
-(show-smartparens-global-mode t)
-(sp-with-modes '(rhtml-mode)
-  (sp-local-pair "<" ">")
-  (sp-local-pair "<%" "%>"))
-(smartparens-global-mode t)
 )
 ;; end generic programming config.
 
@@ -201,18 +187,12 @@
   (before theme-dont-propagate activate)
   (mapcar #'disable-theme custom-enabled-themes))
 
-(defun toggle-night-color-theme-24()
+(defun toggle-night-color-theme()
   (interactive)
   (if (eq (car custom-enabled-themes) 'wombat)
       (disable-theme 'wombat) ;; after diable theme, will use default theme.
     (load-theme 'wombat)
     ))
-
-(defun toggle-night-color-theme()
-  (interactive)
-      (toggle-night-color-theme-24))
-
-
 
 (defun config-in-tty-mode ()
 ;; don't load color in tty mode.
@@ -222,7 +202,8 @@
 (defun load-python-env()
   (add-hook 'python-mode-hook (function cscope:hook))
   (add-hook 'python-mode-hook
-	    (lambda()
+            (lambda()
+              (setq dash-at-point-docset "django")
           (jedi:setup) ;; JEDI document: http://tkf.github.io/emacs-jedi/latest/#jedi:key-complete
           (setq jedi:complete-on-dot t)
           (highlight-indentation-current-column-mode)
@@ -245,7 +226,7 @@
 ;;  (setq enh-ruby-program "(path-to-ruby1.9)/bin/ruby") ; so that still works if ruby points to ruby1.8
 
 ;; Enhanced Ruby Mode defines its own specific faces with the hook erm-define-faces. If your theme is already defining those faces, to not overwrite them, just remove the hook with:
-;;(remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
+  ;;(remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
 (add-hook 'enh-ruby-mode-hook
            (lambda () (highlight-indentation-current-column-mode)))
 
@@ -263,6 +244,8 @@
 (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
 (require 'rinari)
 (global-rinari-mode)
+(add-hook 'enh-ruby-mode-hook
+          (lambda () (flyspell-prog-mode)))
 (add-hook 'rinari-minor-mode-hook
           (lambda () (setq dash-at-point-docset "rails")))
 (custom-set-faces
@@ -310,9 +293,6 @@
 (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-
-(add-hook 'enh-ruby-mode-hook
-          (lambda () (flyspell-prog-mode)))
 
 (add-hook 'web-mode-hook
           (lambda () (flyspell-prog-mode)))
@@ -390,7 +370,7 @@ nil))
 ;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
 ;; need find-file to do this
 (add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
-;(setq mac-option-key-is-meta t)
+(setq mac-option-key-is-meta t)
 ;(setq mac-right-option-modifier nil)
 (setq exec-path (append exec-path '("/opt/local/bin")) )
 (setenv "LC_CTYPE" "UTF-8")
@@ -404,10 +384,23 @@ nil))
 ;		:family "Monaco" :height 130 :weight 'normal)
 
 ;; Change control and meta key under mac, make less pain...
-(setq mac-command-modifier 'control)
-(setq mac-control-modifier 'meta)
+(setq mac-command-modifier 'meta)
+(setq mac-control-modifier 'control)
 t
 )) nil)
+
+(defun toggle-control-position ()
+  "toggle the control position bewteen alt or contorl under mac."
+  (if (eq mac-command-modifier 'meta) ((lambda()
+					 (setq mac-command-modifier 'control)
+					 (setq mac-control-modifier 'meta)
+					 (setq mac-option-modifier 'control)
+					 (setq mac-option-key-is-meta t)))
+    ((lambda()
+       (setq mac-command-modifier 'meta)
+       (setq mac-control-modifier 'control)
+       (setq mac-option-key-is-meta t))))
+)
 
 (require 'find-file) ;; for the "cc-other-file-alist" variable
 (nconc (cadr (assoc "\\.h\\'" cc-other-file-alist)) '(".m" ".mm"))
@@ -436,6 +429,9 @@ t
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@interface" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
 
+(require 'yasnippet)
+(yas/global-mode 1)
+
 (safe-wrap (ergoemacs-setup))
 (safe-wrap (dash-setup))
 (safe-wrap (term-init))
@@ -443,7 +439,7 @@ t
 (safe-wrap (hightlight-80+-setup))
 (safe-wrap (git-setup))
 (safe-wrap (load-python-env))
-(safe-wrap (load-ruby-env))
+;(safe-wrap (load-ruby-env))
 (safe-wrap (load-web-env))
 ;;(safe-wrap (elscreen-setup))
 (safe-wrap (fic-mode-setup))
@@ -465,24 +461,28 @@ t
 (global-set-key [f12] 'org-todo-list)
 (global-set-key [\M-f12] 'org-todo-list) ;; mac use
 
+(global-set-key[\M-f9] 'toggle-night-color-theme)
+
+(global-set-key [\M-f11] 'toggle-control-position)
+
 (global-set-key (kbd "C-z")  'undo)  ;; undo by C-z
+(global-set-key (kbd "M-z")  'undo)  ;; undo by C-z
 (global-set-key (kbd "M-s")  'occur)
 (global-set-key (kbd "C-9")  'other-window)
 (global-set-key (kbd "C-0")  'delete-window)
 (global-set-key (kbd "C--")  'split-window-below)
 (global-set-key (kbd "C-=")  'split-window-right)
 
-(global-set-key (kbd "C-h") 'forward-char)
-(global-set-key (kbd "C-j") 'previous-line)
-(global-set-key (kbd "C-k") 'next-line)
-(global-set-key (kbd "C-l") 'backward-char)
+;(global-set-key (kbd "C-l") 'forward-char)
+;(global-set-key (kbd "C-k") 'previous-line)
+(global-set-key (kbd "C-j") 'next-line)
+(global-set-key (kbd "C-h") 'backward-char)
 (global-set-key (kbd "M-SPC") 'set-mark-command)
-(global-set-key (kbd "M-a") 'execute-extended-command)
 (global-set-key (kbd "C-`") 'other-window)
 (global-set-key (kbd "M-`") 'other-window)
 
 
-(global-set-key (kbd "c-c c-j")  [?\c-x ?b return]) ;; Switch back to pervious windows.
+;(global-set-key (kbd "c-c c-j")  [?\c-x ?b return]) ;; Switch back to pervious windows.
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
 (global-set-key (kbd "S-C-<down>") 'shrink-window)
@@ -512,6 +512,14 @@ try-complete-lisp-symbol
 try-complete-lisp-symbol-partially
 ;;	try-expand-whole-kill
 ))
+
+(require 'smartparens-config)
+(require 'smartparens-ruby)
+(smartparens-global-mode)
+(show-smartparens-global-mode)
+(sp-with-modes '(rhtml-mode)
+  (sp-local-pair "<" ">")
+  (sp-local-pair "<%" "%>"))
 
 ;; for object-c.
 (add-hook 'objc-mode-hook
@@ -642,6 +650,12 @@ try-complete-lisp-symbol-partially
 (global-set-key (kbd "s-p") 'projectile-find-file)
  ;; Press Command-b for fuzzy switch buffer
 (global-set-key (kbd "s-b") 'projectile-switch-to-buffer)
+
+(require 'ido)
+(require 'ibuffer)
+;(setq ido-auto-merge-work-directories-length -1)
+(ido-mode)                             ;Ido mode really good.
+
 
 (setq-default truncate-lines nil) ;; 自动折行
 (auto-compression-mode 1) ;; 打开压缩文件时自动解压缩
@@ -897,3 +911,5 @@ try-complete-lisp-symbol-partially
   (package-install 'ergoemacs-mode)
 
 )
+
+
