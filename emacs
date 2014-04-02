@@ -226,28 +226,35 @@
 ;;  (setq enh-ruby-program "(path-to-ruby1.9)/bin/ruby") ; so that still works if ruby points to ruby1.8
 
 ;; Enhanced Ruby Mode defines its own specific faces with the hook erm-define-faces. If your theme is already defining those faces, to not overwrite them, just remove the hook with:
-  ;;(remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
-(add-hook 'enh-ruby-mode-hook
-           (lambda () (highlight-indentation-current-column-mode)))
-
- (add-hook 'coffee-mode-hook
-           (lambda () (highlight-indentation-current-column-mode)))
-(rvm-use-default)
-(add-hook 'ruby-mode-hook 'projectile-on)
-(require 'highlight-indentation)
+  (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
+(add-hook 'ruby-mode-hook
+	  (lambda () (highlight-indentation-current-column-mode)))
 (add-hook 'enh-ruby-mode-hook
           (lambda () (highlight-indentation-current-column-mode)))
-
+(add-hook 'ruby-mode-hook 'projectile-on)
+(add-hook 'coffee-mode-hook
+           (lambda () (highlight-indentation-current-column-mode)))
+(rvm-use-default)
 (add-hook 'coffee-mode-hook
           (lambda () (highlight-indentation-current-column-mode)))
 (add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
 (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
+
 (require 'rinari)
 (global-rinari-mode)
-(add-hook 'enh-ruby-mode-hook
-          (lambda () (flyspell-prog-mode)))
+
+(add-hook 'ruby-mode-hook
+	  (lambda () (flymake-ruby-load))
+	  )
+;(add-hook 'enh-ruby-mode-hook
+;          (lambda () (flyspell-prog-mode)))
+
 (add-hook 'rinari-minor-mode-hook
           (lambda () (setq dash-at-point-docset "rails")))
+
+(setq enh-ruby-check-syntax nil)
+
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -906,9 +913,10 @@ try-complete-lisp-symbol-partially
   (package-install 'yaml-mode)
   (package-install 'ag)
   (package-install 'magit)
-  (package-install 'enh-ruby-mode)
+;  (package-install 'enh-ruby-mode) ; this package will disable yasnnipe, no need.
   (pacakge-install 'rinari)
   (package-install 'ergoemacs-mode)
+  (package-install 'flymake-ruby)
 
 )
 
