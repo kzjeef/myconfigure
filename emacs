@@ -1,3 +1,4 @@
+
 ;;-*- mode: emacs-lisp -*-
 ;; .emacs
 ;;; uncomment this line to disable loading of "default.el" at startup
@@ -37,7 +38,8 @@
   (package-initialize)
   (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+                         ("melpa" . "http://melpa.milkbox.net/packages/")
+			   ))
 
 )
 
@@ -87,6 +89,12 @@
   ;(ergoemacs-mode 0)
   ;(cua-mode nil)
   )
+
+(defun yas-setup()
+(require 'yasnippet)
+(yas/global-mode 1)
+(setq yas/window-system-popup-function 'yas/x-popup-menu-for-template)
+(yas/load-directory  "~/.emacs.d/site-lisp/rails-snippets/"))
 
 (defun elscreen-setup()
 ;;; The tabbar.
@@ -200,6 +208,11 @@
 )
 
 (defun load-python-env()
+  (require 'python-mode)
+  (setq auto-mode-alist (cons '("\\.py$" . python-mode) auto-mode-alist))
+ (setq interpreter-mode-alist (cons '("python" . python-mode) interpreter-mode-alist))
+ (autoload 'python-mode "python-mode" "Python editing mode." t)
+
   (add-hook 'python-mode-hook (function cscope:hook))
   (add-hook 'python-mode-hook
             (lambda()
@@ -221,7 +234,13 @@
 ;;   (add-to-list 'auto-mode-alist
 ;;               '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . enh-ruby-mode))
 ;;  (add-to-list 'auto-mode-alist
-;;               '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . enh-ruby-mode))
+  ;;               '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . enh-ruby-mode))
+
+   (add-to-list 'auto-mode-alist
+               '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . ruby-mode))
+  (add-to-list 'auto-mode-alist
+               '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . ruby-mode))
+  
 ;; optional
 ;;  (setq enh-ruby-program "(path-to-ruby1.9)/bin/ruby") ; so that still works if ruby points to ruby1.8
 
@@ -237,20 +256,20 @@
 (rvm-use-default)
 (add-hook 'coffee-mode-hook
           (lambda () (highlight-indentation-current-column-mode)))
-(add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
+					;(add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
 (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
 
 (require 'rinari)
 (global-rinari-mode)
+
+(add-hook 'ruby-mode-hook(lambda() (setq dash-at-point-docset "rails")))
 
 (add-hook 'ruby-mode-hook
 	  (lambda () (flymake-ruby-load))
 	  )
 ;(add-hook 'enh-ruby-mode-hook
 ;          (lambda () (flyspell-prog-mode)))
-
-(add-hook 'rinari-minor-mode-hook
-          (lambda () (setq dash-at-point-docset "rails")))
 
 (setq enh-ruby-check-syntax nil)
 
@@ -277,6 +296,16 @@
 
 (defun load-web-env()
   (autoload 'js2-mode "js2-mode" nil t)
+
+  (eval-after-load 'js2-mode
+  '(progn
+     (define-key js2-mode-map (kbd "TAB") (lambda()
+                                            (interactive)
+                                            (let ((yas/fallback-behavior 'return-nil))
+                                              (unless (yas/expand)
+                                                (indent-for-tab-command)
+                                                (if (looking-back "^\s*")
+                                                    (back-to-indentation))))))))
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   (add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
   (add-hook 'js2-mode-hook (lambda()
@@ -382,13 +411,13 @@ nil))
 (setq exec-path (append exec-path '("/opt/local/bin")) )
 (setenv "LC_CTYPE" "UTF-8")
 
-(set-face-attribute 'default nil
-		:family "Inconsolata" :height 160 :weight 'normal)
+;(set-face-attribute 'default nil
+;		:family "Inconsolata" :height 165 :weight 'normal)
 
 ;(set-face-attribute 'default nil
 ;		:family "Ubuntu mono" :height 160 :weight 'normal)
-;(set-face-attribute 'default nil
-;		:family "Monaco" :height 130 :weight 'normal)
+(set-face-attribute 'default nil
+		:family "Monaco" :height 145 :weight 'normal)
 
 ;; Change control and meta key under mac, make less pain...
 (setq mac-command-modifier 'meta)
@@ -436,8 +465,9 @@ t
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@interface" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
 
-(require 'yasnippet)
-(yas/global-mode 1)
+
+
+(safe-wrap (yas-setup))
 
 (safe-wrap (ergoemacs-setup))
 (safe-wrap (dash-setup))
@@ -446,7 +476,7 @@ t
 (safe-wrap (hightlight-80+-setup))
 (safe-wrap (git-setup))
 (safe-wrap (load-python-env))
-;(safe-wrap (load-ruby-env))
+(safe-wrap (load-ruby-env))
 (safe-wrap (load-web-env))
 ;;(safe-wrap (elscreen-setup))
 (safe-wrap (fic-mode-setup))
@@ -831,6 +861,15 @@ try-complete-lisp-symbol-partially
 '(setq mumamo-per-buffer-local-vars
 (delq 'buffer-file-name mumamo-per-buffer-local-vars))))
 
+(when (boundp 'aquamacs-version)
+ (global-set-key [M-left] 'tabbar-backward-tab)
+ (global-set-key [M-right] 'tabbar-forward-tab)
+ (one-buffer-one-frame-mode 0)
+; (aquamacs-autoface-mode nil)
+(set-face-attribute 'default nil :height 145)
+;; scale the font, default scale is too large.
+)
+
 
 ;; 开启服务器模式
 ;(Server-force-delete)
@@ -902,8 +941,9 @@ try-complete-lisp-symbol-partially
   (package-install 'web-mode)
   (package-install 'js2-mode)
   (package-install 'multi-term)
-  (package-install 'python-mode)
+;  (package-install 'python-mode)
   (package-install 'jedi)
+  (package-install '2048-game)
   (jedi:install-server)
   (package-install 'highlight-indentation)
   (package-install 'rvm)
@@ -914,10 +954,9 @@ try-complete-lisp-symbol-partially
   (package-install 'ag)
   (package-install 'magit)
 ;  (package-install 'enh-ruby-mode) ; this package will disable yasnnipe, no need.
-  (pacakge-install 'rinari)
-  (package-install 'ergoemacs-mode)
+  (package-install 'rinari)
   (package-install 'flymake-ruby)
-
+;  (package-install 'ergoemacs-mode)
 )
 
 

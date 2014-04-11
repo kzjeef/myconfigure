@@ -63,8 +63,7 @@ install highlight-80+.el ${TARGET_DIR}
 
 (cp multi-term.el ${TARGET_DIR})
 
+(cp -r yas-rails ${TARGET_DIR})
 
 # finally need to recompile all files under install dir.
 emacs --batch --eval '(byte-recompile-directory "~/.emacs.d/site-lisp/")'
-
-
