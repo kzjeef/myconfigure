@@ -1,5 +1,4 @@
-
-;;-*- mode: emacs-lisp -*-
+;; -*- mode: emacs-lisp -*-
 ;; .emacs
 ;;; uncomment this line to disable loading of "default.el" at startup
 ;; (setq inhibit-default-init t)
@@ -217,7 +216,9 @@
   (add-hook 'python-mode-hook
             (lambda()
               (setq dash-at-point-docset "django")
-          (jedi:setup) ;; JEDI document: http://tkf.github.io/emacs-jedi/latest/#jedi:key-complete
+          ;; JEDI document: http://tkf.github.io/emacs-jedi/latest/#jedi:key-complete
+              (when (not (is-aquamacs)) (jedi:setup))
+              ;; jedi have a bug will not running in acquamcs.
           (setq jedi:complete-on-dot t)
           (highlight-indentation-current-column-mode)
           ;; also can complete by C-TAB
@@ -238,7 +239,7 @@
 
    (add-to-list 'auto-mode-alist
                '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . ruby-mode))
-  (add-to-list 'auto-mode-alist
+y  (add-to-list 'auto-mode-alist
                '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . ruby-mode))
   
 ;; optional
@@ -273,6 +274,25 @@
 
 (setq enh-ruby-check-syntax nil)
 
+(setq ruby-use-encoding-map nil)
+(add-hook 'ruby-mode-hook
+               (lambda ()
+                 (define-key ruby-mode-map "\C-c#" 'comment-or-uncomment-region)
+                 ))
+(define-key ruby-mode-map (kbd "RET") 'reindent-then-newline-and-indent)
+(defun flymake-ruby-init ()
+  (let* ((temp-file   (flymake-init-create-temp-buffer-copy
+                       'flymake-create-temp-inplace))
+         (local-file  (file-relative-name
+                       temp-file
+                       (file-name-directory buffer-file-name))))
+    (list "ruby" (list "-c" local-file))))
+
+(push '(".+\\.rb$" flymake-ruby-init) flymake-allowed-file-name-masks)
+(push '("Rakefile$" flymake-ruby-init) flymake-allowed-file-name-masks)
+(push '("Gemfile$" flymake-ruby-init) flymake-allowed-file-name-masks)
+(push '("^\\(.*\\):\\([0-9]+\\): \\(.*\\)$" 1 2 nil 3) flymake-err-line-patterns)
+(add-hook 'ruby-mode-hook 'hs-minor-mode)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -280,6 +300,16 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(enh-ruby-op-face ((t (:foreground "#d9045a")))))
+
+(add-hook 'speedbar-mode-hook
+          (lambda()
+            (speedbar-add-supported-extension "\\.rb")
+            (speedbar-add-supported-extension "\\.ru")
+            (speedbar-add-supported-extension "\\.erb")
+            (speedbar-add-supported-extension "\\.rjs")
+            (speedbar-add-supported-extension "\\.rhtml")
+            (speedbar-add-supported-extension "\\.rake")))
+
 
 )
 
@@ -310,7 +340,7 @@
   (add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
   (add-hook 'js2-mode-hook (lambda()
 				     (custom-set-variables
-				      '(js2-basic-offset 8)
+				      '(js2-basic-offset 2)
 				      '(js2-bounce-indent-p nil)
 				      )))
   ;; Css mode indent
@@ -494,7 +524,8 @@ t
 (global-set-key [f7] 'grep-find)
 (global-set-key [f8] 'compile)
 (global-set-key [f9] 'gdb)
-(global-set-key [f10] 'toggle-night-color-theme)
+(global-set-key [f10] 'sr-speedbar-toggle)
+(global-set-key [\M-f10] 'sr-speedbar-toggle)
 (global-set-key [f12] 'org-todo-list)
 (global-set-key [\M-f12] 'org-todo-list) ;; mac use
 
@@ -550,6 +581,11 @@ try-complete-lisp-symbol-partially
 ;;	try-expand-whole-kill
 ))
 
+(setq speedbar-use-images nil)  ;; don't use image in  speedbar.
+(make-face 'speedbar-face)
+(set-face-font 'speedbar-face "Inconsolata-15")
+(setq speedbar-mode-hook '(lambda () (buffer-face-set 'speedbar-face)))
+
 (require 'smartparens-config)
 (require 'smartparens-ruby)
 (smartparens-global-mode)
@@ -564,13 +600,13 @@ try-complete-lisp-symbol-partially
 ;;          (message "objc modeb hook start")
             (setq cscope-do-not-update-database nil)
             (load-c-relate-lib)
-            (turn-on-auto-revert-mode) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
+            (when (not (is-aquamacs)) (turn-on-auto-revert-mode))
             (setq indent-tabs-mode nil)
 ;;          (flymode-init)
-            (setq c-basic-offset 2
-                  tab-width 2
-                  indent-tabs-mode nil)
             (c-set-style "cc-mode")
+            (setq c-basic-offset 4
+                  tab-width 4
+                  indent-tabs-mode nil)
 
 ;;	    (highlight-80+-mode)
 ;;	    (setq highlight-80+-columns 200) ;; hight light 100+ colums
@@ -645,7 +681,7 @@ try-complete-lisp-symbol-partially
 (add-hook 'java-mode-hook
 (lambda ()
 ;   (message "with java mode hook")
-   (turn-on-auto-revert-mode) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
+   (when (not (is-aquamacs)) (turn-on-auto-revert-mode)) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
    (load-java-relate-lib)))
 
 (remove-hook 'find-file-hooks 'vc-find-file-hook)
@@ -848,7 +884,7 @@ try-complete-lisp-symbol-partially
                                                        (thing-at-point 'symbol))))
                                            (or (and thing (progn
                                                             (set-text-properties 0 (length thing) nil thing)
-                                                            (shell-quote-argument (regexp-quote thing))))
+                                                            (shell-qeuote-argument (regexp-quote thing))))
                                                "")))
                                  'git-grep-history))))
     (let ((grep-use-null-device nil))
@@ -861,10 +897,19 @@ try-complete-lisp-symbol-partially
 '(setq mumamo-per-buffer-local-vars
 (delq 'buffer-file-name mumamo-per-buffer-local-vars))))
 
+(defun is-aquamacs()
+(if (boundp 'aquamacs-version)
+    t
+  nil))
+
 (when (boundp 'aquamacs-version)
  (global-set-key [M-left] 'tabbar-backward-tab)
  (global-set-key [M-right] 'tabbar-forward-tab)
  (one-buffer-one-frame-mode 0)
+ (tabbar-mode 0)
+(add-hook 'after-init-hook (lambda () (set-cursor-color "#aa88dd")) 'append)
+(smartparens-global-mode 0) ;; aquamacs some how have issue with this mode, will not able to type Cap char.
+(setq-default cursor-type 'box)
 ; (aquamacs-autoface-mode nil)
 (set-face-attribute 'default nil :height 145)
 ;; scale the font, default scale is too large.
@@ -956,7 +1001,15 @@ try-complete-lisp-symbol-partially
 ;  (package-install 'enh-ruby-mode) ; this package will disable yasnnipe, no need.
   (package-install 'rinari)
   (package-install 'flymake-ruby)
+  (package-install 'sr-speedbar)
 ;  (package-install 'ergoemacs-mode)
-)
+  )
 
-
+;; fix sr-speedbar 24.4 function miss error
+(defun ad-advised-definition-p (definition) 
+"Return non-nil if DEFINITION was generated from advice information." 
+(if (or (ad-lambda-p definition) 
+        (macrop definition) (ad-compiled-p definition)) 
+    (let ((docstring (ad-docstring definition)))
+      (and (stringp docstring)
+           (get-text-property 0 ‘dynamic-docstring-function docstring)))))
