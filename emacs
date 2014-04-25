@@ -1,4 +1,4 @@
-;;-*- mode: emacs-lisp -*-
+;; -*- mode: emacs-lisp -*-
 ;; .emacs
 ;;; uncomment this line to disable loading of "default.el" at startup
 ;; (setq inhibit-default-init t)
@@ -37,7 +37,8 @@
   (package-initialize)
   (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+                         ("melpa" . "http://melpa.milkbox.net/packages/")
+			   ))
 
 )
 
@@ -87,6 +88,12 @@
   ;(ergoemacs-mode 0)
   ;(cua-mode nil)
   )
+
+(defun yas-setup()
+(require 'yasnippet)
+(yas/global-mode 1)
+(setq yas/window-system-popup-function 'yas/x-popup-menu-for-template)
+(yas/load-directory  "~/.emacs.d/site-lisp/rails-snippets/"))
 
 (defun elscreen-setup()
 ;;; The tabbar.
@@ -161,10 +168,6 @@
 ;; ffap-kpathsea-expand-path 展开路径的深度
 ;; (setq ffap-kpathsea-depth 5)
 
-(require 'ido)
-(require 'ibuffer)
-(setq ido-auto-merge-work-directories-length -1)
-(ido-mode t)                            ;Ido mode really good.
 ;; Hide & Show minor mode, usually good when looking big source file.
 ;(hs-minor-mode)
 ;;  (safe-wrap (flex-bison-init)) ; cause editor hang, remove it.
@@ -174,17 +177,7 @@
 
 (defconst my-speedbar-buffer-name "SPEEDBAR")
 
-(require 'yasnippet)
-(yas/global-mode 1)
 
-(require 'smartparens-config)
-(require 'smartparens-ruby)
-(smartparens-global-mode)
-(show-smartparens-global-mode t)
-(sp-with-modes '(rhtml-mode)
-  (sp-local-pair "<" ">")
-  (sp-local-pair "<%" "%>"))
-(smartparens-global-mode t)
 )
 ;; end generic programming config.
 
@@ -201,18 +194,12 @@
   (before theme-dont-propagate activate)
   (mapcar #'disable-theme custom-enabled-themes))
 
-(defun toggle-night-color-theme-24()
+(defun toggle-night-color-theme()
   (interactive)
   (if (eq (car custom-enabled-themes) 'wombat)
       (disable-theme 'wombat) ;; after diable theme, will use default theme.
     (load-theme 'wombat)
     ))
-
-(defun toggle-night-color-theme()
-  (interactive)
-      (toggle-night-color-theme-24))
-
-
 
 (defun config-in-tty-mode ()
 ;; don't load color in tty mode.
@@ -220,10 +207,18 @@
 )
 
 (defun load-python-env()
+  (require 'python-mode)
+  (setq auto-mode-alist (cons '("\\.py$" . python-mode) auto-mode-alist))
+ (setq interpreter-mode-alist (cons '("python" . python-mode) interpreter-mode-alist))
+ (autoload 'python-mode "python-mode" "Python editing mode." t)
+
   (add-hook 'python-mode-hook (function cscope:hook))
   (add-hook 'python-mode-hook
-	    (lambda()
-          (jedi:setup) ;; JEDI document: http://tkf.github.io/emacs-jedi/latest/#jedi:key-complete
+            (lambda()
+              (setq dash-at-point-docset "django")
+          ;; JEDI document: http://tkf.github.io/emacs-jedi/latest/#jedi:key-complete
+              (when (not (is-aquamacs)) (jedi:setup))
+              ;; jedi have a bug will not running in acquamcs.
           (setq jedi:complete-on-dot t)
           (highlight-indentation-current-column-mode)
           ;; also can complete by C-TAB
@@ -240,37 +235,81 @@
 ;;   (add-to-list 'auto-mode-alist
 ;;               '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . enh-ruby-mode))
 ;;  (add-to-list 'auto-mode-alist
-;;               '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . enh-ruby-mode))
+  ;;               '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . enh-ruby-mode))
+
+   (add-to-list 'auto-mode-alist
+               '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . ruby-mode))
+y  (add-to-list 'auto-mode-alist
+               '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . ruby-mode))
+  
 ;; optional
 ;;  (setq enh-ruby-program "(path-to-ruby1.9)/bin/ruby") ; so that still works if ruby points to ruby1.8
 
 ;; Enhanced Ruby Mode defines its own specific faces with the hook erm-define-faces. If your theme is already defining those faces, to not overwrite them, just remove the hook with:
-;;(remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
+  (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
+(add-hook 'ruby-mode-hook
+	  (lambda () (highlight-indentation-current-column-mode)))
 (add-hook 'enh-ruby-mode-hook
-           (lambda () (highlight-indentation-current-column-mode)))
-
- (add-hook 'coffee-mode-hook
+          (lambda () (highlight-indentation-current-column-mode)))
+(add-hook 'ruby-mode-hook 'projectile-on)
+(add-hook 'coffee-mode-hook
            (lambda () (highlight-indentation-current-column-mode)))
 (rvm-use-default)
-(add-hook 'ruby-mode-hook 'projectile-on)
-(require 'highlight-indentation)
-(add-hook 'enh-ruby-mode-hook
-          (lambda () (highlight-indentation-current-column-mode)))
-
 (add-hook 'coffee-mode-hook
           (lambda () (highlight-indentation-current-column-mode)))
-(add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
+					;(add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
 (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
+
 (require 'rinari)
 (global-rinari-mode)
-(add-hook 'rinari-minor-mode-hook
-          (lambda () (setq dash-at-point-docset "rails")))
+
+(add-hook 'ruby-mode-hook(lambda() (setq dash-at-point-docset "rails")))
+
+(add-hook 'ruby-mode-hook
+	  (lambda () (flymake-ruby-load))
+	  )
+;(add-hook 'enh-ruby-mode-hook
+;          (lambda () (flyspell-prog-mode)))
+
+(setq enh-ruby-check-syntax nil)
+
+(setq ruby-use-encoding-map nil)
+(add-hook 'ruby-mode-hook
+               (lambda ()
+                 (define-key ruby-mode-map "\C-c#" 'comment-or-uncomment-region)
+                 ))
+(define-key ruby-mode-map (kbd "RET") 'reindent-then-newline-and-indent)
+(defun flymake-ruby-init ()
+  (let* ((temp-file   (flymake-init-create-temp-buffer-copy
+                       'flymake-create-temp-inplace))
+         (local-file  (file-relative-name
+                       temp-file
+                       (file-name-directory buffer-file-name))))
+    (list "ruby" (list "-c" local-file))))
+
+(push '(".+\\.rb$" flymake-ruby-init) flymake-allowed-file-name-masks)
+(push '("Rakefile$" flymake-ruby-init) flymake-allowed-file-name-masks)
+(push '("Gemfile$" flymake-ruby-init) flymake-allowed-file-name-masks)
+(push '("^\\(.*\\):\\([0-9]+\\): \\(.*\\)$" 1 2 nil 3) flymake-err-line-patterns)
+(add-hook 'ruby-mode-hook 'hs-minor-mode)
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(enh-ruby-op-face ((t (:foreground "#d9045a")))))
+
+(add-hook 'speedbar-mode-hook
+          (lambda()
+            (speedbar-add-supported-extension "\\.rb")
+            (speedbar-add-supported-extension "\\.ru")
+            (speedbar-add-supported-extension "\\.erb")
+            (speedbar-add-supported-extension "\\.rjs")
+            (speedbar-add-supported-extension "\\.rhtml")
+            (speedbar-add-supported-extension "\\.rake")))
+
 
 )
 
@@ -287,11 +326,21 @@
 
 (defun load-web-env()
   (autoload 'js2-mode "js2-mode" nil t)
+
+  (eval-after-load 'js2-mode
+  '(progn
+     (define-key js2-mode-map (kbd "TAB") (lambda()
+                                            (interactive)
+                                            (let ((yas/fallback-behavior 'return-nil))
+                                              (unless (yas/expand)
+                                                (indent-for-tab-command)
+                                                (if (looking-back "^\s*")
+                                                    (back-to-indentation))))))))
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   (add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
   (add-hook 'js2-mode-hook (lambda()
 				     (custom-set-variables
-				      '(js2-basic-offset 8)
+				      '(js2-basic-offset 2)
 				      '(js2-bounce-indent-p nil)
 				      )))
   ;; Css mode indent
@@ -310,9 +359,6 @@
 (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-
-(add-hook 'enh-ruby-mode-hook
-          (lambda () (flyspell-prog-mode)))
 
 (add-hook 'web-mode-hook
           (lambda () (flyspell-prog-mode)))
@@ -390,24 +436,37 @@ nil))
 ;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
 ;; need find-file to do this
 (add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
-;(setq mac-option-key-is-meta t)
+(setq mac-option-key-is-meta t)
 ;(setq mac-right-option-modifier nil)
 (setq exec-path (append exec-path '("/opt/local/bin")) )
 (setenv "LC_CTYPE" "UTF-8")
 
-(set-face-attribute 'default nil
-		:family "Inconsolata" :height 160 :weight 'normal)
+;(set-face-attribute 'default nil
+;		:family "Inconsolata" :height 165 :weight 'normal)
 
 ;(set-face-attribute 'default nil
 ;		:family "Ubuntu mono" :height 160 :weight 'normal)
-;(set-face-attribute 'default nil
-;		:family "Monaco" :height 130 :weight 'normal)
+(set-face-attribute 'default nil
+		:family "Monaco" :height 145 :weight 'normal)
 
 ;; Change control and meta key under mac, make less pain...
-(setq mac-command-modifier 'control)
-(setq mac-control-modifier 'meta)
+(setq mac-command-modifier 'meta)
+(setq mac-control-modifier 'control)
 t
 )) nil)
+
+(defun toggle-control-position ()
+  "toggle the control position bewteen alt or contorl under mac."
+  (if (eq mac-command-modifier 'meta) ((lambda()
+					 (setq mac-command-modifier 'control)
+					 (setq mac-control-modifier 'meta)
+					 (setq mac-option-modifier 'control)
+					 (setq mac-option-key-is-meta t)))
+    ((lambda()
+       (setq mac-command-modifier 'meta)
+       (setq mac-control-modifier 'control)
+       (setq mac-option-key-is-meta t))))
+)
 
 (require 'find-file) ;; for the "cc-other-file-alist" variable
 (nconc (cadr (assoc "\\.h\\'" cc-other-file-alist)) '(".m" ".mm"))
@@ -436,6 +495,10 @@ t
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@interface" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
 
+
+
+(safe-wrap (yas-setup))
+
 (safe-wrap (ergoemacs-setup))
 (safe-wrap (dash-setup))
 (safe-wrap (term-init))
@@ -461,11 +524,17 @@ t
 (global-set-key [f7] 'grep-find)
 (global-set-key [f8] 'compile)
 (global-set-key [f9] 'gdb)
-(global-set-key [f10] 'toggle-night-color-theme)
+(global-set-key [f10] 'sr-speedbar-toggle)
+(global-set-key [\M-f10] 'sr-speedbar-toggle)
 (global-set-key [f12] 'org-todo-list)
 (global-set-key [\M-f12] 'org-todo-list) ;; mac use
 
+(global-set-key[\M-f9] 'toggle-night-color-theme)
+
+(global-set-key [\M-f11] 'toggle-control-position)
+
 (global-set-key (kbd "C-z")  'undo)  ;; undo by C-z
+(global-set-key (kbd "M-z")  'undo)  ;; undo by C-z
 (global-set-key (kbd "M-s")  'occur)
 (global-set-key (kbd "C-9")  'other-window)
 (global-set-key (kbd "C-0")  'delete-window)
@@ -476,8 +545,11 @@ t
 (global-set-key (kbd "C-j") 'previous-line)
 ;(global-set-key (kbd "C-k") 'next-line)
 ;(global-set-key (kbd "C-l") 'backward-char)
+;(global-set-key (kbd "C-l") 'forward-char)
+;(global-set-key (kbd "C-k") 'previous-line)
+(global-set-key (kbd "C-j") 'next-line)
+(global-set-key (kbd "C-h") 'backward-char)
 (global-set-key (kbd "M-SPC") 'set-mark-command)
-(global-set-key (kbd "M-a") 'execute-extended-command)
 (global-set-key (kbd "C-`") 'other-window)
 (global-set-key (kbd "M-`") 'other-window)
 
@@ -513,19 +585,32 @@ try-complete-lisp-symbol-partially
 ;;	try-expand-whole-kill
 ))
 
+(setq speedbar-use-images nil)  ;; don't use image in  speedbar.
+(make-face 'speedbar-face)
+(set-face-font 'speedbar-face "Inconsolata-15")
+(setq speedbar-mode-hook '(lambda () (buffer-face-set 'speedbar-face)))
+
+(require 'smartparens-config)
+(require 'smartparens-ruby)
+(smartparens-global-mode)
+(show-smartparens-global-mode)
+(sp-with-modes '(rhtml-mode)
+  (sp-local-pair "<" ">")
+  (sp-local-pair "<%" "%>"))
+
 ;; for object-c.
 (add-hook 'objc-mode-hook
           (lambda ()
 ;;          (message "objc modeb hook start")
             (setq cscope-do-not-update-database nil)
             (load-c-relate-lib)
-            (turn-on-auto-revert-mode) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
+            (when (not (is-aquamacs)) (turn-on-auto-revert-mode))
             (setq indent-tabs-mode nil)
 ;;          (flymode-init)
-            (setq c-basic-offset 2
-                  tab-width 2
-                  indent-tabs-mode nil)
             (c-set-style "cc-mode")
+            (setq c-basic-offset 4
+                  tab-width 4
+                  indent-tabs-mode nil)
 
 ;;	    (highlight-80+-mode)
 ;;	    (setq highlight-80+-columns 200) ;; hight light 100+ colums
@@ -600,7 +685,7 @@ try-complete-lisp-symbol-partially
 (add-hook 'java-mode-hook
 (lambda ()
 ;   (message "with java mode hook")
-   (turn-on-auto-revert-mode) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
+   (when (not (is-aquamacs)) (turn-on-auto-revert-mode)) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
    (load-java-relate-lib)))
 
 (remove-hook 'find-file-hooks 'vc-find-file-hook)
@@ -642,6 +727,12 @@ try-complete-lisp-symbol-partially
 (global-set-key (kbd "s-p") 'projectile-find-file)
  ;; Press Command-b for fuzzy switch buffer
 (global-set-key (kbd "s-b") 'projectile-switch-to-buffer)
+
+(require 'ido)
+(require 'ibuffer)
+;(setq ido-auto-merge-work-directories-length -1)
+(ido-mode)                             ;Ido mode really good.
+
 
 (setq-default truncate-lines nil) ;; 自动折行
 (auto-compression-mode 1) ;; 打开压缩文件时自动解压缩
@@ -797,7 +888,7 @@ try-complete-lisp-symbol-partially
                                                        (thing-at-point 'symbol))))
                                            (or (and thing (progn
                                                             (set-text-properties 0 (length thing) nil thing)
-                                                            (shell-quote-argument (regexp-quote thing))))
+                                                            (shell-qeuote-argument (regexp-quote thing))))
                                                "")))
                                  'git-grep-history))))
     (let ((grep-use-null-device nil))
@@ -809,6 +900,24 @@ try-complete-lisp-symbol-partially
 (eval-after-load "mumamo"
 '(setq mumamo-per-buffer-local-vars
 (delq 'buffer-file-name mumamo-per-buffer-local-vars))))
+
+(defun is-aquamacs()
+(if (boundp 'aquamacs-version)
+    t
+  nil))
+
+(when (boundp 'aquamacs-version)
+ (global-set-key [M-left] 'tabbar-backward-tab)
+ (global-set-key [M-right] 'tabbar-forward-tab)
+ (one-buffer-one-frame-mode 0)
+ (tabbar-mode 0)
+(add-hook 'after-init-hook (lambda () (set-cursor-color "#aa88dd")) 'append)
+(smartparens-global-mode 0) ;; aquamacs some how have issue with this mode, will not able to type Cap char.
+(setq-default cursor-type 'box)
+; (aquamacs-autoface-mode nil)
+(set-face-attribute 'default nil :height 145)
+;; scale the font, default scale is too large.
+)
 
 
 ;; 开启服务器模式
@@ -881,8 +990,9 @@ try-complete-lisp-symbol-partially
   (package-install 'web-mode)
   (package-install 'js2-mode)
   (package-install 'multi-term)
-  (package-install 'python-mode)
+;  (package-install 'python-mode)
   (package-install 'jedi)
+  (package-install '2048-game)
   (jedi:install-server)
   (package-install 'highlight-indentation)
   (package-install 'rvm)
@@ -892,8 +1002,18 @@ try-complete-lisp-symbol-partially
   (package-install 'yaml-mode)
   (package-install 'ag)
   (package-install 'magit)
-  (package-install 'enh-ruby-mode)
+;  (package-install 'enh-ruby-mode) ; this package will disable yasnnipe, no need.
   (package-install 'rinari)
-  (package-install 'ergoemacs-mode)
+  (package-install 'flymake-ruby)
+  (package-install 'sr-speedbar)
+;  (package-install 'ergoemacs-mode)
+  )
 
-)
+;; fix sr-speedbar 24.4 function miss error
+(defun ad-advised-definition-p (definition) 
+"Return non-nil if DEFINITION was generated from advice information." 
+(if (or (ad-lambda-p definition) 
+        (macrop definition) (ad-compiled-p definition)) 
+    (let ((docstring (ad-docstring definition)))
+      (and (stringp docstring)
+           (get-text-property 0 ‘dynamic-docstring-function docstring)))))

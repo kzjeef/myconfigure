@@ -17,3 +17,9 @@
 	path = ergoemacs-mode
 	url = https://github.com/ergoemacs/ergoemacs-mode.git
 	branch = master
+[submodule "yasnippet-ruby-mode"]
+	path = yasnippet-ruby-mode
+	url = git@github.com:bmaland/yasnippet-ruby-mode.git
+[submodule "yas-rails"]
+	path = yas-rails
+	url = git://github.com/eschulte/yasnippets-rails.git
