@@ -474,15 +474,15 @@ t
 
 (global-set-key (kbd "C-h") 'forward-char)
 (global-set-key (kbd "C-j") 'previous-line)
-(global-set-key (kbd "C-k") 'next-line)
-(global-set-key (kbd "C-l") 'backward-char)
+;(global-set-key (kbd "C-k") 'next-line)
+;(global-set-key (kbd "C-l") 'backward-char)
 (global-set-key (kbd "M-SPC") 'set-mark-command)
 (global-set-key (kbd "M-a") 'execute-extended-command)
 (global-set-key (kbd "C-`") 'other-window)
 (global-set-key (kbd "M-`") 'other-window)
 
 
-(global-set-key (kbd "c-c c-j")  [?\c-x ?b return]) ;; Switch back to pervious windows.
+;(global-set-key (kbd "c-c c-j")  [?\c-x ?b return]) ;; Switch back to pervious windows.
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
 (global-set-key (kbd "S-C-<down>") 'shrink-window)
@@ -893,7 +893,7 @@ try-complete-lisp-symbol-partially
   (package-install 'ag)
   (package-install 'magit)
   (package-install 'enh-ruby-mode)
-  (pacakge-install 'rinari)
+  (package-install 'rinari)
   (package-install 'ergoemacs-mode)
 
 )
