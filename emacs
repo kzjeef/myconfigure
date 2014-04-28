@@ -541,14 +541,20 @@ t
 (global-set-key (kbd "C--")  'split-window-below)
 (global-set-key (kbd "C-=")  'split-window-right)
 
-(global-set-key (kbd "C-h") 'forward-char)
 (global-set-key (kbd "C-j") 'previous-line)
+
+
+(global-set-key (kbd "M-b") 'backward-char)
+(global-set-key (kbd "M-f") 'forward-char)
+(global-set-key (kbd "M-p") 'previous-line)
+(global-set-key (kbd "M-n") 'next-line)
+(global-set-key (kbd "M-e") 'move-end-of-line)
+
 ;(global-set-key (kbd "C-k") 'next-line)
 ;(global-set-key (kbd "C-l") 'backward-char)
 ;(global-set-key (kbd "C-l") 'forward-char)
 ;(global-set-key (kbd "C-k") 'previous-line)
 (global-set-key (kbd "C-j") 'next-line)
-(global-set-key (kbd "C-h") 'backward-char)
 (global-set-key (kbd "M-SPC") 'set-mark-command)
 (global-set-key (kbd "C-`") 'other-window)
 (global-set-key (kbd "M-`") 'other-window)
