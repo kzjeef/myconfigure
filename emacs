@@ -268,6 +268,7 @@ y  (add-to-list 'auto-mode-alist
 
 (add-hook 'ruby-mode-hook
 	  (lambda () (flymake-ruby-load))
+	  (rspec-mode)
 	  )
 ;(add-hook 'enh-ruby-mode-hook
 ;          (lambda () (flyspell-prog-mode)))
@@ -310,6 +311,26 @@ y  (add-to-list 'auto-mode-alist
             (speedbar-add-supported-extension "\\.rhtml")
             (speedbar-add-supported-extension "\\.rake")))
 
+;;;;;;;;;;;;;;;;;; RSpec mode help.  ;;;;;;;;;;;;;;;;;;;;;
+;; Rspec will use ~/.bash_env, so setup the ruby env there.
+;; From: http://procrastiblog.com/2007/07/09/changing-your-path-in-emacs-compilation-mode/
+;; toggle back and forth between a spec and it’s target (bound to \C-c ,t)
+
+;; verify the spec file associated with the current buffer (bound to \C-c ,v)
+
+;; verify the spec defined in the current buffer if it is a spec file (bound to \C-c ,v)
+
+;; verify the example defined at the point of the current buffer (bound to \C-c ,s)
+
+;; re-run the last verification process (bound to \C-c ,r)
+
+;; toggle the pendingness of the example at the point (bound to \C-c ,d)
+
+;; disable the example at the point by making it pending
+
+;; reenable the disabled example at the point
+
+;; run “spec” rake task for project (bound to \C-c ,a)
 
 )
 
@@ -447,7 +468,7 @@ nil))
 ;(set-face-attribute 'default nil
 ;		:family "Ubuntu mono" :height 160 :weight 'normal)
 (set-face-attribute 'default nil
-		:family "Monaco" :height 145 :weight 'normal)
+		:family "Monaco" :height 140 :weight 'normal)
 
 ;; Change control and meta key under mac, make less pain...
 (setq mac-command-modifier 'meta)
@@ -738,8 +759,6 @@ try-complete-lisp-symbol-partially
 (require 'ibuffer)
 ;(setq ido-auto-merge-work-directories-length -1)
 (ido-mode)                             ;Ido mode really good.
-
-
 (setq-default truncate-lines nil) ;; 自动折行
 (auto-compression-mode 1) ;; 打开压缩文件时自动解压缩
 (auto-image-file-mode)	 ;; 自动打开图片模式
@@ -925,6 +944,14 @@ try-complete-lisp-symbol-partially
 ;; scale the font, default scale is too large.
 )
 
+;; Hack to setup the compile enviroment.
+(let ((path (shell-command-to-string ". ~/.bash_env; echo -n $PATH")))
+  (setenv "PATH" path)
+  (setq exec-path 
+        (append
+         (split-string-and-unquote path ":")
+         exec-path)))
+
 
 ;; 开启服务器模式
 ;(Server-force-delete)
@@ -1012,6 +1039,11 @@ try-complete-lisp-symbol-partially
   (package-install 'rinari)
   (package-install 'flymake-ruby)
   (package-install 'sr-speedbar)
+;  (package-install 'emacs-rails-reloaded)
+  (package-install 'rspec-mode)
+;  (package-install 'exec-path-from-shell)
+  
+  
 ;  (package-install 'ergoemacs-mode)
   )
 

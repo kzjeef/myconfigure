@@ -14,6 +14,9 @@ git submodule init
 git submodule update
 git submodule sync
 
+
+ln -s  `pwd`/bash_env ~/.bash_env
+
 mkdir -p ${TARGET_DIR}
 
 if [[ "$platform" == 'mac' ]]; then
