@@ -239,7 +239,7 @@
 
    (add-to-list 'auto-mode-alist
                '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . ruby-mode))
-y  (add-to-list 'auto-mode-alist
+  (add-to-list 'auto-mode-alist
                '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . ruby-mode))
   
 ;; optional
@@ -262,33 +262,14 @@ y  (add-to-list 'auto-mode-alist
 (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
 
 (require 'rinari)
-(global-rinari-mode)
-
 (add-hook 'ruby-mode-hook(lambda() (setq dash-at-point-docset "rails")))
-
 (add-hook 'ruby-mode-hook
 	  (lambda () (flymake-ruby-load))
 	  (rspec-mode)
+	  (global-rinari-mode)
 	  )
 ;(add-hook 'enh-ruby-mode-hook
-;          (lambda () (flyspell-prog-mode)))
-
-(setq enh-ruby-check-syntax nil)
-
-(setq ruby-use-encoding-map nil)
-(add-hook 'ruby-mode-hook
-               (lambda ()
-                 (define-key ruby-mode-map "\C-c#" 'comment-or-uncomment-region)
-                 ))
-(define-key ruby-mode-map (kbd "RET") 'reindent-then-newline-and-indent)
-(defun flymake-ruby-init ()
-  (let* ((temp-file   (flymake-init-create-temp-buffer-copy
-                       'flymake-create-temp-inplace))
-         (local-file  (file-relative-name
-                       temp-file
-                       (file-name-directory buffer-file-name))))
-    (list "ruby" (list "-c" local-file))))
-
+(require 'flymake)
 (push '(".+\\.rb$" flymake-ruby-init) flymake-allowed-file-name-masks)
 (push '("Rakefile$" flymake-ruby-init) flymake-allowed-file-name-masks)
 (push '("Gemfile$" flymake-ruby-init) flymake-allowed-file-name-masks)
@@ -333,6 +314,8 @@ y  (add-to-list 'auto-mode-alist
 ;; run “spec” rake task for project (bound to \C-c ,a)
 
 )
+
+(load-ruby-env)
 
 (defun android-setup()
 
@@ -945,12 +928,15 @@ try-complete-lisp-symbol-partially
 )
 
 ;; Hack to setup the compile enviroment.
-(let ((path (shell-command-to-string ". ~/.bash_env; echo -n $PATH")))
-  (setenv "PATH" path)
-  (setq exec-path 
-        (append
-         (split-string-and-unquote path ":")
-         exec-path)))
+;(let ((path (shell-command-to-string ". ~/.bash_env; echo -n $PATH")))
+;  (setenv "PATH" path)
+;  (setq exec-path 
+;        (append
+;         (split-string-and-unquote path ":")
+;         exec-path)))
+
+;(setq shell-file-name "bash")
+;(setq shell-command-switch "--rcfile ~/.bash_env -c")
 
 
 ;; 开启服务器模式
@@ -1036,15 +1022,21 @@ try-complete-lisp-symbol-partially
   (package-install 'ag)
   (package-install 'magit)
 ;  (package-install 'enh-ruby-mode) ; this package will disable yasnnipe, no need.
-  (package-install 'rinari)
+  (package-install 'flymake)
   (package-install 'flymake-ruby)
   (package-install 'sr-speedbar)
 ;  (package-install 'emacs-rails-reloaded)
   (package-install 'rspec-mode)
-;  (package-install 'exec-path-from-shell)
+  (package-install 'yari)
+  (package-install 'exec-path-from-shell)
+  
   
   
 ;  (package-install 'ergoemacs-mode)
+  )
+
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize)
   )
 
 ;; fix sr-speedbar 24.4 function miss error
