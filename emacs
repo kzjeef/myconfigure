@@ -193,7 +193,7 @@
 ;; end generic programming config.
 
 (defun color-init()
-  (load-theme 'zenburn)
+  (load-theme 'zenburn t)
 ;  (load-theme 'wombat)
   )
 
@@ -208,9 +208,8 @@
 
 (defun toggle-night-color-theme()
   (interactive)
-  (setq night-theme-name 'zenburn)
   (if (eq (car custom-enabled-themes) 'zenburn)
-      (disable-theme (night-theme-name) ;; after diable theme, will use default theme.
+      (disable-theme 'zenburn) ;; after diable theme, will use default theme.
 ;    (load-theme 'wombat)
 ;    (load-theme 'zenburn)
     ))
@@ -275,7 +274,6 @@
 (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
 (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
 
-(require 'rails-speedbar-feature)
 (require 'rinari)
 (add-hook 'ruby-mode-hook(lambda() (setq dash-at-point-docset "rails")))
 (add-hook 'ruby-mode-hook
@@ -695,7 +693,7 @@ try-complete-lisp-symbol-partially
                  ;; or like this: (string-match (expand-file-name "~/src/linux-trees")
                  (c-set-style "linux-tabs-only")
                  ;; for kernel, hightlight 80 chars more line.
-                 (highlight-80+-mode)
+;;                 (highlight-80+-mode)
                  ))))
 
 (add-hook 'c++-mode-hook
@@ -1078,4 +1076,4 @@ try-complete-lisp-symbol-partially
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(enh-ruby-op-face ((t (:foreground "#d9045a")))))
+ '(enh-ruby-op-face ((t (:foreground "#d9045a"))) t))
