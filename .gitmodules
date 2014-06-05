@@ -23,3 +23,6 @@
 [submodule "yas-rails"]
 	path = yas-rails
 	url = git://github.com/eschulte/yasnippets-rails.git
+[submodule "emacs-rails"]
+	path = emacs-rails
+	url = git://github.com/remvee/emacs-rails.git

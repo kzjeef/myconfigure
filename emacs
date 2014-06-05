@@ -91,9 +91,20 @@
 
 (defun yas-setup()
 (require 'yasnippet)
-(yas/global-mode 1)
 (setq yas/window-system-popup-function 'yas/x-popup-menu-for-template)
-(yas/load-directory  "~/.emacs.d/site-lisp/rails-snippets/"))
+;(setq yas-snippet-dirs
+;      '("~/.emacs.d/snippets"                 ;; personal snippets
+;	"~/.emacs.d/site-lisp/rails-snippets/"
+;        ))
+
+(setq yas-snippet-dirs (append yas-snippet-dirs
+			       
+                               '("~/.emacs.d/site-lisp/rails-snippets/"
+				 "~/.emacs.d/snippets"
+				 )))
+(yas/global-mode 1)
+)
+
 
 (defun elscreen-setup()
 ;;; The tabbar.
@@ -182,6 +193,7 @@
 ;; end generic programming config.
 
 (defun color-init()
+  (load-theme 'zenburn)
 ;  (load-theme 'wombat)
   )
 
@@ -196,9 +208,11 @@
 
 (defun toggle-night-color-theme()
   (interactive)
-  (if (eq (car custom-enabled-themes) 'wombat)
-      (disable-theme 'wombat) ;; after diable theme, will use default theme.
-    (load-theme 'wombat)
+  (setq night-theme-name 'zenburn)
+  (if (eq (car custom-enabled-themes) 'zenburn)
+      (disable-theme (night-theme-name) ;; after diable theme, will use default theme.
+;    (load-theme 'wombat)
+;    (load-theme 'zenburn)
     ))
 
 (defun config-in-tty-mode ()
@@ -261,6 +275,7 @@
 (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
 (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
 
+(require 'rails-speedbar-feature)
 (require 'rinari)
 (add-hook 'ruby-mode-hook(lambda() (setq dash-at-point-docset "rails")))
 (add-hook 'ruby-mode-hook
@@ -925,6 +940,16 @@ try-complete-lisp-symbol-partially
 ; (aquamacs-autoface-mode nil)
 (set-face-attribute 'default nil :height 145)
 ;; scale the font, default scale is too large.
+
+;; fix sr-speedbar 24.4 function miss error
+(defun ad-advised-definition-p (definition) 
+"Return non-nil if DEFINITION was generated from advice information." 
+(if (or (ad-lambda-p definition) 
+        (macrop definition) (ad-compiled-p definition)) 
+    (let ((docstring (ad-docstring definition)))
+      (and (stringp docstring)
+           (get-text-property 0 ‘dynamic-docstring-function docstring)))))
+
 )
 
 ;; Hack to setup the compile enviroment.
@@ -1029,6 +1054,7 @@ try-complete-lisp-symbol-partially
   (package-install 'rspec-mode)
   (package-install 'yari)
   (package-install 'exec-path-from-shell)
+  (package-install 'zenburn-theme)
   
   
   
@@ -1039,11 +1065,17 @@ try-complete-lisp-symbol-partially
   (exec-path-from-shell-initialize)
   )
 
-;; fix sr-speedbar 24.4 function miss error
-(defun ad-advised-definition-p (definition) 
-"Return non-nil if DEFINITION was generated from advice information." 
-(if (or (ad-lambda-p definition) 
-        (macrop definition) (ad-compiled-p definition)) 
-    (let ((docstring (ad-docstring definition)))
-      (and (stringp docstring)
-           (get-text-property 0 ‘dynamic-docstring-function docstring)))))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes (quote ("5ceb2e85215142caad4c2abc1061c0bade80348c4eb323934a909e36f864d5bc" default)))
+ '(gud-gdb-command-name "gdb --annotate=1")
+ '(large-file-warning-threshold nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(enh-ruby-op-face ((t (:foreground "#d9045a")))))
