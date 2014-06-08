@@ -26,3 +26,6 @@
 [submodule "emacs-rails"]
 	path = emacs-rails
 	url = git://github.com/remvee/emacs-rails.git
+[submodule "ecb"]
+	path = ecb
+	url = https://github.com/emacsmirror/ecb.git

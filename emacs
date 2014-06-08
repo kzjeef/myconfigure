@@ -22,6 +22,8 @@
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/")
 (add-to-list 'load-path "~/.emacs.d/site-lisp/multiple-cursors/")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/ecb/")
+
 
 (setq exec-path (append exec-path '("/usr/local/bin" "/opt/local/bin")))
 
@@ -44,7 +46,7 @@
 
 ;当前窗口和非当前窗口时透明度 
 (setq alpha-list '((95 89) (100 100))) 
-(defun loop-alpha () 
+(defun looping-alpha () 
 (interactive) 
 (let ((h (car alpha-list))) 
 ((lambda (a ab) 
@@ -52,10 +54,6 @@
 (add-to-list 'default-frame-alist (cons 'alpha (list a ab)))) 
 (car h) (car (cdr h))) 
 (setq alpha-list (cdr (append alpha-list (list h)))))) 
-;启动窗口时时自动开启窗口半透明效果 
-(loop-alpha)
-
-
 
 ;(defun multi-cursors-init()
 ;  (require 'multiple-cursors)
@@ -63,6 +61,22 @@
 ;  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 ;  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 ;  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
+
+(defun ecb-init()
+  (require 'ecb)
+  (setq ecb-tip-of-the-day nil))
+
+(setq ecb-is-active nil)
+(defun ecb-toggle(&optional f)
+  (interactive)
+  (if ecb-is-active
+      ((lambda ()
+	      (ecb-deactivate)
+	      (setq ecb-is-active nil)))
+    (ecb-activate)
+    (setq ecb-is-active t)
+)
+)
 
 (defun flex-bison-init()
   (autoload 'flex-mode "flex-mode" nil t)
@@ -192,27 +206,41 @@
 )
 ;; end generic programming config.
 
-(defun color-init()
-  (load-theme 'zenburn t)
-;  (load-theme 'wombat)
-  )
 
 (defun term-init()
   (require 'multi-term)
   (setq multi-term-program "/bin/bash"))
+
+;;; Theme setting part... Really important.
 
 ;; Auto disable theme setup before...
 (defadvice load-theme
   (before theme-dont-propagate activate)
   (mapcar #'disable-theme custom-enabled-themes))
 
-(defun toggle-night-color-theme()
+(defun reset-theme-list() 
+  (setq all-themes '(tango-dark wombat zenburn adwaita))
+  (setq valid-themes all-themes)
+  )
+
+(defun color-init()
+(reset-theme-list)
+(looping-select-theme)
+)
+
+(defun looping-select-theme()
   (interactive)
-  (if (eq (car custom-enabled-themes) 'zenburn)
-      (disable-theme 'zenburn) ;; after diable theme, will use default theme.
-;    (load-theme 'wombat)
-;    (load-theme 'zenburn)
-    ))
+  (if valid-themes
+      ((lambda()
+	(setq current-theme (car valid-themes))
+	(setq valid-themes (cdr valid-themes))
+	(load-theme current-theme t)
+	(message "Current Theme is: %s" current-theme)
+	))
+    (reset-theme-list)
+    (disable-theme current-theme)
+    )
+  )
 
 (defun config-in-tty-mode ()
 ;; don't load color in tty mode.
@@ -515,7 +543,7 @@ t
 
 
 (safe-wrap (yas-setup))
-
+(safe-wrap (ecb-init))
 (safe-wrap (ergoemacs-setup))
 (safe-wrap (dash-setup))
 (safe-wrap (term-init))
@@ -539,16 +567,21 @@ t
 (global-set-key [f5] 'revert-buffer)
 (global-set-key [f6] 'ff-find-related-file) ;; Find header file.
 (global-set-key [f7] 'grep-find)
-(global-set-key [f8] 'compile)
+(global-set-key [f8] 'ecb-toggle)
+(global-set-key [\M-f8] 'compile)
 (global-set-key [f9] 'gdb)
 (global-set-key [f10] 'sr-speedbar-toggle)
 (global-set-key [\M-f10] 'sr-speedbar-toggle)
 (global-set-key [f12] 'org-todo-list)
 (global-set-key [\M-f12] 'org-todo-list) ;; mac use
 
-(global-set-key[\M-f9] 'toggle-night-color-theme)
+(global-set-key[\M-f9] 'looping-select-theme)
 
 (global-set-key [\M-f11] 'toggle-control-position)
+
+(global-set-key [\M-f11] 'toggle-control-position)
+
+(global-set-key [\C-\M-f9] 'looping-alpha)
 
 (global-set-key (kbd "C-z")  'undo)  ;; undo by C-z
 (global-set-key (kbd "M-z")  'undo)  ;; undo by C-z
@@ -755,6 +788,7 @@ try-complete-lisp-symbol-partially
 (require 'ibuffer)
 ;(setq ido-auto-merge-work-directories-length -1)
 (ido-mode)                             ;Ido mode really good.
+(setq ido-save-directory-list-file "~/.emacs.d/ido.last")
 (setq-default truncate-lines nil) ;; 自动折行
 (auto-compression-mode 1) ;; 打开压缩文件时自动解压缩
 (auto-image-file-mode)	 ;; 自动打开图片模式
@@ -1054,8 +1088,6 @@ try-complete-lisp-symbol-partially
   (package-install 'exec-path-from-shell)
   (package-install 'zenburn-theme)
   
-  
-  
 ;  (package-install 'ergoemacs-mode)
   )
 
@@ -1069,6 +1101,8 @@ try-complete-lisp-symbol-partially
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes (quote ("5ceb2e85215142caad4c2abc1061c0bade80348c4eb323934a909e36f864d5bc" default)))
+ '(ecb-layout-window-sizes (quote (("right1" (ecb-directories-buffer-name 0.18143459915611815 . 0.2857142857142857) (ecb-sources-buffer-name 0.18143459915611815 . 0.3392857142857143) (ecb-methods-buffer-name 0.18143459915611815 . 0.35714285714285715)) ("left8" (ecb-directories-buffer-name 0.19831223628691982 . 0.2857142857142857) (ecb-sources-buffer-name 0.19831223628691982 . 0.23214285714285715) (ecb-methods-buffer-name 0.19831223628691982 . 0.2857142857142857) (ecb-history-buffer-name 0.19831223628691982 . 0.17857142857142858)))))
+ '(ecb-options-version "2.40")
  '(gud-gdb-command-name "gdb --annotate=1")
  '(large-file-warning-threshold nil))
 (custom-set-faces
