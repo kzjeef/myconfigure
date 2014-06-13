@@ -4,6 +4,18 @@
 ;; (setq inhibit-default-init t)
 ;; Time-stamp:
 
+;;________________________________________________________________
+;;    Determine where we are
+;;________________________________________________________________
+
+(defvar system-type-as-string (prin1-to-string system-type))
+
+(defvar on_windows_nt (string-match "windows-nt" system-type-as-string))
+(defvar on_darwin     (string-match "darwin" system-type-as-string))
+(defvar on_gnu_linux  (string-match "gnu/linux" system-type-as-string))
+(defvar on_cygwin     (string-match "cygwin" system-type-as-string))
+(defvar on_solaris    (string-match "usg-unix-v" system-type-as-string))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;	 编程相关的配置
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -62,21 +74,33 @@
 ;  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 ;  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
-(defun ecb-init()
-  (require 'ecb)
-  (setq ecb-tip-of-the-day nil))
+;;________________________________________________________________
+;;    Avoid vertical splits
+;;________________________________________________________________
+;; If a window is wider than split-width-threshold, Emacs will split a
+;; window horizontally (C-x 3) when one compiles. Since my preferred
+;; default is to truncate-lines, it means that I have to scroll
+;; horizontally to read the error messages. Change the variable to
+;; something half of which makes it possible to read compilation
+;; messages.
 
-(setq ecb-is-active nil)
+(setq split-width-threshold 240)
+
+(defun ecb-init()
+(setq ecb-tip-of-the-day nil)
+(setq ecb-is-active nil))
+
 (defun ecb-toggle(&optional f)
-  (interactive)
+(interactive)
   (if ecb-is-active
       ((lambda ()
 	      (ecb-deactivate)
 	      (setq ecb-is-active nil)))
+    (require 'ecb)
     (ecb-activate)
+    (ecb-layout-switch "right1")
     (setq ecb-is-active t)
-)
-)
+))
 
 (defun flex-bison-init()
   (autoload 'flex-mode "flex-mode" nil t)
@@ -476,8 +500,7 @@ nil))
 
 
 ;; Config for Mac
-(if (eq system-type 'darwin)
-((lambda ()
+(cond (on_darwin
 ;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
 ;; need find-file to do this
 (add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
@@ -498,7 +521,7 @@ nil))
 (setq mac-command-modifier 'meta)
 (setq mac-control-modifier 'control)
 t
-)) nil)
+))
 
 (defun toggle-control-position ()
   "toggle the control position bewteen alt or contorl under mac."
@@ -746,9 +769,37 @@ try-complete-lisp-symbol-partially
 
 (remove-hook 'find-file-hooks 'vc-find-file-hook)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;-------------------------------------------------------------------------------- 
 ;;	 日常的配置
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;--------------------------------------------------------------------------------
+
+;; The following key-binding iconifies a window -- we disable it:
+(global-unset-key "\C-x\C-z")
+
+;; C-x C-n invokes set-goal-column; disable it.
+(global-unset-key "\C-x\C-n")
+
+;; We use C-c C-z to invoke a shell inside emacs.
+;; The benefits of running a shell from emacs (rather than in an xterm) are:
+;;   - It is possible to cycle through the previous commands
+;;     and edit them using the usual emacs commands
+;;   - One completely avoids using the mouse
+;;   - The commands are fontified, which makes it easy to identify, for example,
+;;     the command line options.
+;;   - There is no upper bound on the output size: Everything is saved.
+;;     This of course requires caution, but has the benefit of allowing
+;;     the usual search commands in the shell window.
+(global-set-key "\C-c\C-z" 'eshell)
+
+;; prevent down-arrow from adding empty lines to the bottom of the buffer
+;; (which is the default behaviour)
+(setq next-line-add-newlines nil)
+
+;; Highlight the marked region.
+(setq-default transient-mark-mode t)
+
+;; We set a key-binding for this often-used command:
+(global-set-key "\M-C" 'compile)
 
 (setq mail-signature "Jiejing")
 
@@ -918,6 +969,7 @@ try-complete-lisp-symbol-partially
 
   ;; Uncomment this to try out the built-in-to-Emacs function.
   ;;(defalias 'git-grep 'vc-git-grep)
+  
 
   (defun git-grep (command-args)
     (interactive
@@ -943,7 +995,7 @@ try-complete-lisp-symbol-partially
                                                        (thing-at-point 'symbol))))
                                            (or (and thing (progn
                                                             (set-text-properties 0 (length thing) nil thing)
-                                                            (shell-qeuote-argument (regexp-quote thing))))
+                                                            (shell-quote-argument (regexp-quote thing))))
                                                "")))
                                  'git-grep-history))))
     (let ((grep-use-null-device nil))
@@ -1094,6 +1146,138 @@ try-complete-lisp-symbol-partially
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize)
   )
+
+
+;;________________________________________________________________
+;;    Scrolling
+;;________________________________________________________________
+
+;; We also map scroll wheel and trackpad events to scrolling.
+;; The mouse wheel on windows generates few events.
+;; Scroll by 3 unless shifted.
+
+(defun up-slow () (interactive) (scroll-up 1))
+(defun down-slow () (interactive) (scroll-down 1))
+
+(defun up-semi-slow () (interactive) (scroll-up 2))
+(defun down-semi-slow () (interactive) (scroll-down 2))
+
+(defun up-medium () (interactive) (scroll-up 3))
+(defun down-medium () (interactive) (scroll-down 3))
+
+(cond (on_windows_nt
+       ;; xemacs won't like the following:
+       (global-set-key [mouse-4] 'down-medium)
+       (global-set-key [mouse-5] 'up-medium)
+
+       (global-set-key [S-mouse-4] 'down-slow)
+       (global-set-key [S-mouse-5] 'up-slow)
+))
+
+;; The trackpad on Mac OSX generates too many events.
+;; Scroll by 1 unless shifted.
+(cond (on_darwin
+       (global-set-key [mouse-4] 'down-slow)
+       (global-set-key [mouse-5] 'up-slow)
+
+       (global-set-key [S-mouse-4] 'down-medium)
+       (global-set-key [S-mouse-5] 'up-medium)
+))
+
+(cond (on_gnu_linux
+       (global-set-key [mouse-4] 'down-medium)
+       (global-set-key [mouse-5] 'up-medium)
+;;    Scrolling
+;;________________________________________________________________
+
+;; We also map scroll wheel and trackpad events to scrolling.
+;; The mouse wheel on windows generates few events.
+;; Scroll by 3 unless shifted.
+
+(defun up-slow () (interactive) (scroll-up 1))
+(defun down-slow () (interactive) (scroll-down 1))
+
+(defun up-semi-slow () (interactive) (scroll-up 2))
+(defun down-semi-slow () (interactive) (scroll-down 2))
+
+(defun up-medium () (interactive) (scroll-up 3))
+(defun down-medium () (interactive) (scroll-down 3))
+
+(cond (on_windows_nt
+       ;; xemacs won't like the following:
+       (global-set-key [mouse-4] 'down-medium)
+       (global-set-key [mouse-5] 'up-medium)
+
+       (global-set-key [S-mouse-4] 'down-slow)
+       (global-set-key [S-mouse-5] 'up-slow)
+))
+
+;; The trackpad on Mac OSX generates too many events.
+;; Scroll by 1 unless shifted.
+(cond (on_darwin
+       (global-set-key [mouse-4] 'down-slow)
+       (global-set-key [mouse-5] 'up-slow)
+
+       (global-set-key [S-mouse-4] 'down-medium)
+       (global-set-key [S-mouse-5] 'up-medium)
+))
+
+(cond (on_gnu_linux
+       (global-set-key [mouse-4] 'down-medium)
+       (global-set-key [mouse-5] 'up-medium)
+
+       (global-set-key [S-mouse-4] 'down-slow)
+       (global-set-key [S-mouse-5] 'up-slow)
+))
+
+(defun up-fast () (interactive) (scroll-up 8))
+(defun down-fast () (interactive) (scroll-down 8))
+(global-set-key [C-mouse-4] 'down-fast)
+(global-set-key [C-mouse-5] 'up-fast)
+       (global-set-key [S-mouse-4] 'down-slow)
+       (global-set-key [S-mouse-5] 'up-slow)
+))
+
+(defun up-fast () (interactive) (scroll-up 8))
+(defun down-fast () (interactive) (scroll-down 8))
+(global-set-key [C-mouse-4] 'down-fast)
+(global-set-key [C-mouse-5] 'up-fast)
+
+;; Ordinarily emacs jumps by half a page when scrolling -- reduce:
+(setq scroll-step 1)
+
+;; The default value is 5, which is too fast on a MacBook or a trackpad; reduce:
+(cond (on_darwin
+       (mouse-wheel-mode 1)
+       (setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
+       (setq mouse-wheel-progressive-speed 'f)
+))
+
+;; And finally, the most useful addition to .emacs: the ability to
+;; scroll from the keyboard (what is everyone else using!?)
+(global-set-key "\M-N" 'up-semi-slow)
+(global-set-key "\M-P" 'down-semi-slow)
+
+;;________________________________________________________________
+;;    Some dired settings
+;;________________________________________________________________
+(cond (on_darwin
+        (require 'dired)
+
+        (define-key dired-mode-map "o" 'dired-open-mac)
+        (defun dired-open-mac ()
+          (interactive)
+          (let ((file-name (dired-get-file-for-visit)))
+            (if (file-exists-p file-name)
+                (shell-command (concat "open '" file-name "'" nil )))))
+))
+
+;;________________________________________________________________
+;;    uniquify -- though using <1>, <2> also has its advantages.
+;;________________________________________________________________
+
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'reverse)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
