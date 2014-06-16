@@ -90,6 +90,39 @@
 (setq ecb-tip-of-the-day nil)
 (setq ecb-is-active nil))
 
+(defun ace-jump-init()
+
+;;
+;; ace jump mode major function
+;; 
+(add-to-list 'load-path "~/.emacs.d/site-lisp/ace-jump-mode/")
+(autoload
+  'ace-jump-mode
+  "ace-jump-mode"
+  "Emacs quick move minor mode"
+  t)
+;; you can select the key you prefer to
+(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+;; 
+;; enable a more powerful jump back function from ace jump mode
+;;
+(autoload
+  'ace-jump-mode-pop-mark
+  "ace-jump-mode"
+  "Ace jump back:-)"
+  t)
+(eval-after-load "ace-jump-mode"
+  '(ace-jump-mode-enable-mark-sync))
+(define-key global-map (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
+
+;;If you use viper mode :
+;(define-key viper-vi-global-user-map (kbd "SPC") 'ace-jump-mode)
+;;If you use evil
+;(define-key evil-normal-state-map (kbd "SPC") 'ace-jump-mode)
+)
+
+
+
 (defun ecb-toggle(&optional f)
 (interactive)
   (if ecb-is-active
@@ -181,6 +214,8 @@
     (require 'git-blame)
     (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
     (require 'magit)
+    (global-set-key (kbd "C-x g") 'magit-status)
+
     )))
 
 (defun generic-programming-realted-config ()
@@ -357,26 +392,6 @@
             (speedbar-add-supported-extension "\\.rhtml")
             (speedbar-add-supported-extension "\\.rake")))
 
-;;;;;;;;;;;;;;;;;; RSpec mode help.  ;;;;;;;;;;;;;;;;;;;;;
-;; Rspec will use ~/.bash_env, so setup the ruby env there.
-;; From: http://procrastiblog.com/2007/07/09/changing-your-path-in-emacs-compilation-mode/
-;; toggle back and forth between a spec and it’s target (bound to \C-c ,t)
-
-;; verify the spec file associated with the current buffer (bound to \C-c ,v)
-
-;; verify the spec defined in the current buffer if it is a spec file (bound to \C-c ,v)
-
-;; verify the example defined at the point of the current buffer (bound to \C-c ,s)
-
-;; re-run the last verification process (bound to \C-c ,r)
-
-;; toggle the pendingness of the example at the point (bound to \C-c ,d)
-
-;; disable the example at the point by making it pending
-
-;; reenable the disabled example at the point
-
-;; run “spec” rake task for project (bound to \C-c ,a)
 
 )
 
@@ -520,7 +535,8 @@ nil))
 ;; Change control and meta key under mac, make less pain...
 (setq mac-command-modifier 'meta)
 (setq mac-control-modifier 'control)
-t
+
+(exec-path-from-shell-initialize)
 ))
 
 (defun toggle-control-position ()
@@ -565,6 +581,7 @@ t
 
 
 
+(safe-wrap (ace-jump-init))
 (safe-wrap (yas-setup))
 (safe-wrap (ecb-init))
 (safe-wrap (ergoemacs-setup))
@@ -609,10 +626,12 @@ t
 (global-set-key (kbd "C-z")  'undo)  ;; undo by C-z
 (global-set-key (kbd "M-z")  'undo)  ;; undo by C-z
 (global-set-key (kbd "M-s")  'occur)
-(global-set-key (kbd "C-9")  'other-window)
-(global-set-key (kbd "C-0")  'delete-window)
-(global-set-key (kbd "C--")  'split-window-below)
-(global-set-key (kbd "C-=")  'split-window-right)
+
+(global-set-key (kbd "M-1")  'delete-other-windows)
+(global-set-key (kbd "M-3")  'split-window-right)
+(global-set-key (kbd "M-2")  'split-window-below)
+(global-set-key (kbd "M-0")  'delete-window)
+(global-set-key (kbd "M-o")  'other-window)
 
 (global-set-key (kbd "C-j") 'previous-line)
 
@@ -632,8 +651,6 @@ t
 (global-set-key (kbd "C-`") 'other-window)
 (global-set-key (kbd "M-`") 'other-window)
 
-
-;(global-set-key (kbd "c-c c-j")  [?\c-x ?b return]) ;; Switch back to pervious windows.
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
 (global-set-key (kbd "S-C-<down>") 'shrink-window)
@@ -844,7 +861,7 @@ try-complete-lisp-symbol-partially
 (auto-compression-mode 1) ;; 打开压缩文件时自动解压缩
 (auto-image-file-mode)	 ;; 自动打开图片模式
 (column-number-mode 1) ;; 显示列号
-(blink-cursor-mode -1) ;; 光标不要闪烁
+(blink-cursor-mode 1) ;; 光标不要闪烁
 (show-paren-mode 1) ;; 高亮显示匹配的括号
 (icomplete-mode t)	 ;; 给出用 M-x foo-bar-COMMAND 输入命令的提示。
 (defalias 'list-buffers 'ibuffer)
@@ -1279,6 +1296,28 @@ try-complete-lisp-symbol-partially
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'reverse)
 
+;;;;;;;;;;;;;;;;;; RSpec mode help.  ;;;;;;;;;;;;;;;;;;;;;
+;; Rspec will use ~/.bash_env, so setup the ruby env there.
+;; From: http://procrastiblog.com/2007/07/09/changing-your-path-in-emacs-compilation-mode/
+;; toggle back and forth between a spec and it’s target (bound to \C-c ,t)
+
+;; verify the spec file associated with the current buffer (bound to \C-c ,v)
+
+;; verify the spec defined in the current buffer if it is a spec file (bound to \C-c ,v)
+
+;; verify the example defined at the point of the current buffer (bound to \C-c ,s)
+
+;; re-run the last verification process (bound to \C-c ,r)
+
+;; toggle the pendingness of the example at the point (bound to \C-c ,d)
+
+;; disable the example at the point by making it pending
+
+;; reenable the disabled example at the point
+
+;; run “spec” rake task for project (bound to \C-c ,a)
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -1295,3 +1334,5 @@ try-complete-lisp-symbol-partially
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(enh-ruby-op-face ((t (:foreground "#d9045a"))) t))
+
+
