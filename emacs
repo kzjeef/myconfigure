@@ -86,6 +86,28 @@
 
 (setq split-width-threshold 240)
 
+
+(defun cedet-init()
+;; Load CEDET.
+;; See cedet/common/cedet.info for configuration details.
+;; IMPORTANT: Tou must place this *before* any CEDET component (including
+;; EIEIO) gets activated by another package (Gnus, auth-source, ...).
+(load-file "~/.emacs.d/site-lisp/cedet/cedet-devel-load.el")
+
+;; Add further minor-modes to be enabled by semantic-mode.
+;; See doc-string of `semantic-default-submodes' for other things
+;; you can use here.
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode t)
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode t)
+(add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode t)
+
+;; Enable Semantic
+(semantic-mode 1)
+
+;; Enable EDE (Project Management) features
+(global-ede-mode 1)
+)
+
 (defun ecb-init()
 (setq ecb-tip-of-the-day nil)
 (setq ecb-is-active nil))
@@ -480,8 +502,8 @@ nil))
 	  (if (>= (x-display-pixel-height) 1080)
 ;       (set-default-font "Ubuntu mono-12")
 ;	    (set-default-font "Lucida Console-11")
-	    (set-default-font "Monaco-11")
-	    (set-default-font "Inconsolata-13") 
+	    (set-default-font "Monaco-10")
+	    (set-default-font "Inconsolata-11") 
 	    )
         ) nil)))
 (global-visual-line-mode t)        ;; Auto truncate line  
@@ -583,6 +605,7 @@ nil))
 
 (safe-wrap (ace-jump-init))
 (safe-wrap (yas-setup))
+(safe-wrap (cedet-init))
 (safe-wrap (ecb-init))
 (safe-wrap (ergoemacs-setup))
 (safe-wrap (dash-setup))
@@ -843,7 +866,7 @@ try-complete-lisp-symbol-partially
 ;; http://www.emacswiki.org/emacs/MultiTerm
 
 (projectile-global-mode t)   ;; project mode, https://github.com/bbatsov/projectile
-;; 
+(ggtags-mode)  ;; ggtags require `global'
 (setq projectile-enable-caching nil)
 (setq projectile-completion-system 'grizzl)
 (setq projectile-completion-system 'grizzl)
@@ -1128,6 +1151,7 @@ try-complete-lisp-symbol-partially
   (require 'package)
   (interactive)
   (package-refresh-contents)
+  (package-install 'ggtags)
   (package-install 'dash-at-point)
   (package-install 'rinari)
   (package-install 'yasnippet)

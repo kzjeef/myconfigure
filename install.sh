@@ -22,7 +22,7 @@ mkdir -p ${TARGET_DIR}
 if [[ "$platform" == 'mac' ]]; then
     brew install the_silver_searcher
 else
-    sudo apt-get install texinfo silversearcher-ag
+    sudo apt-get install texinfo silversearcher-ag global
     sudo apt-get install ttf-inconsolata
     sudo fc-cache -fv
 fi
