@@ -44,35 +44,35 @@
 		      (substring emacs-version 0 -2) "/lisp/cedet")
 	      load-path))
 
-(setq stack-trace-on-error nil)
+(setq stack-trace-on-error t)
 
 (when (>= emacs-major-version 24)
   (require 'package)
   (package-initialize)
   (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")
+			   ("marmalade" . "http://marmalade-repo.org/packages/")
+			   ("melpa" . "http://melpa.milkbox.net/packages/")
 			   ))
 
-)
+  )
 
-;当前窗口和非当前窗口时透明度 
+					;当前窗口和非当前窗口时透明度 
 (setq alpha-list '((95 89) (100 100))) 
 (defun looping-alpha () 
-(interactive) 
-(let ((h (car alpha-list))) 
-((lambda (a ab) 
-(set-frame-parameter (selected-frame) 'alpha (list a ab)) 
-(add-to-list 'default-frame-alist (cons 'alpha (list a ab)))) 
-(car h) (car (cdr h))) 
-(setq alpha-list (cdr (append alpha-list (list h)))))) 
+  (interactive) 
+  (let ((h (car alpha-list))) 
+    ((lambda (a ab) 
+       (set-frame-parameter (selected-frame) 'alpha (list a ab)) 
+       (add-to-list 'default-frame-alist (cons 'alpha (list a ab)))) 
+     (car h) (car (cdr h))) 
+    (setq alpha-list (cdr (append alpha-list (list h)))))) 
 
-;(defun multi-cursors-init()
-;  (require 'multiple-cursors)
-;  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-;  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-;  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-;  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
+					;(defun multi-cursors-init()
+					;  (require 'multiple-cursors)
+					;  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+					;  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+					;  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+					;  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
 ;;________________________________________________________________
 ;;    Avoid vertical splits
@@ -88,74 +88,74 @@
 
 
 (defun cedet-init()
-;; Load CEDET.
-;; See cedet/common/cedet.info for configuration details.
-;; IMPORTANT: Tou must place this *before* any CEDET component (including
-;; EIEIO) gets activated by another package (Gnus, auth-source, ...).
-(load-file "~/.emacs.d/site-lisp/cedet/cedet-devel-load.el")
+  ;; Load CEDET.
+  ;; See cedet/common/cedet.info for configuration details.
+  ;; IMPORTANT: Tou must place this *before* any CEDET component (including
+  ;; EIEIO) gets activated by another package (Gnus, auth-source, ...).
+  (load-file "~/.emacs.d/site-lisp/cedet/cedet-devel-load.el")
 
-;; Add further minor-modes to be enabled by semantic-mode.
-;; See doc-string of `semantic-default-submodes' for other things
-;; you can use here.
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode t)
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode t)
-(add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode t)
+  ;; Add further minor-modes to be enabled by semantic-mode.
+  ;; See doc-string of `semantic-default-submodes' for other things
+  ;; you can use here.
+  (add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode t)
+  (add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode t)
+  (add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode t)
 
-;; Enable Semantic
-(semantic-mode 1)
+  ;; Enable Semantic
+  (semantic-mode 1)
 
-;; Enable EDE (Project Management) features
-(global-ede-mode 1)
-)
+  ;; Enable EDE (Project Management) features
+  (global-ede-mode 1)
+  )
 
 (defun ecb-init()
-(setq ecb-tip-of-the-day nil)
-(setq ecb-is-active nil))
+  (setq ecb-tip-of-the-day nil)
+  (setq ecb-is-active nil))
 
 (defun ace-jump-init()
 
-;;
-;; ace jump mode major function
-;; 
-(add-to-list 'load-path "~/.emacs.d/site-lisp/ace-jump-mode/")
-(autoload
-  'ace-jump-mode
-  "ace-jump-mode"
-  "Emacs quick move minor mode"
-  t)
-;; you can select the key you prefer to
-(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
-;; 
-;; enable a more powerful jump back function from ace jump mode
-;;
-(autoload
-  'ace-jump-mode-pop-mark
-  "ace-jump-mode"
-  "Ace jump back:-)"
-  t)
-(eval-after-load "ace-jump-mode"
-  '(ace-jump-mode-enable-mark-sync))
-(define-key global-map (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
+  ;;
+  ;; ace jump mode major function
+  ;; 
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/ace-jump-mode/")
+  (autoload
+    'ace-jump-mode
+    "ace-jump-mode"
+    "Emacs quick move minor mode"
+    t)
+  ;; you can select the key you prefer to
+  (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+  ;; 
+  ;; enable a more powerful jump back function from ace jump mode
+  ;;
+  (autoload
+    'ace-jump-mode-pop-mark
+    "ace-jump-mode"
+    "Ace jump back:-)"
+    t)
+  (eval-after-load "ace-jump-mode"
+    '(ace-jump-mode-enable-mark-sync))
+  (define-key global-map (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
 
-;;If you use viper mode :
-;(define-key viper-vi-global-user-map (kbd "SPC") 'ace-jump-mode)
-;;If you use evil
-;(define-key evil-normal-state-map (kbd "SPC") 'ace-jump-mode)
-)
+  ;;If you use viper mode :
+					;(define-key viper-vi-global-user-map (kbd "SPC") 'ace-jump-mode)
+  ;;If you use evil
+					;(define-key evil-normal-state-map (kbd "SPC") 'ace-jump-mode)
+  )
 
 
 
 (defun ecb-toggle(&optional f)
-(interactive)
+  (interactive)
   (if ecb-is-active
       ((lambda ()
-	      (ecb-deactivate)
-	      (setq ecb-is-active nil)))
+	 (ecb-deactivate)
+	 (setq ecb-is-active nil)))
     (require 'ecb)
     (ecb-activate)
     (ecb-layout-switch "right1")
     (setq ecb-is-active t)
-))
+    ))
 
 (defun flex-bison-init()
   (autoload 'flex-mode "flex-mode" nil t)
@@ -166,10 +166,10 @@
 	(cons '("\\.y" . bison-mode) auto-mode-alist)))
 
 (defun complete-func-init()
-(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/")
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
-(ac-config-default))
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/")
+  (require 'auto-complete-config)
+  (add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
+  (ac-config-default))
 
 ;;  (safe-wrap (complete-func-init)) ;; disbale auto complete for better input speed.
 
@@ -178,25 +178,25 @@
   (setq ergoemacs-keyboard-layout "us")
   ;; (require 'ergoemacs-mode)
   
-  ;(ergoemacs-mode 0)
-  ;(cua-mode nil)
+					;(ergoemacs-mode 0)
+					;(cua-mode nil)
   )
 
 (defun yas-setup()
-(require 'yasnippet)
-(setq yas/window-system-popup-function 'yas/x-popup-menu-for-template)
-;(setq yas-snippet-dirs
-;      '("~/.emacs.d/snippets"                 ;; personal snippets
-;	"~/.emacs.d/site-lisp/rails-snippets/"
-;        ))
+  (require 'yasnippet)
+  (setq yas/window-system-popup-function 'yas/x-popup-menu-for-template)
+					;(setq yas-snippet-dirs
+					;      '("~/.emacs.d/snippets"                 ;; personal snippets
+					;	"~/.emacs.d/site-lisp/rails-snippets/"
+					;        ))
 
-(setq yas-snippet-dirs (append yas-snippet-dirs
-			       
-                               '("~/.emacs.d/site-lisp/rails-snippets/"
-				 "~/.emacs.d/snippets"
-				 )))
-(yas/global-mode 1)
-)
+  (setq yas-snippet-dirs (append yas-snippet-dirs
+				 
+				 '("~/.emacs.d/site-lisp/rails-snippets/"
+				   "~/.emacs.d/snippets"
+				   )))
+  (yas/global-mode 1)
+  )
 
 
 (defun elscreen-setup()
@@ -210,8 +210,8 @@
   (global-set-key (kbd "C-M-+") 'elscreen-next))
 
 (defun ggtag-mode-setup()
-  (require 'ggtags')
-  ;; ggtags require `global'
+  (require 'ggtags)
+  ;; ggtags require global
   (add-hook 'c++-mode-hook 'ggtags-mode)
   (add-hook 'c-mode-hook 'ggtags-mode)
   (add-hook 'python-mode-hook 'ggtags-mode)
@@ -219,8 +219,7 @@
   (add-hook 'java-mode-hook 'ggtags-mode)
   (add-hook 'objc-mode-hook 'ggtags-mode)
   (add-hook 'ruby-mode-hook 'ggtags-mode)
-  (add-hook 'emacs-lisp-mode-hook 'ggtags-mode)
-)
+  (add-hook 'emacs-lisp-mode-hook 'ggtags-mode))
 
 (defun fic-mode-setup()
 ;;; highlight TODO, etc mode.
@@ -233,7 +232,7 @@
   (add-hook 'objc-mode-hook 'turn-on-fic-mode)
   (add-hook 'ruby-mode-hook 'turn-on-fic-mode)
   (add-hook 'emacs-lisp-mode-hook 'turn-on-fic-mode)
-)
+  )
 
 (defun dash-setup ()
   (autoload 'dash-at-point "dash-at-point"
@@ -243,62 +242,62 @@
   (global-set-key "\C-ce" 'dash-at-point-with-docset))
 
 (defun git-setup ()
- (featurep 'git)
-    nil
-    ((lambda ()
-    (require 'git)
-    (require 'git-blame)
-    (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
-    (require 'magit)
-    (global-set-key (kbd "C-x g") 'magit-status)
+  (featurep 'git)
+  nil
+  ((lambda ()
+     (require 'git)
+     (require 'git-blame)
+     (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
+     (require 'magit)
+     (global-set-key (kbd "C-x g") 'magit-status)
 
-    )))
+     )))
 
 (defun generic-programming-realted-config ()
 
-; diable doxymacs for conflict of cedet.
-;; (safe-wrap ((lambda ()
-;;              (require 'doxymacs)
-;;	     (doxymacs-font-lock)
-;;	     )))
-;; Auto enable whitespace mode in diff mode
-(add-hook 'diff-mode-hook
-	  (lambda ()
-	    (whitespace-mode t)))
-;; Remeber artist-mode can draw picutre !!!
-; (define-key c-mode-base-map [(return)] 'newline-and-indent)
-;(c-set-offset 'inextern-lang '0)
-(setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
-(c-toggle-hungry-state t)	 ;; hungry delete
+					; diable doxymacs for conflict of cedet.
+  ;; (safe-wrap ((lambda ()
+  ;;              (require 'doxymacs)
+  ;;	     (doxymacs-font-lock)
+  ;;	     )))
+  ;; Auto enable whitespace mode in diff mode
+  (add-hook 'diff-mode-hook
+	    (lambda ()
+	      (whitespace-mode t)))
+  ;; Remeber artist-mode can draw picutre !!!
+					; (define-key c-mode-base-map [(return)] 'newline-and-indent)
+					;(c-set-offset 'inextern-lang '0)
+  (setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
+  (c-toggle-hungry-state t)	 ;; hungry delete
 
-(require 'flyspell)
-(flyspell-prog-mode)             ;; 会对程序中的注释做拼写检查
+  (require 'flyspell)
+  (flyspell-prog-mode)             ;; 会对程序中的注释做拼写检查
                                         ;(hightlight-change-mode)	 ;; 会对做的修改做Hight light
-(which-func-mode t)	 ;; 在状态栏显示当前函数
-;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
-;; (add-hook 'before-save-hook 'whitespace-cleanup) ;;在保存之前清除空字符
+  (which-func-mode t)	 ;; 在状态栏显示当前函数
+  ;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
+  ;; (add-hook 'before-save-hook 'whitespace-cleanup) ;;在保存之前清除空字符
 
-;; FFAP, find the related file.
-;; (ffap-bindings)
-;; 设定搜索的路径 ffap-c-path
-;; (setq ffap-c-path
-;;     '("/usr/include" "/usr/local/include"))
-;; 如果是新文件要确认
-;; (setq ffap-newfile-prompt t)
-;; ffap-kpathsea-expand-path 展开路径的深度
-;; (setq ffap-kpathsea-depth 5)
+  ;; FFAP, find the related file.
+  ;; (ffap-bindings)
+  ;; 设定搜索的路径 ffap-c-path
+  ;; (setq ffap-c-path
+  ;;     '("/usr/include" "/usr/local/include"))
+  ;; 如果是新文件要确认
+  ;; (setq ffap-newfile-prompt t)
+  ;; ffap-kpathsea-expand-path 展开路径的深度
+  ;; (setq ffap-kpathsea-depth 5)
 
-;; Hide & Show minor mode, usually good when looking big source file.
-;(hs-minor-mode)
-;;  (safe-wrap (flex-bison-init)) ; cause editor hang, remove it.
+  ;; Hide & Show minor mode, usually good when looking big source file.
+					;(hs-minor-mode)
+  ;;  (safe-wrap (flex-bison-init)) ; cause editor hang, remove it.
 
                                         ;(electric-layout-mode) ;; good control of space line.
 
 
-(defconst my-speedbar-buffer-name "SPEEDBAR")
+  (defconst my-speedbar-buffer-name "SPEEDBAR")
 
 
-)
+  )
 ;; end generic programming config.
 
 
@@ -319,117 +318,117 @@
   )
 
 (defun color-init()
-(reset-theme-list)
-(looping-select-theme)
-)
+  (reset-theme-list)
+  (looping-select-theme)
+  )
 
 (defun looping-select-theme()
   (interactive)
   (if valid-themes
       ((lambda()
-	(setq current-theme (car valid-themes))
-	(setq valid-themes (cdr valid-themes))
-	(load-theme current-theme t)
-	(message "Current Theme is: %s" current-theme)
-	))
+	 (setq current-theme (car valid-themes))
+	 (setq valid-themes (cdr valid-themes))
+	 (load-theme current-theme t)
+	 (message "Current Theme is: %s" current-theme)
+	 ))
     (reset-theme-list)
     (disable-theme current-theme)
     )
   )
 
 (defun config-in-tty-mode ()
-;; don't load color in tty mode.
-;(color-init)
-)
+  ;; don't load color in tty mode.
+					;(color-init)
+  )
 
 (defun load-python-env()
   (require 'python-mode)
   (setq auto-mode-alist (cons '("\\.py$" . python-mode) auto-mode-alist))
- (setq interpreter-mode-alist (cons '("python" . python-mode) interpreter-mode-alist))
- (autoload 'python-mode "python-mode" "Python editing mode." t)
+  (setq interpreter-mode-alist (cons '("python" . python-mode) interpreter-mode-alist))
+  (autoload 'python-mode "python-mode" "Python editing mode." t)
 
   (add-hook 'python-mode-hook (function cscope:hook))
   (add-hook 'python-mode-hook
             (lambda()
               (setq dash-at-point-docset "django")
-          ;; JEDI document: http://tkf.github.io/emacs-jedi/latest/#jedi:key-complete
+	      ;; JEDI document: http://tkf.github.io/emacs-jedi/latest/#jedi:key-complete
               (when (not (is-aquamacs)) (jedi:setup))
               ;; jedi have a bug will not running in acquamcs.
-          (setq jedi:complete-on-dot t)
-          (highlight-indentation-current-column-mode)
-          ;; also can complete by C-TAB
-	       (setq-default indent-tabs-mode nil)    ; use only spaces and no tabs
-	       (setq default-tab-width 4)))
+	      (setq jedi:complete-on-dot t)
+	      (highlight-indentation-current-column-mode)
+	      ;; also can complete by C-TAB
+	      (setq-default indent-tabs-mode nil)    ; use only spaces and no tabs
+	      (setq default-tab-width 4)))
   (add-to-list 'load-path "~/.emacs.d/site-lisp/python/")
   (setq py-install-directory "~/.emacs.d/site-lisp/python/")
   (add-to-list 'auto-mode-alist '("\\.py?$" . python-mode))
-)
+  )
 
 (defun load-ruby-env()
-;;  (autoload 'enh-ruby-mode "enh-ruby-mode" "Major mode for ruby files" t)
+  ;;  (autoload 'enh-ruby-mode "enh-ruby-mode" "Major mode for ruby files" t)
 
-;;   (add-to-list 'auto-mode-alist
-;;               '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . enh-ruby-mode))
-;;  (add-to-list 'auto-mode-alist
+  ;;   (add-to-list 'auto-mode-alist
+  ;;               '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . enh-ruby-mode))
+  ;;  (add-to-list 'auto-mode-alist
   ;;               '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . enh-ruby-mode))
 
-   (add-to-list 'auto-mode-alist
+  (add-to-list 'auto-mode-alist
                '("\\.\\(?:gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . ruby-mode))
   (add-to-list 'auto-mode-alist
                '("\\(Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . ruby-mode))
   
-;; optional
-;;  (setq enh-ruby-program "(path-to-ruby1.9)/bin/ruby") ; so that still works if ruby points to ruby1.8
+  ;; optional
+  ;;  (setq enh-ruby-program "(path-to-ruby1.9)/bin/ruby") ; so that still works if ruby points to ruby1.8
 
-;; Enhanced Ruby Mode defines its own specific faces with the hook erm-define-faces. If your theme is already defining those faces, to not overwrite them, just remove the hook with:
+  ;; Enhanced Ruby Mode defines its own specific faces with the hook erm-define-faces. If your theme is already defining those faces, to not overwrite them, just remove the hook with:
   (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
-(add-hook 'ruby-mode-hook
-	  (lambda () (highlight-indentation-current-column-mode)))
-(add-hook 'enh-ruby-mode-hook
-          (lambda () (highlight-indentation-current-column-mode)))
-(add-hook 'ruby-mode-hook 'projectile-on)
-(add-hook 'coffee-mode-hook
-           (lambda () (highlight-indentation-current-column-mode)))
-(rvm-use-default)
-(add-hook 'coffee-mode-hook
-          (lambda () (highlight-indentation-current-column-mode)))
+  (add-hook 'ruby-mode-hook
+	    (lambda () (highlight-indentation-current-column-mode)))
+  (add-hook 'enh-ruby-mode-hook
+	    (lambda () (highlight-indentation-current-column-mode)))
+  (add-hook 'ruby-mode-hook 'projectile-on)
+  (add-hook 'coffee-mode-hook
+	    (lambda () (highlight-indentation-current-column-mode)))
+  (rvm-use-default)
+  (add-hook 'coffee-mode-hook
+	    (lambda () (highlight-indentation-current-column-mode)))
 					;(add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
-(remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
+  (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
+  (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
 
-(require 'rinari)
-(add-hook 'ruby-mode-hook(lambda() (setq dash-at-point-docset "rails")))
-(add-hook 'ruby-mode-hook
-	  (lambda () (flymake-ruby-load))
-	  (rspec-mode)
-	  (global-rinari-mode)
-	  )
-;(add-hook 'enh-ruby-mode-hook
-(require 'flymake)
-(push '(".+\\.rb$" flymake-ruby-init) flymake-allowed-file-name-masks)
-(push '("Rakefile$" flymake-ruby-init) flymake-allowed-file-name-masks)
-(push '("Gemfile$" flymake-ruby-init) flymake-allowed-file-name-masks)
-(push '("^\\(.*\\):\\([0-9]+\\): \\(.*\\)$" 1 2 nil 3) flymake-err-line-patterns)
-(add-hook 'ruby-mode-hook 'hs-minor-mode)
+  (require 'rinari)
+  (add-hook 'ruby-mode-hook(lambda() (setq dash-at-point-docset "rails")))
+  (add-hook 'ruby-mode-hook
+	    (lambda () (flymake-ruby-load))
+	    (rspec-mode)
+	    (global-rinari-mode)
+	    )
+					;(add-hook 'enh-ruby-mode-hook
+  (require 'flymake)
+  (push '(".+\\.rb$" flymake-ruby-init) flymake-allowed-file-name-masks)
+  (push '("Rakefile$" flymake-ruby-init) flymake-allowed-file-name-masks)
+  (push '("Gemfile$" flymake-ruby-init) flymake-allowed-file-name-masks)
+  (push '("^\\(.*\\):\\([0-9]+\\): \\(.*\\)$" 1 2 nil 3) flymake-err-line-patterns)
+  (add-hook 'ruby-mode-hook 'hs-minor-mode)
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(enh-ruby-op-face ((t (:foreground "#d9045a")))))
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(enh-ruby-op-face ((t (:foreground "#d9045a")))))
 
-(add-hook 'speedbar-mode-hook
-          (lambda()
-            (speedbar-add-supported-extension "\\.rb")
-            (speedbar-add-supported-extension "\\.ru")
-            (speedbar-add-supported-extension "\\.erb")
-            (speedbar-add-supported-extension "\\.rjs")
-            (speedbar-add-supported-extension "\\.rhtml")
-            (speedbar-add-supported-extension "\\.rake")))
+  (add-hook 'speedbar-mode-hook
+	    (lambda()
+	      (speedbar-add-supported-extension "\\.rb")
+	      (speedbar-add-supported-extension "\\.ru")
+	      (speedbar-add-supported-extension "\\.erb")
+	      (speedbar-add-supported-extension "\\.rjs")
+	      (speedbar-add-supported-extension "\\.rhtml")
+	      (speedbar-add-supported-extension "\\.rake")))
 
 
-)
+  )
 
 (load-ruby-env)
 
@@ -442,120 +441,123 @@
   ;; $ android list targets
   ;; 3. then you can use android mode
   (require 'android-mode))
-  
+
 
 (defun load-web-env()
   (autoload 'js2-mode "js2-mode" nil t)
 
   (eval-after-load 'js2-mode
-  '(progn
-     (define-key js2-mode-map (kbd "TAB") (lambda()
-                                            (interactive)
-                                            (let ((yas/fallback-behavior 'return-nil))
-                                              (unless (yas/expand)
-                                                (indent-for-tab-command)
-                                                (if (looking-back "^\s*")
-                                                    (back-to-indentation))))))))
+    '(progn
+       (define-key js2-mode-map (kbd "TAB") (lambda()
+					      (interactive)
+					      (let ((yas/fallback-behavior 'return-nil))
+						(unless (yas/expand)
+						  (indent-for-tab-command)
+						  (if (looking-back "^\s*")
+						      (back-to-indentation))))))))
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   (add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
   (add-hook 'js2-mode-hook (lambda()
-				     (custom-set-variables
-				      '(js2-basic-offset 2)
-				      '(js2-bounce-indent-p nil)
-				      )))
+			     (custom-set-variables
+			      '(js2-basic-offset 2)
+			      '(js2-bounce-indent-p nil)
+			      )))
   ;; Css mode indent
   (add-hook 'css-mode-hook (lambda() 
-	(setq cssm-indent-function #'cssm-c-style-indenter)
-	(setq cssm-indent-level 2)))
+			     (setq cssm-indent-function #'cssm-c-style-indenter)
+			     (setq cssm-indent-level 2)))
 
-;  (require 'hl-tags-mode)
+					;  (require 'hl-tags-mode)
   
-(require 'web-mode)
-(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+  (require 'web-mode)
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 
-(add-hook 'web-mode-hook
-          (lambda () (flyspell-prog-mode)))
-)
+  (add-hook 'web-mode-hook
+	    (lambda () (flyspell-prog-mode)))
+  )
 
 (defun load-java-relate-lib ()
-(generic-programming-realted-config)
-(add-hook 'java-mode-hook (function cscope:hook))
-(cscope-minor-mode)
-(message "load java")
-(setq c-comment-start-regexp "(@|/(/|[*][*]?))")
-(modify-syntax-entry ?@ "< b" java-mode-syntax-table)
-(setq c-basic-offset 4
-      tab-width 4
-      indent-tabs-mode nil)
-;;(glasses-mode nil) ;; ThisIsAVarInJava
-(android-setup)
-)
+  (generic-programming-realted-config)
+  (add-hook 'java-mode-hook (function cscope:hook))
+  (cscope-minor-mode)
+  (message "load java")
+  (setq c-comment-start-regexp "(@|/(/|[*][*]?))")
+  (modify-syntax-entry ?@ "< b" java-mode-syntax-table)
+  (setq c-basic-offset 4
+	tab-width 4
+	indent-tabs-mode nil)
+  ;;(glasses-mode nil) ;; ThisIsAVarInJava
+  (android-setup)
+  )
 
 (defun load-c-relate-lib ()
-(generic-programming-realted-config)
-(cscope-minor-mode)
-)
+  (generic-programming-realted-config)
+  (cscope-minor-mode)
+  )
 
 (defun if-in-tty()
-(if (equal (frame-parameter nil 'font) "tty")
-t
-nil))
+  (if (equal (frame-parameter nil 'font) "tty")
+      t
+    nil))
 
 
 (defun font-configing()
-
   (cond (on_gnu_linux
 	 (if (>= (x-display-pixel-height) 1080)
 	     (set-default-font "DejaVu Sans Mono-10.5")
-	;       (set-default-font "Ubuntu mono-13")
-	;	    (set-default-font "Lucida Console-11")
-	;	    (set-default-font "Monaco-10")
+					;       (set-default-font "Ubuntu mono-13")
+					;	    (set-default-font "Lucida Console-11")
+					;	    (set-default-font "Monaco-10")
 	   (set-default-font "DejaVu Sans Mono-10.5")
-	;	    (set-default-font "-apple-Monaco-normal-normal-normal-*-14-*-*-*-*-0-iso10646-1")
-	;	    (set-default-font "Inconsolata-12")
+					;	    (set-default-font "-apple-Monaco-normal-normal-normal-*-14-*-*-*-*-0-iso10646-1")
+					;	    (set-default-font "Inconsolata-12")
 	   )))
 
   (cond (on_darwin
-        ;(set-face-attribute 'default nil
-        ;		:family "Inconsolata" :height 165 :weight 'normal)
+					;(set-face-attribute 'default nil
+					;		:family "Inconsolata" :height 165 :weight 'normal)
 
-        ;(set-face-attribute 'default nil
-        ;		:family "Ubuntu mono" :height 160 :weight 'normal)
-	 (set-face-attribute 'default nil
-			     :family "Monaco" :height 140 :weight 'normal)
+					;(set-face-attribute 'default nil
+					;		:family "Ubuntu mono" :height 160 :weight 'normal)
+
+					;	 (set-default-font "DejaVuSansMono-12")
+	 (set-default-font "AkkurantMonoMono-12")
+					;	 (set-default-font "BitstreamVeraSansMono-set")
+					;	 (12-default-font "-apple-Monaco-normal-normal-normal-*-12-*-*-*-*-0-iso10646-1")
+					;	 (set-face-attribute 'default nil
+					;			     :family "Monaco" :height 120 :weight 'normal)
 	 ))
   )
 
 (defun config-not-in-tty-mode ()
-
-(font-configing)
-(global-visual-line-mode t)        ;; Auto truncate line  
-(mouse-avoidance-mode 'animate)	;; 光标靠近鼠标的时候，　鼠标自己就跑了
-(setq x-select-enable-clipboard t)	;;让X的剪切板和EMACS联系起来
-(tool-bar-mode -1) ;; 不要工具按钮
-(scroll-bar-mode -1) ;; 不要缩放条
-(color-init))
+  (font-configing)
+  (global-visual-line-mode t)        ;; Auto truncate line  
+  (mouse-avoidance-mode 'animate)	;; 光标靠近鼠标的时候，　鼠标自己就跑了
+  (setq x-select-enable-clipboard t)	;;让X的剪切板和EMACS联系起来
+  (tool-bar-mode -1) ;; 不要工具按钮
+  (scroll-bar-mode -1) ;; 不要缩放条
+  (color-init))
 
 (defun toggle-fullscreen (&optional f)
-      (interactive)
-      (let ((current-value (frame-parameter nil 'fullscreen)))
-	(set-frame-parameter nil 'fullscreen
-			     (if (equal 'fullboth current-value)
-				 (if (boundp 'old-fullscreen) old-fullscreen nil)
-			       (progn (setq old-fullscreen current-value)
-				      'fullboth)))))
+  (interactive)
+  (let ((current-value (frame-parameter nil 'fullscreen)))
+    (set-frame-parameter nil 'fullscreen
+			 (if (equal 'fullboth current-value)
+			     (if (boundp 'old-fullscreen) old-fullscreen nil)
+			   (progn (setq old-fullscreen current-value)
+				  'fullboth)))))
 (defun cscope-setup ()
-;  (print "cscope setup")
+					;  (print "cscope setup")
   (require 'xcscope)
   (setq cscope-do-not-update-database t)
-)
+  )
 
 (defun hightlight-80+-setup()
   (require 'highlight-80+))
@@ -568,19 +570,19 @@ nil))
 
 ;; Config for Mac
 (cond (on_darwin
-;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
-;; need find-file to do this
-(add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
-(setq mac-option-key-is-meta t)
-;(setq mac-right-option-modifier nil)
-(setq exec-path (append exec-path '("/opt/local/bin")) )
-(setenv "LC_CTYPE" "UTF-8")
-;; Change control and meta key under mac, make less pain...
-(setq mac-command-modifier 'meta)
-(setq mac-control-modifier 'control)
+       ;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
+       ;; need find-file to do this
+       (add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
+       (setq mac-option-key-is-meta t)
+					;(setq mac-right-option-modifier nil)
+       (setq exec-path (append exec-path '("/opt/local/bin")) )
+       (setenv "LC_CTYPE" "UTF-8")
+       ;; Change control and meta key under mac, make less pain...
+       (setq mac-command-modifier 'meta)
+       (setq mac-control-modifier 'control)
 
-(exec-path-from-shell-initialize)
-))
+       (exec-path-from-shell-initialize)
+       ))
 
 (defun toggle-control-position ()
   "toggle the control position bewteen alt or contorl under mac."
@@ -593,7 +595,7 @@ nil))
        (setq mac-command-modifier 'meta)
        (setq mac-control-modifier 'control)
        (setq mac-option-key-is-meta t))))
-)
+  )
 
 (require 'find-file) ;; for the "cc-other-file-alist" variable
 (nconc (cadr (assoc "\\.h\\'" cc-other-file-alist)) '(".m" ".mm"))
@@ -602,13 +604,13 @@ nil))
 				     fname-stub 
 				     &optional suffix-list))
   "Search for Mac framework headers as well as POSIX headers."
-   (or
-    (if (string-match "\\(.*?\\)/\\(.*\\)" fname-stub)
-	(let* ((framework (match-string 1 fname-stub))
-	       (header (match-string 2 fname-stub))
-	       (fname-stub (concat framework ".framework/Headers/" header)))
-	  ad-do-it))
-      ad-do-it))
+  (or
+   (if (string-match "\\(.*?\\)/\\(.*\\)" fname-stub)
+       (let* ((framework (match-string 1 fname-stub))
+	      (header (match-string 2 fname-stub))
+	      (fname-stub (concat framework ".framework/Headers/" header)))
+	 ad-do-it))
+   ad-do-it))
 (ad-enable-advice 'ff-get-file-name 'around 'ff-get-file-name-framework)
 (ad-activate 'ff-get-file-name)
 (setq cc-search-directories '("." "../include" "/usr/include" "/usr/local/include/*"
@@ -617,7 +619,7 @@ nil))
 ;; Objective C settings.
 (add-to-list 'auto-mode-alist '("\\.m?$" . objc-mode))
 (add-to-list 'auto-mode-alist '("\\.mm?$" . objc-mode))
-;(add-to-list 'auto-mode-alist '("\\.h$" . objc-mode))
+					;(add-to-list 'auto-mode-alist '("\\.h$" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@implementation" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@interface" . objc-mode))
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
@@ -686,10 +688,10 @@ nil))
 (global-set-key (kbd "M-n") 'next-line)
 (global-set-key (kbd "M-e") 'move-end-of-line)
 
-;(global-set-key (kbd "C-k") 'next-line)
-;(global-set-key (kbd "C-l") 'backward-char)
-;(global-set-key (kbd "C-l") 'forward-char)
-;(global-set-key (kbd "C-k") 'previous-line)
+					;(global-set-key (kbd "C-k") 'next-line)
+					;(global-set-key (kbd "C-l") 'backward-char)
+					;(global-set-key (kbd "C-l") 'forward-char)
+					;(global-set-key (kbd "C-k") 'previous-line)
 (global-set-key (kbd "C-j") 'next-line)
 (global-set-key (kbd "M-SPC") 'set-mark-command)
 (global-set-key (kbd "C-`") 'other-window)
@@ -700,30 +702,30 @@ nil))
 (global-set-key (kbd "S-C-<down>") 'shrink-window)
 (global-set-key (kbd "S-C-<up>") 'enlarge-window)
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
- 
-;(global-set-key "\C-xl" 'goto-line)	;; used to goto line
+
+					;(global-set-key "\C-xl" 'goto-line)	;; used to goto line
 
 (put 'upcase-region 'disabled nil)	;; 打开C－x c－u把区域变成大写的功能
 ;; 自动补全的尝试列表
 ;; (global-set-key [(meta ?/)] 'hippie-expand)
-;(autoload 'senator-try-expand-sematic "senator")
+					;(autoload 'senator-try-expand-sematic "senator")
 (setq hippie-expand-try-functions-list
-'(
-senator-try-expand-sematic
-;; try-expand-line
-;; try-expand-line-all-buffers
-try-expand-list
-try-expand-list-all-buffers
-try-expand-dabbrev
-try-expand-dabbrev-visible
-try-expand-dabbrev-all-buffers
-try-expand-dabbrev-from-kill
-try-complete-file-name
-try-complete-file-name-partially
-try-complete-lisp-symbol
-try-complete-lisp-symbol-partially
-;;	try-expand-whole-kill
-))
+      '(
+	senator-try-expand-sematic
+	;; try-expand-line
+	;; try-expand-line-all-buffers
+	try-expand-list
+	try-expand-list-all-buffers
+	try-expand-dabbrev
+	try-expand-dabbrev-visible
+	try-expand-dabbrev-all-buffers
+	try-expand-dabbrev-from-kill
+	try-complete-file-name
+	try-complete-file-name-partially
+	try-complete-lisp-symbol
+	try-complete-lisp-symbol-partially
+	;;	try-expand-whole-kill
+	))
 
 (setq speedbar-use-images nil)  ;; don't use image in  speedbar.
 (make-face 'speedbar-face)
@@ -735,25 +737,25 @@ try-complete-lisp-symbol-partially
 (smartparens-global-mode)
 (show-smartparens-global-mode)
 (sp-with-modes '(rhtml-mode)
-  (sp-local-pair "<" ">")
-  (sp-local-pair "<%" "%>"))
+	       (sp-local-pair "<" ">")
+	       (sp-local-pair "<%" "%>"))
 
 ;; for object-c.
 (add-hook 'objc-mode-hook
           (lambda ()
-;;          (message "objc modeb hook start")
+	    ;;          (message "objc modeb hook start")
             (setq cscope-do-not-update-database nil)
             (load-c-relate-lib)
             (when (not (is-aquamacs)) (turn-on-auto-revert-mode))
             (setq indent-tabs-mode nil)
-;;          (flymode-init)
+	    ;;          (flymode-init)
             (c-set-style "cc-mode")
             (setq c-basic-offset 4
                   tab-width 4
                   indent-tabs-mode nil)
 
-;;	    (highlight-80+-mode)
-;;	    (setq highlight-80+-columns 200) ;; hight light 100+ colums
+	    ;;	    (highlight-80+-mode)
+	    ;;	    (setq highlight-80+-columns 200) ;; hight light 100+ colums
             (cscope-minor-mode)))
 
 
@@ -794,39 +796,39 @@ try-complete-lisp-symbol-partially
 			 c-lineup-gcc-asm-reg
 			 c-lineup-arglist-tabs-only))
                (setq-default indent-tabs-mode t)))
-))
+	    ))
 
 (add-hook 'c-mode-hook
 	  (lambda ()
-             (load-c-relate-lib)
-             (setq c-basic-offset 4
-                   tab-width 4
-                   indent-tabs-mode nil)
-             (let ((filename (buffer-file-name)))
-               ;; Enable kernel mode for the appropriate files
-               (when (and filename
-                          (or (string-match "linux" filename)
-                              (string-match "kernel" filename)))
-                 ;; or like this: (string-match (expand-file-name "~/src/linux-trees")
-                 (c-set-style "linux-tabs-only")
-                 ;; for kernel, hightlight 80 chars more line.
-;;                 (highlight-80+-mode)
-                 ))))
+	    (load-c-relate-lib)
+	    (setq c-basic-offset 4
+		  tab-width 4
+		  indent-tabs-mode nil)
+	    (let ((filename (buffer-file-name)))
+	      ;; Enable kernel mode for the appropriate files
+	      (when (and filename
+			 (or (string-match "linux" filename)
+			     (string-match "kernel" filename)))
+		;; or like this: (string-match (expand-file-name "~/src/linux-trees")
+		(c-set-style "linux-tabs-only")
+		;; for kernel, hightlight 80 chars more line.
+		;;                 (highlight-80+-mode)
+		))))
 
 (add-hook 'c++-mode-hook
-(lambda ()
-(load-c-relate-lib)
-(c-set-style "my-cc-style")
-(setq c-basic-offset 4
-      tab-width 4
-      indent-tabs-mode nil)
-))
+	  (lambda ()
+	    (load-c-relate-lib)
+	    (c-set-style "my-cc-style")
+	    (setq c-basic-offset 4
+		  tab-width 4
+		  indent-tabs-mode nil)
+	    ))
 
 (add-hook 'java-mode-hook
-(lambda ()
-;   (message "with java mode hook")
-   (when (not (is-aquamacs)) (turn-on-auto-revert-mode)) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
-   (load-java-relate-lib)))
+	  (lambda ()
+					;   (message "with java mode hook")
+	    (when (not (is-aquamacs)) (turn-on-auto-revert-mode)) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
+	    (load-java-relate-lib)))
 
 (remove-hook 'find-file-hooks 'vc-find-file-hook)
 
@@ -865,19 +867,19 @@ try-complete-lisp-symbol-partially
 (setq mail-signature "Jiejing")
 
 (setq org-log-done 'time)
-;(setq org-log-done 'note)
+					;(setq org-log-done 'note)
 
 (require 'cl)
 ;; filter not exist files, otherwise agenda mode will report error
 (require 'cl)
 (setq org-agenda-files (remove-if 'nil (mapcar (lambda (x)
-	  (if (file-exists-p x)
-	      x
-	    nil))
-   (list "~/org/app.org"
-   "~/Google 云端硬盘/Nvidia Notes/nvidia_notes.org"
-   "~/org/todo.org"
-   "~/SyncDrive/Nvidia Notes/nvidia_notes.org"))))
+						 (if (file-exists-p x)
+						     x
+						   nil))
+					       (list "~/org/app.org"
+						     "~/Google 云端硬盘/Nvidia Notes/nvidia_notes.org"
+						     "~/org/todo.org"
+						     "~/SyncDrive/Nvidia Notes/nvidia_notes.org"))))
 
 (global-set-key "\C-ca" 'org-agenda)
 (prefer-coding-system 'utf-8)
@@ -891,14 +893,14 @@ try-complete-lisp-symbol-partially
 (setq projectile-enable-caching nil)
 (setq projectile-completion-system 'grizzl)
 (setq projectile-completion-system 'grizzl)
- ;; Press Command-p for fuzzy find in project
+;; Press Command-p for fuzzy find in project
 (global-set-key (kbd "s-p") 'projectile-find-file)
- ;; Press Command-b for fuzzy switch buffer
+;; Press Command-b for fuzzy switch buffer
 (global-set-key (kbd "s-b") 'projectile-switch-to-buffer)
 
 (require 'ido)
 (require 'ibuffer)
-;(setq ido-auto-merge-work-directories-length -1)
+					;(setq ido-auto-merge-work-directories-length -1)
 (ido-mode)                             ;Ido mode really good.
 (setq ido-save-directory-list-file "~/.emacs.d/ido.last")
 (setq-default truncate-lines nil) ;; 自动折行
@@ -929,7 +931,7 @@ try-complete-lisp-symbol-partially
 (setq kill-ring-max 200)	 ;; kill-ring 最多的记录个数。
 (setq bookmark-save-flag 1)
 ;; 每当设置书签的时候都保存书签文件，否则只在你退出 Emacs 时保存。
-; (setq bookmark-default-file "~/.emacs.d/.emacs.bmk")
+					; (setq bookmark-default-file "~/.emacs.d/.emacs.bmk")
 ;; 缺省书签文件的路径及文件名。
 (setq version-control t)
 (setq kept-old-versions 2)
@@ -953,7 +955,7 @@ try-complete-lisp-symbol-partially
     (setq ispell-dictionary "english")
   (setq ispell-dictionary "american"))
 (add-hook 'comint-output-filter-functions
-'comint-watch-for-password-prompt) ;; 密码的相关的提示密码
+	  'comint-watch-for-password-prompt) ;; 密码的相关的提示密码
 
 ;; Full screen settings.
 ;; Needs Mac configure of full screen
@@ -961,10 +963,10 @@ try-complete-lisp-symbol-partially
 (global-set-key (kbd "C-M-<return>")	'toggle-fullscreen)
 
 ;; Set a visible bell function...
-;(setq visible-bell nil)
-;(setq ring-bell-function `(lambda ()
-;                            (set-face-background 'default "DodgerBlue")
-;                            (set-face-background 'default "black")))
+					;(setq visible-bell nil)
+					;(setq ring-bell-function `(lambda ()
+					;                            (set-face-background 'default "DodgerBlue")
+					;                            (set-face-background 'default "black")))
 
 ;; remove the startup message.
 (setq inhibit-splash-screen t)
@@ -977,22 +979,22 @@ try-complete-lisp-symbol-partially
 
 ;; Ask question when C-x, C-c.
 (setq kill-emacs-query-functions
-(lambda() (y-or-n-p "Do you really want to quit?")))
+      (lambda() (y-or-n-p "Do you really want to quit?")))
 
 ;; For daemon mode
 (add-hook 'after-make-frame-functions
-(lambda (frame)
-(with-selected-frame frame
-(when window-system
-(config-not-in-tty-mode)
-(config-in-tty-mode)))))
+	  (lambda (frame)
+	    (with-selected-frame frame
+	      (when window-system
+		(config-not-in-tty-mode)
+		(config-in-tty-mode)))))
 
 ;; Non-deamon mode config
-;(if (equal (daemonp) nil)
+					;(if (equal (daemonp) nil)
 (if (equal (if-in-tty) nil)
-(config-not-in-tty-mode)
-(config-in-tty-mode))
-;)
+    (config-not-in-tty-mode)
+  (config-in-tty-mode))
+					;)
 
 ;; tramp is a remote file access mode, default enable.
 (require 'tramp)
@@ -1064,54 +1066,54 @@ try-complete-lisp-symbol-partially
 
 ;; Kill warnning..
 (when (and (>= emacs-major-version 24)
-(>= emacs-minor-version 2))
-(eval-after-load "mumamo"
-'(setq mumamo-per-buffer-local-vars
-(delq 'buffer-file-name mumamo-per-buffer-local-vars))))
+	   (>= emacs-minor-version 2))
+  (eval-after-load "mumamo"
+    '(setq mumamo-per-buffer-local-vars
+	   (delq 'buffer-file-name mumamo-per-buffer-local-vars))))
 
 (defun is-aquamacs()
-(if (boundp 'aquamacs-version)
-    t
-  nil))
+  (if (boundp 'aquamacs-version)
+      t
+    nil))
 
 (when (boundp 'aquamacs-version)
- (global-set-key [M-left] 'tabbar-backward-tab)
- (global-set-key [M-right] 'tabbar-forward-tab)
- (one-buffer-one-frame-mode 0)
- (tabbar-mode 0)
-(add-hook 'after-init-hook (lambda () (set-cursor-color "#aa88dd")) 'append)
-(smartparens-global-mode 0) ;; aquamacs some how have issue with this mode, will not able to type Cap char.
-(setq-default cursor-type 'box)
-; (aquamacs-autoface-mode nil)
-(set-face-attribute 'default nil :height 110)
-;; scale the font, default scale is too large.
+  (global-set-key [M-left] 'tabbar-backward-tab)
+  (global-set-key [M-right] 'tabbar-forward-tab)
+  (one-buffer-one-frame-mode 0)
+  (tabbar-mode 0)
+  (add-hook 'after-init-hook (lambda () (set-cursor-color "#aa88dd")) 'append)
+  (smartparens-global-mode 0) ;; aquamacs some how have issue with this mode, will not able to type Cap char.
+  (setq-default cursor-type 'box)
+					; (aquamacs-autoface-mode nil)
+  (set-face-attribute 'default nil :height 120)
+  ;; scale the font, default scale is too large.
 
-;; fix sr-speedbar 24.4 function miss error
-(defun ad-advised-definition-p (definition) 
-"Return non-nil if DEFINITION was generated from advice information." 
-(if (or (ad-lambda-p definition) 
-        (macrop definition) (ad-compiled-p definition)) 
-    (let ((docstring (ad-docstring definition)))
-      (and (stringp docstring)
-           (get-text-property 0 ‘dynamic-docstring-function docstring)))))
+  ;; fix sr-speedbar 24.4 function miss error
+  (defun ad-advised-definition-p (definition) 
+    "Return non-nil if DEFINITION was generated from advice information." 
+    (if (or (ad-lambda-p definition) 
+	    (macrop definition) (ad-compiled-p definition)) 
+	(let ((docstring (ad-docstring definition)))
+	  (and (stringp docstring)
+	       (get-text-property 0 ‘dynamic-docstring-function docstring)))))
 
-)
+  )
 
 ;; Hack to setup the compile enviroment.
-;(let ((path (shell-command-to-string ". ~/.bash_env; echo -n $PATH")))
-;  (setenv "PATH" path)
-;  (setq exec-path 
-;        (append
-;         (split-string-and-unquote path ":")
-;         exec-path)))
+					;(let ((path (shell-command-to-string ". ~/.bash_env; echo -n $PATH")))
+					;  (setenv "PATH" path)
+					;  (setq exec-path 
+					;        (append
+					;         (split-string-and-unquote path ":")
+					;         exec-path)))
 
-;(setq shell-file-name "bash")
-;(setq shell-command-switch "--rcfile ~/.bash_env -c")
+					;(setq shell-file-name "bash")
+					;(setq shell-command-switch "--rcfile ~/.bash_env -c")
 
 
 ;; 开启服务器模式
-;(Server-force-delete)
-;(server-start)
+					;(Server-force-delete)
+					;(server-start)
 ;; 用Daemon替代
 
 
@@ -1119,9 +1121,9 @@ try-complete-lisp-symbol-partially
 
 (defun dpi  (xres yres inch)
   "return  screen dpi from resolution and inch of screen."
-   (/ (sqrt (+ (expt (float xres) 2)
-	       (expt (float yres) 2)))
-      (float inch)))
+  (/ (sqrt (+ (expt (float xres) 2)
+	      (expt (float yres) 2)))
+     (float inch)))
 
 
 
@@ -1133,7 +1135,7 @@ try-complete-lisp-symbol-partially
 
 (defun page2mb (page-number)
   "Define a function conv page number to MB"
- (/ (* page-number 4) 1024))
+  (/ (* page-number 4) 1024))
 (put 'set-goal-column 'disabled nil)
 
 
@@ -1180,7 +1182,7 @@ try-complete-lisp-symbol-partially
   (package-install 'web-mode)
   (package-install 'js2-mode)
   (package-install 'multi-term)
-;  (package-install 'python-mode)
+					;  (package-install 'python-mode)
   (package-install 'jedi)
   (package-install '2048-game)
   (jedi:install-server)
@@ -1192,17 +1194,17 @@ try-complete-lisp-symbol-partially
   (package-install 'yaml-mode)
   (package-install 'ag)
   (package-install 'magit)
-;  (package-install 'enh-ruby-mode) ; this package will disable yasnnipe, no need.
+					;  (package-install 'enh-ruby-mode) ; this package will disable yasnnipe, no need.
   (package-install 'flymake)
   (package-install 'flymake-ruby)
   (package-install 'sr-speedbar)
-;  (package-install 'emacs-rails-reloaded)
+					;  (package-install 'emacs-rails-reloaded)
   (package-install 'rspec-mode)
   (package-install 'yari)
   (package-install 'exec-path-from-shell)
   (package-install 'zenburn-theme)
   
-;  (package-install 'ergoemacs-mode)
+					;  (package-install 'ergoemacs-mode)
   )
 
 (when (memq window-system '(mac ns))
@@ -1234,7 +1236,7 @@ try-complete-lisp-symbol-partially
 
        (global-set-key [S-mouse-4] 'down-slow)
        (global-set-key [S-mouse-5] 'up-slow)
-))
+       ))
 
 ;; The trackpad on Mac OSX generates too many events.
 ;; Scroll by 1 unless shifted.
@@ -1244,61 +1246,61 @@ try-complete-lisp-symbol-partially
 
        (global-set-key [S-mouse-4] 'down-medium)
        (global-set-key [S-mouse-5] 'up-medium)
-))
+       ))
 
 (cond (on_gnu_linux
        (global-set-key [mouse-4] 'down-medium)
        (global-set-key [mouse-5] 'up-medium)
-;;    Scrolling
-;;________________________________________________________________
+       ;;    Scrolling
+       ;;________________________________________________________________
 
-;; We also map scroll wheel and trackpad events to scrolling.
-;; The mouse wheel on windows generates few events.
-;; Scroll by 3 unless shifted.
+       ;; We also map scroll wheel and trackpad events to scrolling.
+       ;; The mouse wheel on windows generates few events.
+       ;; Scroll by 3 unless shifted.
 
-(defun up-slow () (interactive) (scroll-up 1))
-(defun down-slow () (interactive) (scroll-down 1))
+       (defun up-slow () (interactive) (scroll-up 1))
+       (defun down-slow () (interactive) (scroll-down 1))
 
-(defun up-semi-slow () (interactive) (scroll-up 2))
-(defun down-semi-slow () (interactive) (scroll-down 2))
+       (defun up-semi-slow () (interactive) (scroll-up 2))
+       (defun down-semi-slow () (interactive) (scroll-down 2))
 
-(defun up-medium () (interactive) (scroll-up 3))
-(defun down-medium () (interactive) (scroll-down 3))
+       (defun up-medium () (interactive) (scroll-up 3))
+       (defun down-medium () (interactive) (scroll-down 3))
 
-(cond (on_windows_nt
-       ;; xemacs won't like the following:
-       (global-set-key [mouse-4] 'down-medium)
-       (global-set-key [mouse-5] 'up-medium)
+       (cond (on_windows_nt
+	      ;; xemacs won't like the following:
+	      (global-set-key [mouse-4] 'down-medium)
+	      (global-set-key [mouse-5] 'up-medium)
 
+	      (global-set-key [S-mouse-4] 'down-slow)
+	      (global-set-key [S-mouse-5] 'up-slow)
+	      ))
+
+       ;; The trackpad on Mac OSX generates too many events.
+       ;; Scroll by 1 unless shifted.
+       (cond (on_darwin
+	      (global-set-key [mouse-4] 'down-slow)
+	      (global-set-key [mouse-5] 'up-slow)
+
+	      (global-set-key [S-mouse-4] 'down-medium)
+	      (global-set-key [S-mouse-5] 'up-medium)
+	      ))
+
+       (cond (on_gnu_linux
+	      (global-set-key [mouse-4] 'down-medium)
+	      (global-set-key [mouse-5] 'up-medium)
+
+	      (global-set-key [S-mouse-4] 'down-slow)
+	      (global-set-key [S-mouse-5] 'up-slow)
+	      ))
+
+       (defun up-fast () (interactive) (scroll-up 8))
+       (defun down-fast () (interactive) (scroll-down 8))
+       (global-set-key [C-mouse-4] 'down-fast)
+       (global-set-key [C-mouse-5] 'up-fast)
        (global-set-key [S-mouse-4] 'down-slow)
        (global-set-key [S-mouse-5] 'up-slow)
-))
-
-;; The trackpad on Mac OSX generates too many events.
-;; Scroll by 1 unless shifted.
-(cond (on_darwin
-       (global-set-key [mouse-4] 'down-slow)
-       (global-set-key [mouse-5] 'up-slow)
-
-       (global-set-key [S-mouse-4] 'down-medium)
-       (global-set-key [S-mouse-5] 'up-medium)
-))
-
-(cond (on_gnu_linux
-       (global-set-key [mouse-4] 'down-medium)
-       (global-set-key [mouse-5] 'up-medium)
-
-       (global-set-key [S-mouse-4] 'down-slow)
-       (global-set-key [S-mouse-5] 'up-slow)
-))
-
-(defun up-fast () (interactive) (scroll-up 8))
-(defun down-fast () (interactive) (scroll-down 8))
-(global-set-key [C-mouse-4] 'down-fast)
-(global-set-key [C-mouse-5] 'up-fast)
-       (global-set-key [S-mouse-4] 'down-slow)
-       (global-set-key [S-mouse-5] 'up-slow)
-))
+       ))
 
 (defun up-fast () (interactive) (scroll-up 8))
 (defun down-fast () (interactive) (scroll-down 8))
@@ -1313,7 +1315,7 @@ try-complete-lisp-symbol-partially
        (mouse-wheel-mode 1)
        (setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
        (setq mouse-wheel-progressive-speed 'f)
-))
+       ))
 
 ;; And finally, the most useful addition to .emacs: the ability to
 ;; scroll from the keyboard (what is everyone else using!?)
@@ -1324,15 +1326,15 @@ try-complete-lisp-symbol-partially
 ;;    Some dired settings
 ;;________________________________________________________________
 (cond (on_darwin
-        (require 'dired)
+       (require 'dired)
 
-        (define-key dired-mode-map "o" 'dired-open-mac)
-        (defun dired-open-mac ()
-          (interactive)
-          (let ((file-name (dired-get-file-for-visit)))
-            (if (file-exists-p file-name)
-                (shell-command (concat "open '" file-name "'" nil )))))
-))
+       (define-key dired-mode-map "o" 'dired-open-mac)
+       (defun dired-open-mac ()
+	 (interactive)
+	 (let ((file-name (dired-get-file-for-visit)))
+	   (if (file-exists-p file-name)
+	       (shell-command (concat "open '" file-name "'" nil )))))
+       ))
 
 ;;________________________________________________________________
 ;;    uniquify -- though using <1>, <2> also has its advantages.

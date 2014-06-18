@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'AkkuratRegular';
+    src: url('akkurat.eot');
+    src: url('akkurat.eot') format('embedded-opentype'),
+         url('akkurat.woff') format('woff'),
+         url('akkurat.ttf') format('truetype'),
+         url('akkurat.svg#AkkuratRegular') format('svg');
+}

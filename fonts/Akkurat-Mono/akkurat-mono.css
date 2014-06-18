@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'AkkuratMonoMono';
+    src: url('akkurat-mono.eot');
+    src: url('akkurat-mono.eot') format('embedded-opentype'),
+         url('akkurat-mono.woff') format('woff'),
+         url('akkurat-mono.ttf') format('truetype'),
+         url('akkurat-mono.svg#AkkuratMonoMono') format('svg');
+}

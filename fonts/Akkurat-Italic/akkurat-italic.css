@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'AkkuratItalicItalic';
+    src: url('akkurat-italic.eot');
+    src: url('akkurat-italic.eot') format('embedded-opentype'),
+         url('akkurat-italic.woff') format('woff'),
+         url('akkurat-italic.ttf') format('truetype'),
+         url('akkurat-italic.svg#AkkuratItalicItalic') format('svg');
+}

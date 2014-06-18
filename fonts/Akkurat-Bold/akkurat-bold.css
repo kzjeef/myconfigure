@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'AkkuratBoldBold';
+    src: url('akkurat-bold.eot');
+    src: url('akkurat-bold.eot') format('embedded-opentype'),
+         url('akkurat-bold.woff') format('woff'),
+         url('akkurat-bold.ttf') format('truetype'),
+         url('akkurat-bold.svg#AkkuratBoldBold') format('svg');
+}
