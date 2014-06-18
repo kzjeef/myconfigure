@@ -209,6 +209,19 @@
   (global-set-key (kbd "C-M-_") 'elscreen-previous)
   (global-set-key (kbd "C-M-+") 'elscreen-next))
 
+(defun ggtag-mode-setup()
+  (require 'ggtags')
+  ;; ggtags require `global'
+  (add-hook 'c++-mode-hook 'ggtags-mode)
+  (add-hook 'c-mode-hook 'ggtags-mode)
+  (add-hook 'python-mode-hook 'ggtags-mode)
+  (add-hook 'js2-mode-hook 'ggtags-mode)
+  (add-hook 'java-mode-hook 'ggtags-mode)
+  (add-hook 'objc-mode-hook 'ggtags-mode)
+  (add-hook 'ruby-mode-hook 'ggtags-mode)
+  (add-hook 'emacs-lisp-mode-hook 'ggtags-mode)
+)
+
 (defun fic-mode-setup()
 ;;; highlight TODO, etc mode.
   (require 'fic-mode)
@@ -218,6 +231,7 @@
   (add-hook 'js2-mode-hook 'turn-on-fic-mode)
   (add-hook 'java-mode-hook 'turn-on-fic-mode)
   (add-hook 'objc-mode-hook 'turn-on-fic-mode)
+  (add-hook 'ruby-mode-hook 'turn-on-fic-mode)
   (add-hook 'emacs-lisp-mode-hook 'turn-on-fic-mode)
 )
 
@@ -494,18 +508,34 @@
 t
 nil))
 
+
+(defun font-configing()
+
+  (cond (on_gnu_linux
+	 (if (>= (x-display-pixel-height) 1080)
+	     (set-default-font "DejaVu Sans Mono-10.5")
+	;       (set-default-font "Ubuntu mono-13")
+	;	    (set-default-font "Lucida Console-11")
+	;	    (set-default-font "Monaco-10")
+	   (set-default-font "DejaVu Sans Mono-10.5")
+	;	    (set-default-font "-apple-Monaco-normal-normal-normal-*-14-*-*-*-*-0-iso10646-1")
+	;	    (set-default-font "Inconsolata-12")
+	   )))
+
+  (cond (on_darwin
+        ;(set-face-attribute 'default nil
+        ;		:family "Inconsolata" :height 165 :weight 'normal)
+
+        ;(set-face-attribute 'default nil
+        ;		:family "Ubuntu mono" :height 160 :weight 'normal)
+	 (set-face-attribute 'default nil
+			     :family "Monaco" :height 140 :weight 'normal)
+	 ))
+  )
+
 (defun config-not-in-tty-mode ()
-(if (not (eq system-type 'darwin))
-    ((lambda ()
-;; use monaco fonts default, want to switch to Lucida, change this to nil
-      (if t
-	  (if (>= (x-display-pixel-height) 1080)
-;       (set-default-font "Ubuntu mono-12")
-;	    (set-default-font "Lucida Console-11")
-	    (set-default-font "Monaco-10")
-	    (set-default-font "Inconsolata-11") 
-	    )
-        ) nil)))
+
+(font-configing)
 (global-visual-line-mode t)        ;; Auto truncate line  
 (mouse-avoidance-mode 'animate)	;; 光标靠近鼠标的时候，　鼠标自己就跑了
 (setq x-select-enable-clipboard t)	;;让X的剪切板和EMACS联系起来
@@ -545,15 +575,6 @@ nil))
 ;(setq mac-right-option-modifier nil)
 (setq exec-path (append exec-path '("/opt/local/bin")) )
 (setenv "LC_CTYPE" "UTF-8")
-
-;(set-face-attribute 'default nil
-;		:family "Inconsolata" :height 165 :weight 'normal)
-
-;(set-face-attribute 'default nil
-;		:family "Ubuntu mono" :height 160 :weight 'normal)
-(set-face-attribute 'default nil
-		:family "Monaco" :height 140 :weight 'normal)
-
 ;; Change control and meta key under mac, make less pain...
 (setq mac-command-modifier 'meta)
 (setq mac-control-modifier 'control)
@@ -706,7 +727,7 @@ try-complete-lisp-symbol-partially
 
 (setq speedbar-use-images nil)  ;; don't use image in  speedbar.
 (make-face 'speedbar-face)
-(set-face-font 'speedbar-face "Inconsolata-15")
+(set-face-font 'speedbar-face "Inconsolata-10")
 (setq speedbar-mode-hook '(lambda () (buffer-face-set 'speedbar-face)))
 
 (require 'smartparens-config)
@@ -866,7 +887,7 @@ try-complete-lisp-symbol-partially
 ;; http://www.emacswiki.org/emacs/MultiTerm
 
 (projectile-global-mode t)   ;; project mode, https://github.com/bbatsov/projectile
-(ggtags-mode)  ;; ggtags require `global'
+
 (setq projectile-enable-caching nil)
 (setq projectile-completion-system 'grizzl)
 (setq projectile-completion-system 'grizzl)
@@ -1062,7 +1083,7 @@ try-complete-lisp-symbol-partially
 (smartparens-global-mode 0) ;; aquamacs some how have issue with this mode, will not able to type Cap char.
 (setq-default cursor-type 'box)
 ; (aquamacs-autoface-mode nil)
-(set-face-attribute 'default nil :height 145)
+(set-face-attribute 'default nil :height 110)
 ;; scale the font, default scale is too large.
 
 ;; fix sr-speedbar 24.4 function miss error
