@@ -314,14 +314,12 @@
   (mapcar #'disable-theme custom-enabled-themes))
 
 (defun reset-theme-list() 
-  (setq all-themes '(twilight tango-dark wombat zenburn adwaita))
-  (setq valid-themes all-themes)
-  )
+  (setq all-themes '(twilight twilight-bright adwaita zenburn solarized-dark solarized-light monokai))
+  (setq valid-themes all-themes))
 
 (defun color-init()
   (reset-theme-list)
-  (looping-select-theme)
-  )
+  (looping-select-theme))
 
 (defun looping-select-theme()
   (interactive)
@@ -333,9 +331,7 @@
 	 (message "Current Theme is: %s" current-theme)
 	 ))
     (reset-theme-list)
-    (disable-theme current-theme)
-    )
-  )
+    (disable-theme current-theme)))
 
 (defun config-in-tty-mode ()
   ;; don't load color in tty mode.
@@ -1205,6 +1201,9 @@
   (package-install 'exec-path-from-shell)
   (package-install 'zenburn-theme)
   (package-install 'twilight-theme)
+  (package-install 'twilight-bright-theme)
+  (package-install 'solarized-theme)
+  (package-install 'monokai-theme)
 					;  (package-install 'ergoemacs-mode)
   )
 
@@ -1372,15 +1371,30 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ansi-color-names-vector ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
- '(custom-safe-themes (quote ("e24180589c0267df991cf54bf1a795c07d00b24169206106624bb844292807b9" "5ceb2e85215142caad4c2abc1061c0bade80348c4eb323934a909e36f864d5bc" default)))
+ '(compilation-message-face (quote default))
+ '(cua-global-mark-cursor-color "#2aa198")
+ '(cua-normal-cursor-color "#657b83")
+ '(cua-overwrite-cursor-color "#b58900")
+ '(cua-read-only-cursor-color "#859900")
+ '(custom-safe-themes (quote ("60f04e478dedc16397353fb9f33f0d895ea3dab4f581307fbf0aa2f07e658a40" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "e24180589c0267df991cf54bf1a795c07d00b24169206106624bb844292807b9" "5ceb2e85215142caad4c2abc1061c0bade80348c4eb323934a909e36f864d5bc" default)))
  '(ecb-layout-window-sizes (quote (("right1" (ecb-directories-buffer-name 0.18143459915611815 . 0.2857142857142857) (ecb-sources-buffer-name 0.18143459915611815 . 0.3392857142857143) (ecb-methods-buffer-name 0.18143459915611815 . 0.35714285714285715)) ("left8" (ecb-directories-buffer-name 0.19831223628691982 . 0.2857142857142857) (ecb-sources-buffer-name 0.19831223628691982 . 0.23214285714285715) (ecb-methods-buffer-name 0.19831223628691982 . 0.2857142857142857) (ecb-history-buffer-name 0.19831223628691982 . 0.17857142857142858)))))
  '(ecb-options-version "2.40")
+ '(fci-rule-character-color "#d9d9d9")
  '(fci-rule-color "#383838")
  '(gud-gdb-command-name "gdb --annotate=1")
+ '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
+ '(highlight-symbol-colors (--map (solarized-color-blend it "#fdf6e3" 0.25) (quote ("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2"))))
+ '(highlight-symbol-foreground-color "#586e75")
+ '(highlight-tail-colors (quote (("#eee8d5" . 0) ("#B4C342" . 20) ("#69CABF" . 30) ("#69B7F0" . 50) ("#DEB542" . 60) ("#F2804F" . 70) ("#F771AC" . 85) ("#eee8d5" . 100))))
  '(large-file-warning-threshold nil)
+ '(magit-use-overlays nil)
+ '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#eee8d5" 0.2))
+ '(term-default-bg-color "#fdf6e3")
+ '(term-default-fg-color "#657b83")
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map (quote ((20 . "#BC8383") (40 . "#CC9393") (60 . "#DFAF8F") (80 . "#D0BF8F") (100 . "#E0CF9F") (120 . "#F0DFAF") (140 . "#5F7F5F") (160 . "#7F9F7F") (180 . "#8FB28F") (200 . "#9FC59F") (220 . "#AFD8AF") (240 . "#BFEBBF") (260 . "#93E0E3") (280 . "#6CA0A3") (300 . "#7CB8BB") (320 . "#8CD0D3") (340 . "#94BFF3") (360 . "#DC8CC3"))))
- '(vc-annotate-very-old-color "#DC8CC3"))
+ '(vc-annotate-very-old-color "#DC8CC3")
+ '(weechat-color-list (quote (unspecified "#fdf6e3" "#eee8d5" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#657b83" "#839496"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
