@@ -46,6 +46,7 @@
 
 (setq stack-trace-on-error t)
 
+
 (when (>= emacs-major-version 24)
   (require 'package)
   (package-initialize)
@@ -313,7 +314,7 @@
   (mapcar #'disable-theme custom-enabled-themes))
 
 (defun reset-theme-list() 
-  (setq all-themes '(tango-dark wombat zenburn adwaita))
+  (setq all-themes '(twilight tango-dark wombat zenburn adwaita))
   (setq valid-themes all-themes)
   )
 
@@ -1203,7 +1204,7 @@
   (package-install 'yari)
   (package-install 'exec-path-from-shell)
   (package-install 'zenburn-theme)
-  
+  (package-install 'twilight-theme)
 					;  (package-install 'ergoemacs-mode)
   )
 
@@ -1370,11 +1371,16 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("5ceb2e85215142caad4c2abc1061c0bade80348c4eb323934a909e36f864d5bc" default)))
+ '(ansi-color-names-vector ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
+ '(custom-safe-themes (quote ("e24180589c0267df991cf54bf1a795c07d00b24169206106624bb844292807b9" "5ceb2e85215142caad4c2abc1061c0bade80348c4eb323934a909e36f864d5bc" default)))
  '(ecb-layout-window-sizes (quote (("right1" (ecb-directories-buffer-name 0.18143459915611815 . 0.2857142857142857) (ecb-sources-buffer-name 0.18143459915611815 . 0.3392857142857143) (ecb-methods-buffer-name 0.18143459915611815 . 0.35714285714285715)) ("left8" (ecb-directories-buffer-name 0.19831223628691982 . 0.2857142857142857) (ecb-sources-buffer-name 0.19831223628691982 . 0.23214285714285715) (ecb-methods-buffer-name 0.19831223628691982 . 0.2857142857142857) (ecb-history-buffer-name 0.19831223628691982 . 0.17857142857142858)))))
  '(ecb-options-version "2.40")
+ '(fci-rule-color "#383838")
  '(gud-gdb-command-name "gdb --annotate=1")
- '(large-file-warning-threshold nil))
+ '(large-file-warning-threshold nil)
+ '(vc-annotate-background "#2B2B2B")
+ '(vc-annotate-color-map (quote ((20 . "#BC8383") (40 . "#CC9393") (60 . "#DFAF8F") (80 . "#D0BF8F") (100 . "#E0CF9F") (120 . "#F0DFAF") (140 . "#5F7F5F") (160 . "#7F9F7F") (180 . "#8FB28F") (200 . "#9FC59F") (220 . "#AFD8AF") (240 . "#BFEBBF") (260 . "#93E0E3") (280 . "#6CA0A3") (300 . "#7CB8BB") (320 . "#8CD0D3") (340 . "#94BFF3") (360 . "#DC8CC3"))))
+ '(vc-annotate-very-old-color "#DC8CC3"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
