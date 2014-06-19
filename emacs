@@ -643,6 +643,8 @@
 (defalias 'qrr 'query-replace-regexp)   ;; regexp query.
 
 
+
+
 ;; (global-set-key [kp-insert] 'overwrite-mode) ; [Ins]
 (global-set-key [f2] 'git-grep)	 ;; Git grep.
 ;; F3 start micro
@@ -678,21 +680,26 @@
 
 (global-set-key (kbd "C-j") 'previous-line)
 
-
-(global-set-key (kbd "M-b") 'backward-char)
-(global-set-key (kbd "M-f") 'forward-char)
-(global-set-key (kbd "M-p") 'previous-line)
-(global-set-key (kbd "M-n") 'next-line)
 (global-set-key (kbd "M-e") 'move-end-of-line)
 
-					;(global-set-key (kbd "C-k") 'next-line)
-					;(global-set-key (kbd "C-l") 'backward-char)
-					;(global-set-key (kbd "C-l") 'forward-char)
-					;(global-set-key (kbd "C-k") 'previous-line)
+
+;; use some vi key move around...
+(global-set-key (kbd "C-k") 'previous-line)
+(global-set-key (kbd "C-l") 'forward-char)
+(global-set-key (kbd "C-h") 'backward-char)
 (global-set-key (kbd "C-j") 'next-line)
+
 (global-set-key (kbd "M-SPC") 'set-mark-command)
-(global-set-key (kbd "C-`") 'other-window)
-(global-set-key (kbd "M-`") 'other-window)
+
+
+(global-set-key (kbd "M-h") 'help)
+(global-set-key (kbd "M-k") 'kill-line)
+(global-set-key (kbd "M-l")  'recenter-top-bottom)
+;; Use these two mapping to avoid right hand small finger pinky
+;; Ctrl-M is return key in default.
+(global-set-key "\M-b"  [backspace])
+(global-set-key "\M-w" 'backward-kill-word)
+
 
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
