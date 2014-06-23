@@ -319,7 +319,10 @@
 
 (defun color-init()
   (reset-theme-list)
-  (looping-select-theme))
+  (when (not (boundp 'current-theme))
+    (looping-select-theme)))
+
+
 
 (defun looping-select-theme()
   (interactive)
@@ -678,11 +681,7 @@
 (global-set-key (kbd "M-0")  'delete-window)
 (global-set-key (kbd "M-o")  'other-window)
 
-(global-set-key (kbd "C-j") 'previous-line)
-
 (global-set-key (kbd "M-e") 'move-end-of-line)
-
-
 ;; use some vi key move around...
 (global-set-key (kbd "C-k") 'previous-line)
 (global-set-key (kbd "C-l") 'forward-char)
@@ -698,7 +697,8 @@
 ;; Use these two mapping to avoid right hand small finger pinky
 ;; Ctrl-M is return key in default.
 (global-set-key "\M-b"  [backspace])
-(global-set-key "\M-w" 'backward-kill-word)
+(global-set-key "\M-m"  [return])
+(global-set-key "\C-q" 'backward-kill-word)
 
 
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
