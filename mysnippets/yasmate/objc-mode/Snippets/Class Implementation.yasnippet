@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# uuid: BE0B2832-D88E-40BF-93EE-281DDA93840B
+# key: clm
+# contributor: Translated from textmate snippet by PROGRAM_NAME
+# name: Class Implementation
+## condition: "
+# --
+@implementation ${1:${TM_FILENAME/\...*$|(^$)/(?1:object)/}}
+- (id)init
+{
+	if((self = [super init]))
+	{$0
+	}
+	return self;
+}
+@end

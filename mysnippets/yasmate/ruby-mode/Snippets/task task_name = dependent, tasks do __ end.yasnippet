@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# uuid: A7BF14E6-59B1-42E5-8755-8A72BF13685E
+# key: tas
+# contributor: Translated from textmate snippet by PROGRAM_NAME
+# name: task :task_name => [:dependent, :tasks] do .. end
+## condition: "
+# --
+desc "${1:Task description}"
+task :${2:${3:task_name} => ${4:[:${5:dependent, :tasks}]}} do
+	$0
+end

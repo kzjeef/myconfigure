@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# uuid: 1251B7E8-6BF0-11D9-8384-000D93589AF6
+# key: log
+# contributor: Translated from textmate snippet by PROGRAM_NAME
+# name: NSLog(…)
+## condition: "
+# --
+NSLog(@"$1"${1/[^%]*(%)?.*/(?1:, :\);)/}$2${1/[^%]*(%)?.*/(?1:\);)/}

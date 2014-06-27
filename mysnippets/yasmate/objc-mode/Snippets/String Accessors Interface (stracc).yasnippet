@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 35EB2F86-DEA0-443B-8DC2-4815F0478F67
+# key: stracc
+# contributor: Translated from textmate snippet by PROGRAM_NAME
+# name: Interface: Accessors for String
+## condition: "
+# --
+- (NSString${TM_C_POINTER/(^(.+?)\s*$)?/(?1:$2: *)/})${1:thing};
+- (void)set${1/./\u$0/}:(NSString${TM_C_POINTER/(^(.+?)\s*$)?/(?1:$2: *)/})${2:a${1/.*/\u$0/}};

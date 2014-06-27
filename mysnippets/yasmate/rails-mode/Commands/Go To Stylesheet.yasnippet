@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# type: command
+# uuid: B207BBD4-D6AA-41E9-9530-27210F2D7B66
+# contributor: Translated from textmate snippet by PROGRAM_NAME
+# name: Go to Stylesheet
+# binding: [M-S-s-down]
+# condition: text.html.erb.rails, source.ruby.rails.embedded.html, (yas-rails-controller-p), meta.rails.helper, text.haml
+# --
+(if (featurep 'rinari) (rinari-find-stylesheet) (yas-unimplemented 'rinari))

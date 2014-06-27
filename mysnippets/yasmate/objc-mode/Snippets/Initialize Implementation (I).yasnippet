@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# uuid: 366DBAB0-554B-4A38-966E-793DFE13A1EC
+# key: I
+# contributor: Translated from textmate snippet by PROGRAM_NAME
+# name: Method: Initialize
+## condition: "(source.objc | source.objc++) & meta.scope.implementation.objc - meta.function-with-body
+# --
++ (void)initialize
+{
+	[[NSUserDefaults standardUserDefaults] registerDefaults:@{
+		$0@"key" : @"value",
+	}];
+}

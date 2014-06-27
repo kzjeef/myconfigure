@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# uuid: E8107901-70F1-45D9-8633-81BD5E57CC89
+# key: obs
+# contributor: Translated from textmate snippet by PROGRAM_NAME
+# name: Register for Notification
+## condition: "
+# --
+[[NSNotificationCenter defaultCenter] addObserver:${1:self} selector:@selector(${3:${2/^([A-Z]{2})?(.+?)(Notification)?$/\l$2/}}:) name:${2:NSWindowDidBecomeMainNotification} object:${4:nil}];

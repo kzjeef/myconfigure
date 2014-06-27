@@ -144,6 +144,56 @@
 					;(define-key evil-normal-state-map (kbd "SPC") 'ace-jump-mode)
   )
 
+;;--------------------------------------------------------------------------------
+;;                               Copmany mode init
+;;--------------------------------------------------------------------------------
+
+;; FIXME: this function make it only complete at ., ->, _, it's a c mode, but not well on other language.
+ (defun check-expansion ()
+    (save-excursion
+      (if (looking-at "\\_>") t
+        (backward-char 1)
+        (if (looking-at "\\.") t
+          (backward-char 1)
+          (if (looking-at "->") t nil)))))
+
+  (defun do-yas-expand ()
+    (let ((yas/fallback-behavior 'return-nil))
+      (yas/expand)))
+
+  (defun tab-indent-or-complete ()
+    (interactive)
+    (if (minibufferp)
+        (minibuffer-complete)
+      (if (or (not yas/minor-mode)
+              (null (do-yas-expand)))
+          (if (check-expansion)
+              (company-complete-common)
+            (indent-for-tab-command)))))
+ 
+(defun company-mode-init()
+  (add-hook 'after-init-hook 'global-company-mode)
+  (global-set-key [tab] 'tab-indent-or-complete)
+
+  
+  (global-set-key [(meta ?/)] 'company-complete-common)
+
+  (setq company-idle-delay nil) ;; don't pop compnay by timeout, default 0.7 seconds.
+  (dolist (hook (list
+		 'emacs-lisp-mode-hook
+		 'lisp-mode-hook
+		 'lisp-interaction-mode-hook
+		 'scheme-mode-hook
+		 'c-mode-common-hook
+		 'python-mode-hook
+		 'haskell-mode-hook
+		 'asm-mode-hook
+		 'emms-tag-editor-mode-hook
+		 'sh-mode-hook))
+
+    (add-hook hook 'company-mode))
+  )
+
 
 
 (defun ecb-toggle(&optional f)
@@ -195,6 +245,7 @@
 				 
 				 '("~/.emacs.d/site-lisp/rails-snippets/"
 				   "~/.emacs.d/snippets"
+				   "~/proj/myconfigure/mysnippets/yasmate"
 				   )))
   (yas/global-mode 1)
   )
@@ -213,12 +264,9 @@
 (defun ggtag-mode-setup()
   (require 'ggtags)
   ;; ggtags require global
-  (add-hook 'c++-mode-hook 'ggtags-mode)
-  (add-hook 'c-mode-hook 'ggtags-mode)
+  (add-hook 'c-mode-common-hook 'ggtags-mode)
   (add-hook 'python-mode-hook 'ggtags-mode)
   (add-hook 'js2-mode-hook 'ggtags-mode)
-  (add-hook 'java-mode-hook 'ggtags-mode)
-  (add-hook 'objc-mode-hook 'ggtags-mode)
   (add-hook 'ruby-mode-hook 'ggtags-mode)
   (add-hook 'emacs-lisp-mode-hook 'ggtags-mode))
 
@@ -626,6 +674,8 @@
 
 
 
+(safe-wrap (ggtag-mode-setup))
+(safe-wrap (company-mode-init))
 (safe-wrap (ace-jump-init))
 (safe-wrap (yas-setup))
 (safe-wrap (cedet-init))
@@ -691,6 +741,7 @@
 (global-set-key (kbd "M-SPC") 'set-mark-command)
 
 
+;; C-M-q will indent whole region, such as a function, or a code block. 
 (global-set-key (kbd "M-h") 'help)
 (global-set-key (kbd "M-k") 'kill-line)
 (global-set-key (kbd "M-l")  'recenter-top-bottom)
@@ -715,9 +766,11 @@
 					;(autoload 'senator-try-expand-sematic "senator")
 (setq hippie-expand-try-functions-list
       '(
+
 	senator-try-expand-sematic
 	;; try-expand-line
 	;; try-expand-line-all-buffers
+	ggtags-try-complete-tag
 	try-expand-list
 	try-expand-list-all-buffers
 	try-expand-dabbrev
@@ -750,6 +803,8 @@
 	    ;;          (message "objc modeb hook start")
             (setq cscope-do-not-update-database nil)
             (load-c-relate-lib)
+
+	    (setq dash-at-point-docset nil)
             (when (not (is-aquamacs)) (turn-on-auto-revert-mode))
             (setq indent-tabs-mode nil)
 	    ;;          (flymode-init)
@@ -1211,6 +1266,7 @@
   (package-install 'twilight-bright-theme)
   (package-install 'solarized-theme)
   (package-install 'monokai-theme)
+  (package-install 'company)
 					;  (package-install 'ergoemacs-mode)
   )
 

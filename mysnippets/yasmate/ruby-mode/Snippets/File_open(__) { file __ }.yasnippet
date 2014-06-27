@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# uuid: 397FA09F-A30F-4EE4-920C-318D5004EE97
+# key: File
+# contributor: Translated from textmate snippet by PROGRAM_NAME
+# name: File.open("..") { |file| .. }
+## condition: "
+# --
+File.open(${1:"${2:path/to/file}"}${3:$(and (string-match "^[rwab+]+$" yas-text) ", \"" )}${3:w}${3:$(and (string-match "^[rwab+]+$" yas-text) "\"" )}) { |${4:file}| $0 }

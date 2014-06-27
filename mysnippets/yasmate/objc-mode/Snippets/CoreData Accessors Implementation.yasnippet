@@ -1,0 +1,21 @@
+# -*- mode: snippet -*-
+# uuid: 563B2FDB-A163-46FE-9380-4178EFC1AD14
+# key: cdacc
+# contributor: Translated from textmate snippet by PROGRAM_NAME
+# name: CoreData
+## condition: "
+# --
+- (${1:id})${2:attribute}
+{
+	[self willAccessValueForKey:@"${2: attribute}"];
+	${1:id} value = [self primitiveValueForKey:@"${2: attribute}"];
+	[self didAccessValueForKey:@"${2: attribute}"];
+	return value;
+}
+
+- (void)set${2/./\u$0/}:($1)aValue
+{
+	[self willChangeValueForKey:@"${2: attribute}"];
+	[self setPrimitiveValue:aValue forKey:@"${2: attribute}"];
+	[self didChangeValueForKey:@"${2: attribute}"];
+}

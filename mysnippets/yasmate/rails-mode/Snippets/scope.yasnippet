@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# uuid: 8F87F3C7-8ABB-4778-9786-64CF95E99160
+# key: scope
+# contributor: Translated from textmate snippet by PROGRAM_NAME
+# name: scope
+## condition: "meta.rails.model
+# --
+scope :${1:name}, ${2:joins(:${3:table}).}where(${4:'${5:$3.${6:field}} = ?', ${7:'${8:value}'}})

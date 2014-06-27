@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# uuid: 06F15373-9900-11D9-9BB8-000A95A89C98
+# key: clh
+# contributor: Translated from textmate snippet by PROGRAM_NAME
+# name: Class Interface
+## condition: "
+# --
+@interface ${1:${TM_FILENAME/\...*$|(^$)/(?1:object)/}} : ${2:NSObject}
+{$3
+}
+$0
+@end

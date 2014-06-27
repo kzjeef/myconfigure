@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# uuid: 325B0A2B-5939-4805-80A1-6DED5B373283
+# key: m
+# contributor: Translated from textmate snippet by PROGRAM_NAME
+# name: Interface: Method
+## binding: "^M
+## condition: "
+# --
+- (${1:id})${2:`(or (yas-selected-text) "method")`}${3::(${4:id})${5:${4/(NS([AEIOQUY])?(\w+).*)|(.)?.*/(?1:a(?2:n$2)$3:(?4:anArgument))/}}};

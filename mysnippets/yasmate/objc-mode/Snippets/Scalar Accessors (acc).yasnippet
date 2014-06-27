@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# uuid: DADC6C91-415F-463A-9C24-7A059BB5EE56
+# key: acc
+# contributor: Translated from textmate snippet by PROGRAM_NAME
+# name: Primitive Type
+## condition: "(source.objc | source.objc++) & meta.scope.implementation.objc - meta.function-with-body
+# --
+- (${1:unsigned int})${2:thing}
+{
+	return ${3:$2};
+}
+
+- (void)set${2/./\u$0/}:(${1:unsigned int})new${2/./\u$0/}
+{
+	$3 = new${2/./\u$0/};
+}
