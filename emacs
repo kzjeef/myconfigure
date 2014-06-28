@@ -173,7 +173,7 @@
  
 (defun company-mode-init()
   (add-hook 'after-init-hook 'global-company-mode)
-  (global-set-key [tab] 'tab-indent-or-complete)
+;  (global-set-key [tab] 'tab-indent-or-complete) ;; just keep defualt, [tab] is for the yas and indent.
 
   
   (global-set-key [(meta ?/)] 'company-complete-common)
@@ -217,12 +217,34 @@
 	(cons '("\\.y" . bison-mode) auto-mode-alist)))
 
 (defun complete-func-init()
-  (add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/")
-  (require 'auto-complete-config)
-  (add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
-  (ac-config-default))
 
-;;  (safe-wrap (complete-func-init)) ;; disbale auto complete for better input speed.
+(defcustom mycustom-system-include-paths '("./include/" "/opt/local/include" "/usr/include" )
+  "This is a list of include paths that are used by the clang auto completion."
+  :group 'mycustom
+  :type '(repeat directory)
+  )
+;;(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/") 
+;;(add-to-list 'ac-dictionary-directories "~/bin/emacs/auto-complete/ac-dict")
+(ac-config-default)
+(require 'auto-complete-clang)
+(setq clang-completion-suppress-error 't)
+(setq ac-clang-flags
+      (mapcar (lambda (item)(concat "-I" item))
+              (append
+               mycustom-system-include-paths
+               )
+              )
+      )
+ 
+(defun my-ac-clang-mode-common-hook()
+  (define-key c-mode-base-map (kbd "M-/") 'ac-complete-clang)
+  )
+
+(add-hook 'c-mode-common-hook 'my-ac-clang-mode-common-hook)
+
+)
+
+  (safe-wrap (complete-func-init)) ;; disbale auto complete for better input speed.
 
 (defun ergoemacs-setup()
   (setq ergoemacs-theme "lvl1")
@@ -235,7 +257,6 @@
 
 (defun yas-setup()
   (require 'yasnippet)
-  (setq yas/window-system-popup-function 'yas/x-popup-menu-for-template)
 					;(setq yas-snippet-dirs
 					;      '("~/.emacs.d/snippets"                 ;; personal snippets
 					;	"~/.emacs.d/site-lisp/rails-snippets/"
@@ -243,11 +264,10 @@
 
   (setq yas-snippet-dirs (append yas-snippet-dirs
 				 
-				 '("~/.emacs.d/site-lisp/rails-snippets/"
-				   "~/.emacs.d/snippets"
-				   "~/proj/myconfigure/mysnippets/yasmate"
+				 '("~/proj/myconfigure/mysnippets/yasmate"
 				   )))
-  (yas/global-mode 1)
+
+  (yas-global-mode 1)
   )
 
 
@@ -264,11 +284,11 @@
 (defun ggtag-mode-setup()
   (require 'ggtags)
   ;; ggtags require global
+  (setq ggtags-highlight-tag-timer nil) ;; disable the tag hight light.
   (add-hook 'c-mode-common-hook 'ggtags-mode)
   (add-hook 'python-mode-hook 'ggtags-mode)
   (add-hook 'js2-mode-hook 'ggtags-mode)
-  (add-hook 'ruby-mode-hook 'ggtags-mode)
-  (add-hook 'emacs-lisp-mode-hook 'ggtags-mode))
+  (add-hook 'ruby-mode-hook 'ggtags-mode))
 
 (defun fic-mode-setup()
 ;;; highlight TODO, etc mode.
@@ -763,20 +783,18 @@
 (put 'upcase-region 'disabled nil)	;; 打开C－x c－u把区域变成大写的功能
 ;; 自动补全的尝试列表
 ;; (global-set-key [(meta ?/)] 'hippie-expand)
-					;(autoload 'senator-try-expand-sematic "senator")
+;; (autoload 'senator-try-expand-sematic "senator")
 (setq hippie-expand-try-functions-list
       '(
-
-	senator-try-expand-sematic
+;;	senator-try-expand-sematic
 	;; try-expand-line
 	;; try-expand-line-all-buffers
-	ggtags-try-complete-tag
+	try-expand-dabbrev
 	try-expand-list
 	try-expand-list-all-buffers
-	try-expand-dabbrev
 	try-expand-dabbrev-visible
 	try-expand-dabbrev-all-buffers
-	try-expand-dabbrev-from-kill
+;; 	try-expand-dabbrev-from-kill ;; don't want to comple some typo words.
 	try-complete-file-name
 	try-complete-file-name-partially
 	try-complete-lisp-symbol
@@ -1253,6 +1271,7 @@
   (package-install 'yaml-mode)
   (package-install 'ag)
   (package-install 'magit)
+  
 					;  (package-install 'enh-ruby-mode) ; this package will disable yasnnipe, no need.
   (package-install 'flymake)
   (package-install 'flymake-ruby)
@@ -1267,6 +1286,9 @@
   (package-install 'solarized-theme)
   (package-install 'monokai-theme)
   (package-install 'company)
+
+  (package-install 'auto-complete-clang-async)
+  (package-install 'auto-complete-clang)
 					;  (package-install 'ergoemacs-mode)
   )
 
