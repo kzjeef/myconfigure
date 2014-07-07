@@ -51,6 +51,7 @@
   (require 'package)
   (package-initialize)
   (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+			   ("elpa" . "http://tromey.com/elpa/")
 			   ("marmalade" . "http://marmalade-repo.org/packages/")
 			   ("melpa" . "http://melpa.milkbox.net/packages/")
 			   ))
@@ -148,7 +149,6 @@
 ;;                               Copmany mode init
 ;;--------------------------------------------------------------------------------
 
-;; FIXME: this function make it only complete at ., ->, _, it's a c mode, but not well on other language.
  (defun check-expansion ()
     (save-excursion
       (if (looking-at "\\_>") t
@@ -157,26 +157,23 @@
           (backward-char 1)
           (if (looking-at "->") t nil)))))
 
-  (defun do-yas-expand ()
-    (let ((yas/fallback-behavior 'return-nil))
-      (yas/expand)))
+(defun do-yas-expand ()
+  (let ((yas-fallback-behavior 'return-nil))
+    (yas-expand)))
 
-  (defun tab-indent-or-complete ()
-    (interactive)
-    (if (minibufferp)
+(defun tab-indent-or-complete ()
+  (interactive)
+  (if (minibufferp)
         (minibuffer-complete)
-      (if (or (not yas/minor-mode)
-              (null (do-yas-expand)))
-          (if (check-expansion)
-              (company-complete-common)
-            (indent-for-tab-command)))))
- 
+    (if (or (not yas-minor-mode)
+	    (null (do-yas-expand)))
+	(if (check-expansion)
+	    (company-complete-indent)
+	  (indent-for-tab-command)))))
+
 (defun company-mode-init()
   (add-hook 'after-init-hook 'global-company-mode)
-;  (global-set-key [tab] 'tab-indent-or-complete) ;; just keep defualt, [tab] is for the yas and indent.
-
-  
-  (global-set-key [(meta ?/)] 'company-complete-common)
+  (global-set-key [tab] 'tab-indent-or-complete) ;; just keep defualt, [tab] is for the yas and indent.
 
   (setq company-idle-delay nil) ;; don't pop compnay by timeout, default 0.7 seconds.
   (dolist (hook (list
@@ -223,9 +220,9 @@
   :group 'mycustom
   :type '(repeat directory)
   )
-;;(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/") 
-;;(add-to-list 'ac-dictionary-directories "~/bin/emacs/auto-complete/ac-dict")
-(ac-config-default)
+(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/") 
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/auto-complete/ac-dict")
+
 (require 'auto-complete-clang)
 (setq clang-completion-suppress-error 't)
 (setq ac-clang-flags
@@ -233,18 +230,41 @@
               (append
                mycustom-system-include-paths
                )
-              )
-      )
- 
-(defun my-ac-clang-mode-common-hook()
-  (define-key c-mode-base-map (kbd "M-/") 'ac-complete-clang)
-  )
+              ))
 
-(add-hook 'c-mode-common-hook 'my-ac-clang-mode-common-hook)
 
+
+(set-default 'ac-sources
+             '(ac-source-abbrev
+               ac-source-dictionary
+               ac-source-yasnippet
+               ac-source-words-in-buffer
+               ac-source-words-in-same-mode-buffers
+               ac-source-semantic))
+
+(setq ac-sources (append '(ac-source-clang) ac-sources))
+
+(ac-config-default)
+
+(add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+(add-hook 'ruby-mode-hook 'ac-ruby-mode-setup)
+(add-hook 'css-mode-hook 'ac-css-mode-setup)
+(add-hook 'auto-complete-mode-hook 'ac-common-setup)
+(add-to-list 'ac-modes 'objc-mode)
+(global-auto-complete-mode t)
+
+(add-hook 'slime-mode-hook 'set-up-slime-ac)
+ (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+ (eval-after-load "auto-complete"
+   '(add-to-list 'ac-modes 'slime-repl-mode))
+
+(dolist (m '(c-mode c++-mode java-mode objc-mode))
+  (add-to-list 'ac-modes m))
+
+(global-auto-complete-mode t)
 )
 
-  (safe-wrap (complete-func-init)) ;; disbale auto complete for better input speed.
+;(safe-wrap (complete-func-init)) ;; disbale auto complete for better input speed.
 
 (defun ergoemacs-setup()
   (setq ergoemacs-theme "lvl1")
@@ -382,7 +402,7 @@
   (mapcar #'disable-theme custom-enabled-themes))
 
 (defun reset-theme-list() 
-  (setq all-themes '(twilight twilight-bright adwaita zenburn solarized-dark solarized-light monokai))
+  (setq all-themes '(twilight twilight-bright adwaita solarized-dark monokai))
   (setq valid-themes all-themes))
 
 (defun color-init()
@@ -807,10 +827,10 @@
 (set-face-font 'speedbar-face "Inconsolata-10")
 (setq speedbar-mode-hook '(lambda () (buffer-face-set 'speedbar-face)))
 
-(require 'smartparens-config)
-(require 'smartparens-ruby)
-(smartparens-global-mode)
-(show-smartparens-global-mode)
+;(require 'smartparens-config)
+;(require 'smartparens-ruby)
+;(smartparens-global-mode)
+;(show-smartparens-global-mode)
 (sp-with-modes '(rhtml-mode)
 	       (sp-local-pair "<" ">")
 	       (sp-local-pair "<%" "%>"))
@@ -845,6 +865,19 @@
 	 (steps (floor offset c-basic-offset)))
     (* (max steps 1)
        c-basic-offset)))
+
+
+
+(add-hook 'go-mode-hook (lambda ()
+			  (local-set-key (kbd "C-c C-g") 'go-goto-imports)
+			  (local-set-key (kbd "C-c C-f") 'gofmt)
+			  (local-set-key (kbd "C-c C-r") 'go-remove-unused-imports)
+                          (local-set-key (kbd "M-.") 'godef-jump)
+                          (add-hook 'before-save-hook 'gofmt-before-save)
+                          (setq tab-width 4)
+                          (setq indent-tabs-mode 1)))
+	  
+
 
 (add-hook 'c-mode-common-hook
 	  (lambda ()
@@ -1289,6 +1322,9 @@
 
   (package-install 'auto-complete-clang-async)
   (package-install 'auto-complete-clang)
+  (package-install 'ac-slime)
+  (package-install 'slime)
+  (package-install 'go-mode)
 					;  (package-install 'ergoemacs-mode)
   )
 
