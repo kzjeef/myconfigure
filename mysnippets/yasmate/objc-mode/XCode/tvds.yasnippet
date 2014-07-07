@@ -1,0 +1,31 @@
+# -*- mode: snippet -*-
+# name:  UITableViewDataSource delegates methods
+# key: tvds
+# --
+#pragma mark - UITableViewDataSource
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return $1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView
+ numberOfRowsInSection:(NSInteger)section
+{
+    return $2
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView
+         cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:${3:reuseIdentifier} forIndexPath:indexPath];
+
+    [self configureCell:cell forRowAtIndexPath:indexPath];
+
+    return cell;
+}
+
+- (void)configureCell:(UITableViewCell *)cell
+    forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    $4
+}

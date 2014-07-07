@@ -1,0 +1,20 @@
+# -*- mode: snippet -*-
+# name: Test: Make Async API test case become sync.
+# key: testsync 
+# --
+- (void)test$1
+{
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+
+    $0
+    [${2: Class} ${3: Fcuntion} {
+
+       $4
+        dispatch_semaphore_signal(semaphore);
+    }];
+
+    while (dispatch_semaphore_wait(sema, DISPATCH_TIME_NOW))
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
+}
+
