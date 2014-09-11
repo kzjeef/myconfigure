@@ -165,10 +165,10 @@
   (interactive)
   (if (minibufferp)
         (minibuffer-complete)
-    (if (or (not yas-minor-mode)
+    (if (or (not yas/minor-mode)
 	    (null (do-yas-expand)))
 	(if (check-expansion)
-	    (company-complete-indent)
+	    (company-complete-common)
 	  (indent-for-tab-command)))))
 
 (defun company-mode-init()
@@ -287,7 +287,7 @@
 				 '("~/proj/myconfigure/mysnippets/yasmate"
 				   )))
 
-  (yas-global-mode 1)
+  (yas/global-mode 1)
   )
 
 
