@@ -62,3 +62,5 @@ keycode 66 = Caps_Lock
 add Lock = Caps_Lock
 EOF
 }
+
+export JAVA_TOOL_OPTIONS=-Duser.language=en

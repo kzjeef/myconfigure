@@ -159,7 +159,7 @@
 
 (defun do-yas-expand ()
   (let ((yas-fallback-behavior 'return-nil))
-    (yas-expand)))
+    (yas/expand)))
 
 (defun tab-indent-or-complete ()
   (interactive)
@@ -170,11 +170,9 @@
 	(if (check-expansion)
 	    (company-complete-common)
 	  (indent-for-tab-command)))))
-
 (defun company-mode-init()
   (add-hook 'after-init-hook 'global-company-mode)
   (global-set-key [tab] 'tab-indent-or-complete) ;; just keep defualt, [tab] is for the yas and indent.
-
   (setq company-idle-delay nil) ;; don't pop compnay by timeout, default 0.7 seconds.
   (dolist (hook (list
 		 'emacs-lisp-mode-hook
@@ -266,6 +264,12 @@
 
 ;(safe-wrap (complete-func-init)) ;; disbale auto complete for better input speed.
 
+(defun nxml-setup()
+  (defun nxml-custom-keybindings ()
+    (define-key nxml-mode-map "\C-c\C-c" 'nxml-complete))
+
+  (add-hook 'nxml-mode-hook 'nxml-custom-keybindings))
+
 (defun ergoemacs-setup()
   (setq ergoemacs-theme "lvl1")
   (setq ergoemacs-keyboard-layout "us")
@@ -329,6 +333,14 @@
   (global-set-key "\C-cd" 'dash-at-point)
   (global-set-key [f1] 'dash-at-point)
   (global-set-key "\C-ce" 'dash-at-point-with-docset))
+
+(defun markdown-setup()
+  (autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+  (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+)
 
 (defun git-setup ()
   (featurep 'git)
@@ -721,6 +733,7 @@
 (safe-wrap (company-mode-init))
 (safe-wrap (ace-jump-init))
 (safe-wrap (yas-setup))
+(safe-wrap (nxml-setup))
 (safe-wrap (cedet-init))
 (safe-wrap (ecb-init))
 (safe-wrap (ergoemacs-setup))
@@ -1075,6 +1088,10 @@
 (global-set-key (kbd "C-M-RET")		'toggle-fullscreen)
 (global-set-key (kbd "C-M-<return>")	'toggle-fullscreen)
 
+
+(setq mode-require-final-newline nil)
+
+
 ;; Set a visible bell function...
 					;(setq visible-bell nil)
 					;(setq ring-bell-function `(lambda ()
@@ -1307,6 +1324,7 @@
   (package-install 'yaml-mode)
   (package-install 'ag)
   (package-install 'magit)
+  (package-install 'markdown-mode)
   
 					;  (package-install 'enh-ruby-mode) ; this package will disable yasnnipe, no need.
   (package-install 'flymake)
@@ -1322,6 +1340,7 @@
   (package-install 'solarized-theme)
   (package-install 'monokai-theme)
   (package-install 'company)
+  (package-install 'auto-complete-nxml)
 
   (package-install 'auto-complete-clang-async)
   (package-install 'auto-complete-clang)
