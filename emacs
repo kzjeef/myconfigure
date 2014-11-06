@@ -173,7 +173,7 @@
 
 (defun company-mode-init()
   (add-hook 'after-init-hook 'global-company-mode)
-  (global-set-key [tab] 'tab-indent-or-complete) ;; just keep defualt, [tab] is for the yas and indent.
+ (global-set-key [backtab] 'company-complate-common) ;; [shift] + [tab]
 
   (setq company-idle-delay nil) ;; don't pop compnay by timeout, default 0.7 seconds.
   (dolist (hook (list
@@ -284,7 +284,8 @@
 
   (setq yas-snippet-dirs (append yas-snippet-dirs
 				 
-				 '("~/proj/myconfigure/mysnippets/yasmate"
+                                 '("~/proj/myconfigure/mysnippets/yasmate"
+                                   "~/proj/myconfigure/mysnippets/golang"
 				   )))
 
   (yas-global-mode 1)
@@ -438,7 +439,8 @@
   (add-hook 'python-mode-hook (function cscope:hook))
   (add-hook 'python-mode-hook
             (lambda()
-              (setq dash-at-point-docset "django")
+              (ac-stop) ;; ac mode 会造成输入的时候闪烁
+;              (setq dash-at-point-docset "django")
 	      ;; JEDI document: http://tkf.github.io/emacs-jedi/latest/#jedi:key-complete
               (when (not (is-aquamacs)) (jedi:setup))
               ;; jedi have a bug will not running in acquamcs.
@@ -485,7 +487,7 @@
   (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
 
   (require 'rinari)
-  (add-hook 'ruby-mode-hook(lambda() (setq dash-at-point-docset "rails")))
+;  (add-hook 'ruby-mode-hook(lambda() (setq dash-at-point-docset "rails")))
   (add-hook 'ruby-mode-hook
 	    (lambda () (flymake-ruby-load))
 	    (rspec-mode)
@@ -831,9 +833,9 @@
 ;(require 'smartparens-ruby)
 ;(smartparens-global-mode)
 ;(show-smartparens-global-mode)
-(sp-with-modes '(rhtml-mode)
-	       (sp-local-pair "<" ">")
-	       (sp-local-pair "<%" "%>"))
+;;(sp-with-modes '(rhtml-mode)
+;;	       (sp-local-pair "<" ">")
+;;	       (sp-local-pair "<%" "%>"))
 
 ;; for object-c.
 (add-hook 'objc-mode-hook
@@ -1326,6 +1328,7 @@
   (package-install 'slime)
   (package-install 'go-mode)
 					;  (package-install 'ergoemacs-mode)
+  (package-install 'erlang)
   )
 
 (when (memq window-system '(mac ns))

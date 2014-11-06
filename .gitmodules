@@ -38,3 +38,6 @@
 [submodule "auto-complete"]
 	path = auto-complete
 	url = https://github.com/auto-complete/auto-complete.git
+[submodule "mysnippets/golang"]
+	path = mysnippets/golang
+	url = https://github.com/atotto/yasnippet-golang.git
