@@ -159,22 +159,21 @@
 
 (defun do-yas-expand ()
   (let ((yas-fallback-behavior 'return-nil))
-    (yas-expand)))
+    (yas/expand)))
 
 (defun tab-indent-or-complete ()
   (interactive)
   (if (minibufferp)
         (minibuffer-complete)
-    (if (or (not yas-minor-mode)
+    (if (or (not yas/minor-mode)
 	    (null (do-yas-expand)))
 	(if (check-expansion)
-	    (company-complete-indent)
+	    (company-complete-common)
 	  (indent-for-tab-command)))))
-
 (defun company-mode-init()
   (add-hook 'after-init-hook 'global-company-mode)
  (global-set-key [backtab] 'company-complate-common) ;; [shift] + [tab]
-
+;  (global-set-key [tab] 'tab-indent-or-complete) ;; just keep defualt, [tab] is for the yas and indent.
   (setq company-idle-delay nil) ;; don't pop compnay by timeout, default 0.7 seconds.
   (dolist (hook (list
 		 'emacs-lisp-mode-hook
@@ -266,6 +265,12 @@
 
 ;(safe-wrap (complete-func-init)) ;; disbale auto complete for better input speed.
 
+(defun nxml-setup()
+  (defun nxml-custom-keybindings ()
+    (define-key nxml-mode-map "\C-c\C-c" 'nxml-complete))
+
+  (add-hook 'nxml-mode-hook 'nxml-custom-keybindings))
+
 (defun ergoemacs-setup()
   (setq ergoemacs-theme "lvl1")
   (setq ergoemacs-keyboard-layout "us")
@@ -288,7 +293,7 @@
                                    "~/proj/myconfigure/mysnippets/golang"
 				   )))
 
-  (yas-global-mode 1)
+  (yas/global-mode 1)
   )
 
 
@@ -331,6 +336,14 @@
   (global-set-key [f1] 'dash-at-point)
   (global-set-key "\C-ce" 'dash-at-point-with-docset))
 
+(defun markdown-setup()
+  (autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+  (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+)
+
 (defun git-setup ()
   (featurep 'git)
   nil
@@ -351,6 +364,9 @@
   ;;	     (doxymacs-font-lock)
   ;;	     )))
   ;; Auto enable whitespace mode in diff mode
+
+  (global-hl-line-mode t) ;; Highlight current line, seems easier to find the cursor.
+  
   (add-hook 'diff-mode-hook
 	    (lambda ()
 	      (whitespace-mode t)))
@@ -720,6 +736,7 @@
 (safe-wrap (company-mode-init))
 (safe-wrap (ace-jump-init))
 (safe-wrap (yas-setup))
+(safe-wrap (nxml-setup))
 (safe-wrap (cedet-init))
 (safe-wrap (ecb-init))
 (safe-wrap (ergoemacs-setup))
@@ -833,9 +850,15 @@
 ;(require 'smartparens-ruby)
 ;(smartparens-global-mode)
 ;(show-smartparens-global-mode)
+<<<<<<< HEAD
 ;;(sp-with-modes '(rhtml-mode)
 ;;	       (sp-local-pair "<" ">")
 ;;	       (sp-local-pair "<%" "%>"))
+=======
+;(sp-with-modes '(rhtml-mode)
+;	       (sp-local-pair "<" ">")
+;	       (sp-local-pair "<%" "%>"))
+>>>>>>> b10650fd21c7c3473ed30ea3ddc677e0f698419d
 
 ;; for object-c.
 (add-hook 'objc-mode-hook
@@ -1074,6 +1097,10 @@
 (global-set-key (kbd "C-M-RET")		'toggle-fullscreen)
 (global-set-key (kbd "C-M-<return>")	'toggle-fullscreen)
 
+
+(setq mode-require-final-newline nil)
+
+
 ;; Set a visible bell function...
 					;(setq visible-bell nil)
 					;(setq ring-bell-function `(lambda ()
@@ -1306,6 +1333,7 @@
   (package-install 'yaml-mode)
   (package-install 'ag)
   (package-install 'magit)
+  (package-install 'markdown-mode)
   
 					;  (package-install 'enh-ruby-mode) ; this package will disable yasnnipe, no need.
   (package-install 'flymake)
@@ -1321,6 +1349,7 @@
   (package-install 'solarized-theme)
   (package-install 'monokai-theme)
   (package-install 'company)
+  (package-install 'auto-complete-nxml)
 
   (package-install 'auto-complete-clang-async)
   (package-install 'auto-complete-clang)
@@ -1494,31 +1523,95 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
+ '(ansi-color-names-vector
+   ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
+ '(ansi-term-color-vector
+   [unspecified "#FFFFFF" "#d15120" "#5f9411" "#d2ad00" "#6b82a7" "#a66bab" "#6b82a7" "#505050"] t)
  '(compilation-message-face (quote default))
  '(cua-global-mark-cursor-color "#2aa198")
  '(cua-normal-cursor-color "#657b83")
  '(cua-overwrite-cursor-color "#b58900")
  '(cua-read-only-cursor-color "#859900")
- '(custom-safe-themes (quote ("60f04e478dedc16397353fb9f33f0d895ea3dab4f581307fbf0aa2f07e658a40" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "e24180589c0267df991cf54bf1a795c07d00b24169206106624bb844292807b9" "5ceb2e85215142caad4c2abc1061c0bade80348c4eb323934a909e36f864d5bc" default)))
- '(ecb-layout-window-sizes (quote (("right1" (ecb-directories-buffer-name 0.18143459915611815 . 0.2857142857142857) (ecb-sources-buffer-name 0.18143459915611815 . 0.3392857142857143) (ecb-methods-buffer-name 0.18143459915611815 . 0.35714285714285715)) ("left8" (ecb-directories-buffer-name 0.19831223628691982 . 0.2857142857142857) (ecb-sources-buffer-name 0.19831223628691982 . 0.23214285714285715) (ecb-methods-buffer-name 0.19831223628691982 . 0.2857142857142857) (ecb-history-buffer-name 0.19831223628691982 . 0.17857142857142858)))))
+ '(custom-safe-themes
+   (quote
+    ("cea6d15a8333e0c78e1e15a0524000de69aac2afa7bb6cf9d043a2627327844e" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" "3b819bba57a676edf6e4881bd38c777f96d1aa3b3b5bc21d8266fa5b0d0f1ebf" "60f04e478dedc16397353fb9f33f0d895ea3dab4f581307fbf0aa2f07e658a40" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "e24180589c0267df991cf54bf1a795c07d00b24169206106624bb844292807b9" "5ceb2e85215142caad4c2abc1061c0bade80348c4eb323934a909e36f864d5bc" default)))
+ '(ecb-layout-window-sizes
+   (quote
+    (("right1"
+      (ecb-directories-buffer-name 0.18143459915611815 . 0.2857142857142857)
+      (ecb-sources-buffer-name 0.18143459915611815 . 0.3392857142857143)
+      (ecb-methods-buffer-name 0.18143459915611815 . 0.35714285714285715))
+     ("left8"
+      (ecb-directories-buffer-name 0.19831223628691982 . 0.2857142857142857)
+      (ecb-sources-buffer-name 0.19831223628691982 . 0.23214285714285715)
+      (ecb-methods-buffer-name 0.19831223628691982 . 0.2857142857142857)
+      (ecb-history-buffer-name 0.19831223628691982 . 0.17857142857142858)))))
  '(ecb-options-version "2.40")
  '(fci-rule-character-color "#d9d9d9")
  '(fci-rule-color "#383838")
  '(gud-gdb-command-name "gdb --annotate=1")
  '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
- '(highlight-symbol-colors (--map (solarized-color-blend it "#fdf6e3" 0.25) (quote ("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2"))))
+ '(highlight-symbol-colors
+   (--map
+    (solarized-color-blend it "#fdf6e3" 0.25)
+    (quote
+     ("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2"))))
  '(highlight-symbol-foreground-color "#586e75")
- '(highlight-tail-colors (quote (("#eee8d5" . 0) ("#B4C342" . 20) ("#69CABF" . 30) ("#69B7F0" . 50) ("#DEB542" . 60) ("#F2804F" . 70) ("#F771AC" . 85) ("#eee8d5" . 100))))
+ '(highlight-tail-colors
+   (quote
+    (("#eee8d5" . 0)
+     ("#B4C342" . 20)
+     ("#69CABF" . 30)
+     ("#69B7F0" . 50)
+     ("#DEB542" . 60)
+     ("#F2804F" . 70)
+     ("#F771AC" . 85)
+     ("#eee8d5" . 100))))
  '(large-file-warning-threshold nil)
  '(magit-use-overlays nil)
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#eee8d5" 0.2))
+ '(syslog-debug-face
+   (quote
+    ((t :background unspecified :foreground "#A1EFE4" :weight bold))))
+ '(syslog-error-face
+   (quote
+    ((t :background unspecified :foreground "#F92672" :weight bold))))
+ '(syslog-hour-face (quote ((t :background unspecified :foreground "#A6E22E"))))
+ '(syslog-info-face
+   (quote
+    ((t :background unspecified :foreground "#66D9EF" :weight bold))))
+ '(syslog-ip-face (quote ((t :background unspecified :foreground "#E6DB74"))))
+ '(syslog-su-face (quote ((t :background unspecified :foreground "#FD5FF0"))))
+ '(syslog-warn-face
+   (quote
+    ((t :background unspecified :foreground "#FD971F" :weight bold))))
  '(term-default-bg-color "#fdf6e3")
  '(term-default-fg-color "#657b83")
  '(vc-annotate-background "#2B2B2B")
- '(vc-annotate-color-map (quote ((20 . "#BC8383") (40 . "#CC9393") (60 . "#DFAF8F") (80 . "#D0BF8F") (100 . "#E0CF9F") (120 . "#F0DFAF") (140 . "#5F7F5F") (160 . "#7F9F7F") (180 . "#8FB28F") (200 . "#9FC59F") (220 . "#AFD8AF") (240 . "#BFEBBF") (260 . "#93E0E3") (280 . "#6CA0A3") (300 . "#7CB8BB") (320 . "#8CD0D3") (340 . "#94BFF3") (360 . "#DC8CC3"))))
+ '(vc-annotate-color-map
+   (quote
+    ((20 . "#BC8383")
+     (40 . "#CC9393")
+     (60 . "#DFAF8F")
+     (80 . "#D0BF8F")
+     (100 . "#E0CF9F")
+     (120 . "#F0DFAF")
+     (140 . "#5F7F5F")
+     (160 . "#7F9F7F")
+     (180 . "#8FB28F")
+     (200 . "#9FC59F")
+     (220 . "#AFD8AF")
+     (240 . "#BFEBBF")
+     (260 . "#93E0E3")
+     (280 . "#6CA0A3")
+     (300 . "#7CB8BB")
+     (320 . "#8CD0D3")
+     (340 . "#94BFF3")
+     (360 . "#DC8CC3"))))
  '(vc-annotate-very-old-color "#DC8CC3")
- '(weechat-color-list (quote (unspecified "#fdf6e3" "#eee8d5" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#657b83" "#839496"))))
+ '(weechat-color-list
+   (quote
+    (unspecified "#fdf6e3" "#eee8d5" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#657b83" "#839496"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
