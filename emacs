@@ -189,6 +189,14 @@
     (add-hook hook 'company-mode))
   )
 
+(defun java-init()
+  (require 'eclim)
+  (global-eclim-mode)
+  (custom-set-variables
+  '(eclim-eclipse-dirs '("~/nonStandard/eclipse"))
+  '(eclim-executable "~/nonStandard/eclipse/eclim"))
+  )
+
 
 
 (defun ecb-toggle(&optional f)
@@ -417,7 +425,7 @@
   (mapcar #'disable-theme custom-enabled-themes))
 
 (defun reset-theme-list() 
-  (setq all-themes '(twilight twilight-bright adwaita solarized-dark monokai))
+  (setq all-themes '(wombat twilight twilight-bright adwaita solarized-dark monokai))
   (setq valid-themes all-themes))
 
 (defun color-init()
@@ -659,7 +667,7 @@
 (defun cscope-setup ()
 					;  (print "cscope setup")
   (require 'xcscope)
-  (setq cscope-do-not-update-database t)
+;;  (setq cscope-do-not-update-database t)
   )
 
 (defun hightlight-80+-setup()
@@ -1348,6 +1356,8 @@
   (package-install 'slime)
   (package-install 'go-mode)
 					;  (package-install 'ergoemacs-mode)
+
+  (package-install 'emacs-eclim)
   )
 
 (when (memq window-system '(mac ns))
