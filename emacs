@@ -50,7 +50,7 @@
 (when (>= emacs-major-version 24)
   (require 'package)
   (package-initialize)
-  (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+  (setq package-archives '(
 			   ("elpa" . "http://tromey.com/elpa/")
 			   ("marmalade" . "http://marmalade-repo.org/packages/")
 			   ("melpa" . "http://melpa.milkbox.net/packages/")
@@ -58,7 +58,7 @@
 
   )
 
-					;当前窗口和非当前窗口时透明度 
+;当前窗口和非当前窗口时透明度 
 (setq alpha-list '((95 89) (100 100))) 
 (defun looping-alpha () 
   (interactive) 
@@ -373,7 +373,9 @@
   ;;	     )))
   ;; Auto enable whitespace mode in diff mode
 
-  (global-hl-line-mode t) ;; Highlight current line, seems easier to find the cursor.
+  ;;  (global-hl-line-mode t) ;; Highlight current line, seems easier to find the cursor.
+
+  (setq wsd-style "roundgreen")
   
   (add-hook 'diff-mode-hook
 	    (lambda ()
@@ -384,8 +386,8 @@
   (setq comment-multi-line t)	 ;; 大段注释的时候， 每行的开头都是*
   (c-toggle-hungry-state t)	 ;; hungry delete
 
-  (require 'flyspell)
-  (flyspell-prog-mode)             ;; 会对程序中的注释做拼写检查
+;;  (require 'flyspell)
+;;  (flyspell-prog-mode)             ;; 会对程序中的注释做拼写检查
                                         ;(hightlight-change-mode)	 ;; 会对做的修改做Hight light
   (which-func-mode t)	 ;; 在状态栏显示当前函数
   ;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
@@ -427,7 +429,7 @@
   (mapcar #'disable-theme custom-enabled-themes))
 
 (defun reset-theme-list() 
-  (setq all-themes '(wombat twilight twilight-bright adwaita solarized-dark monokai))
+  (setq all-themes '(adwaita wombat twilight twilight-bright solarized-dark monokai))
   (setq valid-themes all-themes))
 
 (defun color-init()
@@ -544,7 +546,7 @@
 
   )
 
-(load-ruby-env)
+;; (load-ruby-env)
 
 (defun android-setup()
 
@@ -955,7 +957,8 @@
 (add-hook 'c++-mode-hook
 	  (lambda ()
 	    (load-c-relate-lib)
-	    (c-set-style "my-cc-style")
+;;	    (c-set-style "my-cc-style")
+	    (c-set-offset 'innamespace 0)
 	    (setq c-basic-offset 4
 		  tab-width 4
 		  indent-tabs-mode nil)
@@ -966,6 +969,8 @@
 					;   (message "with java mode hook")
 	    (when (not (is-aquamacs)) (turn-on-auto-revert-mode)) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
 	    (load-java-relate-lib)))
+
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 (remove-hook 'find-file-hooks 'vc-find-file-hook)
 
@@ -1316,6 +1321,7 @@
   (interactive)
   (package-refresh-contents)
   (package-install 'ggtags)
+  (package-install 'wsd-mode)
   (package-install 'dash-at-point)
   (package-install 'rinari)
   (package-install 'yasnippet)
@@ -1361,6 +1367,7 @@
 					;  (package-install 'ergoemacs-mode)
   (package-install 'emacs-eclim)
   (package-install 'erlang)
+
   )
 
 (when (memq window-system '(mac ns))
