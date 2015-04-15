@@ -88,6 +88,12 @@
 
 (setq split-width-threshold 240)
 
+(defun stock-init()
+  (stock-ticker-global-mode +1)
+  (setq stock-ticker-symbols '("300427.SZ"  "002398.SZ"  "300104.SZ"))
+  (setq stock-ticker-display-interval 5))
+
+
 
 (defun cedet-init()
   ;; Load CEDET.
@@ -111,6 +117,7 @@
   )
 
 (defun ecb-init()
+  (require 'ecb)
   (setq ecb-tip-of-the-day nil)
   (setq ecb-is-active nil))
 
@@ -254,8 +261,8 @@
 (ac-config-default)
 
 (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
-(add-hook 'ruby-mode-hook 'ac-ruby-mode-setup)
-(add-hook 'css-mode-hook 'ac-css-mode-setup)
+;(add-hook 'ruby-mode-hook 'ac-ruby-mode-setup)
+;(add-hook 'css-mode-hook 'ac-css-mode-setup)
 (add-hook 'auto-complete-mode-hook 'ac-common-setup)
 (add-to-list 'ac-modes 'objc-mode)
 (global-auto-complete-mode t)
@@ -271,7 +278,7 @@
 (global-auto-complete-mode t)
 )
 
-;(safe-wrap (complete-func-init)) ;; disbale auto complete for better input speed.
+(safe-wrap (complete-func-init))
 
 (defun nxml-setup()
   (defun nxml-custom-keybindings ()
@@ -323,6 +330,12 @@
   (add-hook 'python-mode-hook 'ggtags-mode)
   (add-hook 'js2-mode-hook 'ggtags-mode)
   (add-hook 'ruby-mode-hook 'ggtags-mode))
+
+(defun flymake-setup()
+  (add-hood 'c++-mode-hook
+	    (lambda()
+
+	      )))
 
 (defun fic-mode-setup()
 ;;; highlight TODO, etc mode.
@@ -429,7 +442,7 @@
   (mapcar #'disable-theme custom-enabled-themes))
 
 (defun reset-theme-list() 
-  (setq all-themes '(adwaita wombat twilight twilight-bright solarized-dark monokai))
+  (setq all-themes '(monokai adwaita wombat twilight-bright))
   (setq valid-themes all-themes))
 
 (defun color-init()
@@ -644,7 +657,7 @@
 					;		:family "Ubuntu mono" :height 160 :weight 'normal)
 
 					;	 (set-default-font "DejaVuSansMono-12")
-	 (set-default-font "AkkurantMonoMono-12")
+	 (set-default-font "AkkurantMonoMono-13")
 					;	 (set-default-font "BitstreamVeraSansMono-set")
 					;	 (12-default-font "-apple-Monaco-normal-normal-normal-*-12-*-*-*-*-0-iso10646-1")
 					;	 (set-face-attribute 'default nil
@@ -742,7 +755,8 @@
 
 
 
-(safe-wrap (ggtag-mode-setup))
+;;(safe-wrap (ggtag-mode-setup))
+(safe-wrap (stock-init))
 (safe-wrap (company-mode-init))
 (safe-wrap (ace-jump-init))
 (safe-wrap (yas-setup))
@@ -774,8 +788,8 @@
 (global-set-key [f5] 'revert-buffer)
 (global-set-key [f6] 'ff-find-related-file) ;; Find header file.
 (global-set-key [f7] 'grep-find)
-(global-set-key [f8] 'ecb-toggle)
-(global-set-key [\M-f8] 'compile)
+(global-set-key [\M-f8] 'ecb-toggle)
+(global-set-key [f8] 'compile)
 (global-set-key [f9] 'gdb)
 (global-set-key [f10] 'sr-speedbar-toggle)
 (global-set-key [\M-f10] 'sr-speedbar-toggle)
@@ -954,6 +968,36 @@
 		;;                 (highlight-80+-mode)
 		))))
 
+
+;; --------- Begin Fix enum class in c++11
+(defun inside-class-enum-p (pos)
+  "Checks if POS is within the braces of a C++ \"enum class\"."
+  (ignore-errors
+    (save-excursion
+      (goto-char pos)
+      (up-list -1)
+      (backward-sexp 1)
+      (looking-back "enum[ \t]+class[ \t]+[^}]+"))))
+
+(defun align-enum-class (langelem)
+  (if (inside-class-enum-p (c-langelem-pos langelem))
+      0
+    (c-lineup-topmost-intro-cont langelem)))
+
+(defun align-enum-class-closing-brace (langelem)
+  (if (inside-class-enum-p (c-langelem-pos langelem))
+      '-
+    '+))
+
+(defun fix-enum-class ()
+  "Setup `c++-mode' to better handle \"class enum\"."
+  (add-to-list 'c-offsets-alist '(topmost-intro-cont . align-enum-class))
+  (add-to-list 'c-offsets-alist
+               '(statement-cont . align-enum-class-closing-brace)))
+
+(add-hook 'c++-mode-hook 'fix-enum-class)
+;; ----------- End Fix enum class in c++11
+
 (add-hook 'c++-mode-hook
 	  (lambda ()
 	    (load-c-relate-lib)
@@ -1064,8 +1108,8 @@
 (setq ring-bell-function 'ignore)	;; 不要让那个DIDI的响
 (setq display-time-24hr-format t)
 (setq display-time-day-and-date t)
-(setq display-time-interval 10)	 ;; 在 mode-line 上显示时间。
-(display-time)
+(setq display-time-interval 10)	 
+;; (display-time)  ;; 在 mode-line 上显示时间。
 (setq require-final-newline t)
 (setq track-eol t)
 (setq suggest-key-bindings 1)	 ;; 当使用 M-x COMMAND 后，过 1 秒钟显示该 COMMAND 绑定的键。
@@ -1342,6 +1386,7 @@
   (package-install 'ag)
   (package-install 'magit)
   (package-install 'markdown-mode)
+  (package-install 'doxymacs)
   
 					;  (package-install 'enh-ruby-mode) ; this package will disable yasnnipe, no need.
   (package-install 'flymake)
@@ -1367,7 +1412,7 @@
 					;  (package-install 'ergoemacs-mode)
   (package-install 'emacs-eclim)
   (package-install 'erlang)
-
+  (package-install 'stock-ticker)
   )
 
 (when (memq window-system '(mac ns))
