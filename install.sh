@@ -70,6 +70,8 @@ install highlight-80+.el ${TARGET_DIR}
 
 (cp -r ace-jump-mode ${TARGET_DIR})
 
+(cp logcat.el ${TARGET_DIR})
+
 # finally need to recompile all files under install dir.
 emacs --batch --eval '(byte-recompile-directory "~/.emacs.d/site-lisp/")'
 

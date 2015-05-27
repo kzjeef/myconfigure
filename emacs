@@ -90,7 +90,7 @@
 
 (defun stock-init()
   (stock-ticker-global-mode +1)
-  (setq stock-ticker-symbols '("300427.SZ"  "002398.SZ"  "300104.SZ"))
+  (setq stock-ticker-symbols '("300028.SZ"  "300058.SZ"))
   (setq stock-ticker-display-interval 5))
 
 
@@ -569,7 +569,14 @@
   ;; 2. The target parameter can find by 
   ;; $ android list targets
   ;; 3. then you can use android mode
-  (require 'android-mode))
+  (require 'android-mode)
+  (setq android-mode-sdk-dir "~/sdk" )
+  (load "logcat")
+;  (add-hook 'gud-mode-hook
+;            (lambda ()
+;	      (add-to-list 'gud-jdb-classpath "/home/gregj/work/android-sdk-linux_86/platforms/android-7/android.jar")
+;;	      ))
+  )
 
 
 (defun load-web-env()
@@ -1413,6 +1420,7 @@
   (package-install 'emacs-eclim)
   (package-install 'erlang)
   (package-install 'stock-ticker)
+  (package-install 'android-mode)
   )
 
 (when (memq window-system '(mac ns))
