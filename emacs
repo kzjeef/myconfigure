@@ -278,7 +278,8 @@
 (global-auto-complete-mode t)
 )
 
-(safe-wrap (complete-func-init))
+
+
 
 (defun nxml-setup()
   (defun nxml-custom-keybindings ()
@@ -389,7 +390,10 @@
   ;;  (global-hl-line-mode t) ;; Highlight current line, seems easier to find the cursor.
 
   (setq wsd-style "roundgreen")
-  
+
+  (global-hi-lock-mode 1)
+  ;; enable hightlight, C-x w h word <RET> <RET> to hightlight
+
   (add-hook 'diff-mode-hook
 	    (lambda ()
 	      (whitespace-mode t)))
@@ -492,6 +496,12 @@
   (setq py-install-directory "~/.emacs.d/site-lisp/python/")
   (add-to-list 'auto-mode-alist '("\\.py?$" . python-mode))
   )
+
+(defun load-squirrel-env()
+  (setq auto-mode-alist (cons '("\\.ni$" . squirrel-mode) auto-mode-alist))
+  (autoload 'squirrel-mode "squirrel-mode" "Squirrel Mode." t))
+  
+
 
 (defun load-ruby-env()
   ;;  (autoload 'enh-ruby-mode "enh-ruby-mode" "Major mode for ruby files" t)
@@ -664,11 +674,12 @@
 					;		:family "Ubuntu mono" :height 160 :weight 'normal)
 
 					;	 (set-default-font "DejaVuSansMono-12")
-	 (set-default-font "AkkurantMonoMono-13")
+	 ;;	 (set-default-font "AkkurantMonoMono-13")
 					;	 (set-default-font "BitstreamVeraSansMono-set")
 					;	 (12-default-font "-apple-Monaco-normal-normal-normal-*-12-*-*-*-*-0-iso10646-1")
-					;	 (set-face-attribute 'default nil
-					;			     :family "Monaco" :height 120 :weight 'normal)
+;;	 (set-face-attribute 'default nil
+	 ;;			     :family "Menlo" :height 10 :weight 'normal)
+	 (set-default-font "Monaco-11")
 	 ))
   )
 
@@ -781,6 +792,7 @@
 (safe-wrap (load-web-env))
 ;;(safe-wrap (elscreen-setup))
 (safe-wrap (fic-mode-setup))
+(safe-wrap (complete-func-init))
 (setq Man-notify-method 'pushy)
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
 (defalias 'qrr 'query-replace-regexp)   ;; regexp query.
@@ -1013,6 +1025,7 @@
 	    (setq c-basic-offset 4
 		  tab-width 4
 		  indent-tabs-mode nil)
+	    (auto-complete-mode t)	;enable auto complete mode.
 	    ))
 
 (add-hook 'java-mode-hook
@@ -1421,6 +1434,8 @@
   (package-install 'erlang)
   (package-install 'stock-ticker)
   (package-install 'android-mode)
+  (package-install 'highlight-symbol)
+  (package-install 'squirrel-mode)
   )
 
 (when (memq window-system '(mac ns))
