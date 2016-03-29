@@ -21,6 +21,8 @@ mkdir -p ${TARGET_DIR}
 
 if [[ "$platform" == 'mac' ]]; then
     brew install the_silver_searcher
+    brew install homebrew/emacs/flycheck
+    brew install rtags --HEAD
 else
     sudo apt-get install texinfo silversearcher-ag global
     sudo apt-get install ttf-inconsolata
@@ -71,6 +73,8 @@ install highlight-80+.el ${TARGET_DIR}
 (cp -r ace-jump-mode ${TARGET_DIR})
 
 (cp logcat.el ${TARGET_DIR})
+
+(cp cmake-project.el ${TARGET_DIR})
 
 # finally need to recompile all files under install dir.
 emacs --batch --eval '(byte-recompile-directory "~/.emacs.d/site-lisp/")'

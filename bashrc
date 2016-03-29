@@ -63,12 +63,12 @@ add Lock = Caps_Lock
 EOF
 }
 
-export JAVA_TOOL_OPTIONS=-Duser.language=en
+#export JAVA_TOOL_OPTIONS=-Duser.language=en
 
 
-alias ad="fb-adb disconnect"
-alias ac="fb-adb connect"
-alias adbs="fb-adb shell"
-alias alogk="adb logcat  -s DirectAudio:v"
-alias ap="fb-adb push"
+alias ad="adb disconnect"
+alias ac="adb connect"
+alias adbs="adb shell"
+alias alogk="adb logcat -vtime -s DirectAudio:v KaraokeService:v"
+alias ap="adb push"
 alias a='adb'

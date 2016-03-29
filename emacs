@@ -1,4 +1,4 @@
-;; -*- mode: emacs-lisp -*-
+;;; -*- mode: emacs-lisp -*-
 ;; .emacs
 ;;; uncomment this line to disable loading of "default.el" at startup
 ;; (setq inhibit-default-init t)
@@ -8,6 +8,12 @@
 ;;    Determine where we are
 ;;________________________________________________________________
 
+
+;; Notes about useful tricks I should remember.
+;; 1. adjust case status of just inputed words, (save the caps key.)
+;;	M-- M-u : upper case just inputed words. some thing like THIS
+;;	M-- M-c : Capital just input Word: 				
+;; 
 (defvar system-type-as-string (prin1-to-string system-type))
 
 (defvar on_windows_nt (string-match "windows-nt" system-type-as-string))
@@ -33,8 +39,184 @@
      ,@clean-up))
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/")
+(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/")
+(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/doxymacs")
 (add-to-list 'load-path "~/.emacs.d/site-lisp/multiple-cursors/")
 (add-to-list 'load-path "~/.emacs.d/site-lisp/ecb/")
+
+
+;; --- begin space macs configure.
+;; Space t E y
+(setq dotspacemacs-editing-style 'hybrid)
+;(setq dotspacemacs-elpa-https nil)
+;; --------------
+                                        ;(setq dotspacemacs-editing-style 'emacs)
+
+(defun spacemacs-init()
+
+(defun dotspacemacs/layers ()
+  "Configuration Layers declaration.
+You should not put any user code in this function besides modifying the variable
+values."
+  (setq-default
+   ;; Base distribution to use. This is a layer contained in the directory
+   ;; `+distribution'. For now available distributions are `spacemacs-base'
+   ;; or `spacemacs'. (default 'spacemacs)
+   dotspacemacs-distribution 'spacemacs
+   ;; List of additional paths where to look for configuration layers.
+   ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
+   dotspacemacs-configuration-layer-path '()
+   ;; List of configuration layers to load. If it is the symbol `all' instead
+   ;; of a list then all discovered layers will be installed.
+   dotspacemacs-configuration-layers
+   '(
+     (auto-completion :variables
+                                                                         auto-completion-return-key-behavior 'complete
+                                                                         auto-completion-tab-key-behavior 'complete
+                                                                         auto-completion-enable-help-tooltip nil
+                                                                         auto-completion-complete-with-key-sequence nil
+                                                                         auto-completion-complete-with-key-sequence-delay 0
+                                                                         auto-completion-private-snippets-directory nil)
+     (shell :variables
+            shell-default-height 30
+            shell-default-position 'bottom
+            shell-default-term-shell (getenv "SHELL"))
+    org
+    git
+    javascript
+    markdown
+    cscope
+    dash
+    c-c++
+;;    semantic ;; sematic is too slow...
+    syntax-checking
+    version-control
+    ))
+   ;; List of additional packages that will be installed without being
+   ;; wrapped in a layer. If you need some configuration for these
+   ;; packages, then consider creating a layer. You can also put the
+   ;; configuration in `dotspacemacs/user-config'.
+   dotspacemacs-additional-packages '()
+   ;; A list of packages and/or extensions that will not be install and loaded.
+   dotspacemacs-excluded-packages '(company-statistics smartparens)
+   ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
+   ;; are declared in a layer which is not a member of
+   ;; the list `dotspacemacs-configuration-layers'. (default t)
+   dotspacemacs-delete-orphan-packages t)
+
+(defun dotspacemacs/init ()
+  "Initialization function.
+This function is called at the very startup of Spacemacs initialization
+before layers configuration.
+You should not put any user code in there besides modifying the variable
+values."
+  ;; This setq-default sexp is an exhaustive list of all the supported
+  ;; spacemacs settings.
+  (setq-default
+   ;; If non nil ELPA repositories are contacted via HTTPS whenever it's
+   ;; possible. Set it to nil if you have no way to use HTTPS in your
+   ;; environment, otherwise it is strongly recommended to let it set to t.
+   ;; This variable has no effect if Emacs is launched with the parameter
+   ;; `--insecure' which forces the value of this variable to nil.
+   ;; (default t)
+   dotspacemacs-elpa-https nil
+   ;; Maximum allowed time in seconds to contact an ELPA repository.
+   dotspacemacs-elpa-timeout 5
+   ;; If non nil then spacemacs will check for updates at startup
+   ;; when the current branch is not `develop'. (default t)
+   dotspacemacs-check-for-update t
+   ;; One of `vim', `emacs' or `hybrid'. Evil is always enabled but if the
+   ;; variable is `emacs' then the `holy-mode' is enabled at startup. `hybrid'
+   ;; uses emacs key bindings for vim's insert mode, but otherwise leaves evil
+   ;; unchanged. (default 'vim)
+   dotspacemacs-editing-style 'hybrid
+   ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
+   dotspacemacs-verbose-loading nil
+   ;; Specify the startup banner. Default value is `official', it displays
+   ;; the official spacemacs logo. An integer value is the index of text
+   ;; banner, `random' chooses a random text banner in `core/banners'
+   ;; directory. A string value must be a path to an image format supported
+   ;; by your Emacs build.
+   ;; If the value is nil then no banner is displayed. (default 'official)
+   dotspacemacs-startup-banner 'official
+   ;; List of items to show in the startup buffer. If nil it is disabled.
+   ;; Possible values are: `recents' `bookmarks' `projects'.
+   ;; (default '(recents projects))
+   dotspacemacs-startup-lists '(recents projects)
+   ;; Number of recent files to show in the startup buffer. Ignored if
+   ;; `dotspacemacs-startup-lists' doesn't include `recents'. (default 5)
+   dotspacemacs-startup-recent-list-size 5
+   ;; Default major mode of the scratch buffer (default `text-mode')
+   dotspacemacs-scratch-mode 'text-mode
+   ;; List of themes, the first of the list is loaded when spacemacs starts.
+   ;; Press <SPC> T n to cycle to the next theme in the list (works great
+   ;; with 2 themes variants, one dark and one light)
+   dotspacemacs-themes '(zenburn
+                         monokai
+                         spacemacs-dark
+                         spacemacs-light
+                         solarized-light
+                         solarized-dark
+                         leuven
+                         )
+   ;; If non nil the cursor color matches the state color in GUI Emacs.
+   dotspacemacs-colorize-cursor-according-to-state t
+   ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
+   ;; size to make separators look not too crappy.
+   dotspacemacs-default-font '("Source Code Pro"
+                               :size 13
+                               :weight normal
+                               :width normal
+                               :powerline-scale 1.1)
+   dotspacemacs-maximized-at-startup t
+   ;; If non nil smooth scrolling (native-scrolling) is enabled. Smooth
+   ;; scrolling overrides the default behavior of Emacs which recenters the
+   ;; point when it reaches the top or bottom of the screen. (default t)
+   dotspacemacs-smooth-scrolling t
+   ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
+   ;; derivatives. If set to `relative', also turns on relative line numbers.
+   ;; (default nil)
+   ;; List of search tool executable names. Spacemacs uses the first installed
+   ;; tool of the list. Supported tools are `ag', `pt', `ack' and `grep'.
+   ;; (default '("ag" "pt" "ack" "grep"))
+   dotspacemacs-search-tools '("ag" "pt" "ack" "grep")
+   ;; Delete whitespace while saving buffer. Possible values are `all'
+   ;; to aggressively delete empty line and long sequences of whitespace,
+   ;; `trailing' to delete only the whitespace at end of lines, `changed'to
+   ;; delete only whitespace for changed lines or `nil' to disable cleanup.
+   ;; (default nil)
+   dotspacemacs-whitespace-cleanup "changed"
+   ))
+
+(defun dotspacemacs/user-init ()
+  "Initialization function for user code.
+It is called immediately after `dotspacemacs/init', before layer configuration
+executes.
+ This function is mostly useful for variables that need to be set
+before packages are loaded. If you are unsure, you should try in setting them in
+`dotspacemacs/user-config' first."
+  (setq tramp-ssh-controlmaster-options "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+  (setq c-c++-default-mode-for-headers 'c++-mode)
+  (setq c-c++-enable-clang-support t)
+  )
+
+(defun dotspacemacs/user-config ()
+  "Configuration function for user code.
+This function is called at the very end of Spacemacs initialization after
+layers configuration.
+This is the place where most of your configurations should be done. Unless it is
+explicitly specified that a variable should be set before a package is loaded,
+you should place you code here."
+  (global-company-mode)
+  (load "rtags/rtags")
+  ;;  (require 'flycheck-rtags) ;; seem it will cause flycheck invalid.
+
+
+  (require 'rtags)
+  (rtags-enable-standard-keybindings)
+ ))
+
+(safe-wrap (spacemacs-init))
 
 
 (setq exec-path (append exec-path '("/usr/local/bin" "/opt/local/bin")))
@@ -44,37 +226,19 @@
 		      (substring emacs-version 0 -2) "/lisp/cedet")
 	      load-path))
 
-(setq stack-trace-on-error t)
-
-
 (when (>= emacs-major-version 24)
   (require 'package)
   (package-initialize)
   (setq package-archives '(
-			   ("elpa" . "http://tromey.com/elpa/")
-			   ("marmalade" . "http://marmalade-repo.org/packages/")
-			   ("melpa" . "http://melpa.milkbox.net/packages/")
+                           ("elpa" . "http://elpa.gnu.org/packages/")
+         ("org" . "http://orgmode.org/elpa/")
+			   ("marmalade" . "https://marmalade-repo.org/packages/")
+;			   ;;("melpa" . "http://melpa.milkbox.net/packages/")
+         ("melpa" . "http://melpa.org/packages/")
 			   ))
 
   )
 
-;当前窗口和非当前窗口时透明度 
-(setq alpha-list '((95 89) (100 100))) 
-(defun looping-alpha () 
-  (interactive) 
-  (let ((h (car alpha-list))) 
-    ((lambda (a ab) 
-       (set-frame-parameter (selected-frame) 'alpha (list a ab)) 
-       (add-to-list 'default-frame-alist (cons 'alpha (list a ab)))) 
-     (car h) (car (cdr h))) 
-    (setq alpha-list (cdr (append alpha-list (list h)))))) 
-
-					;(defun multi-cursors-init()
-					;  (require 'multiple-cursors)
-					;  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-					;  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-					;  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-					;  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
 ;;________________________________________________________________
 ;;    Avoid vertical splits
@@ -90,8 +254,8 @@
 
 (defun stock-init()
   (stock-ticker-global-mode +1)
-  (setq stock-ticker-symbols '("300028.SZ"  "300058.SZ"))
-  (setq stock-ticker-display-interval 5))
+  (setq stock-ticker-symbols '("002227.SZ" "002183.SZ" "fb"))
+  (setq stock-ticker-display-interval 10))
 
 
 
@@ -113,8 +277,8 @@
   (semantic-mode 1)
 
   ;; Enable EDE (Project Management) features
-  (global-ede-mode 1)
-  )
+  (global-ede-mode 1))
+
 
 (defun ecb-init()
   (require 'ecb)
@@ -152,6 +316,39 @@
 					;(define-key evil-normal-state-map (kbd "SPC") 'ace-jump-mode)
   )
 
+(defun rtags-setup()
+  ;; indexing operation.
+
+  ;; rdm &   # start daemon
+  ;; rc -J . # indexing
+  ;; cmake ../ -DCMAKE_EXPORT_COMPILE_COMMANDS=1  it will generate compile-command.json
+
+  (load "rtags/rtags")
+  ;;  (require 'flycheck-rtags) ;; seem it will cause flycheck invalid.
+
+
+  (require 'rtags)
+  (rtags-enable-standard-keybindings)
+
+  ;; in company mode.
+					;  (setq rtags-autostart-diagnostics t)
+  (global-set-key (kbd "M-,") 'rtags-find-references-at-point)
+  (global-set-key (kbd "M-.") 'rtags-find-symbol-at-point)
+  (global-set-key (kbd "M-[") 'rtags-location-stack-back)
+  (global-set-key (kbd "M-]") 'rtags-location-stack-forward)
+  ;;  (rtags-imenu)
+
+  (push 'company-rtags company-backends)
+  (setq rtags-completion-enabled t)
+
+
+
+
+;  (add-hook 'c-mode-common-hook 'rtags-start-process-unless-running)
+;  (add-hook 'c++-mode-common-hook 'rtags-start-process-unless-running)
+
+  )
+
 ;;--------------------------------------------------------------------------------
 ;;                               Copmany mode init
 ;;--------------------------------------------------------------------------------
@@ -178,10 +375,11 @@
 	    (company-complete-common)
 	  (indent-for-tab-command)))))
 (defun company-mode-init()
+  (global-company-mode)
   (add-hook 'after-init-hook 'global-company-mode)
  (global-set-key [backtab] 'company-complate-common) ;; [shift] + [tab]
 ;  (global-set-key [tab] 'tab-indent-or-complete) ;; just keep defualt, [tab] is for the yas and indent.
-  (setq company-idle-delay nil) ;; don't pop compnay by timeout, default 0.7 seconds.
+  (setq company-idle-delay 1) ;; don't pop compnay by timeout, default 0.7 seconds.
   (dolist (hook (list
 		 'emacs-lisp-mode-hook
 		 'lisp-mode-hook
@@ -235,18 +433,6 @@
   :type '(repeat directory)
   )
 (add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/") 
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/auto-complete/ac-dict")
-
-(require 'auto-complete-clang)
-(setq clang-completion-suppress-error 't)
-(setq ac-clang-flags
-      (mapcar (lambda (item)(concat "-I" item))
-              (append
-               mycustom-system-include-paths
-               )
-              ))
-
-
 
 (set-default 'ac-sources
              '(ac-source-abbrev
@@ -313,30 +499,25 @@
   )
 
 
-(defun elscreen-setup()
-;;; The tabbar.
-  (load "elscreen" "ElScreen" t)
-  (elscreen-start)
-  (global-set-key (kbd "C-c t a b e") 'elscreen-create)
-  (global-set-key (kbd "C-c t a b d") 'elscreen-kill)
+(defun flycheck-setup()
+(require 'flycheck)
+(global-flycheck-mode)
+(setq flycheck-check-syntax-automatically '(save mode-enabled))
+(setq flycheck-standard-error-navigation nil)
 
-  (global-set-key (kbd "C-M-_") 'elscreen-previous)
-  (global-set-key (kbd "C-M-+") 'elscreen-next))
 
-(defun ggtag-mode-setup()
-  (require 'ggtags)
-  ;; ggtags require global
-  (setq ggtags-highlight-tag-timer nil) ;; disable the tag hight light.
-  (add-hook 'c-mode-common-hook 'ggtags-mode)
-  (add-hook 'python-mode-hook 'ggtags-mode)
-  (add-hook 'js2-mode-hook 'ggtags-mode)
-  (add-hook 'ruby-mode-hook 'ggtags-mode))
+(global-set-key [\M-f3] 'kmacro-start-macro-or-insert-counter)
+(global-set-key [\M-f4] 'kmacro-end-or-call-macro)
 
-(defun flymake-setup()
-  (add-hood 'c++-mode-hook
-	    (lambda()
-
-	      )))
+(global-set-key [f3] 'flycheck-previous-error)
+(global-set-key [f4] 'flycheck-next-error)
+            ;; flycheck errors on a tooltip (doesnt work on console)
+;; (when (display-graphic-p (selected-frame))
+;;   (eval-after-load 'flycheck
+;;     '(custom-set-variables
+;;       '(flycheck-display-errors-function #'flycheck-pos-tip-error-messages))))
+(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11")))
+(add-hook 'after-init-hook 'global-flycheck-mode))
 
 (defun fic-mode-setup()
 ;;; highlight TODO, etc mode.
@@ -381,15 +562,22 @@
 (defun generic-programming-realted-config ()
 
 					; diable doxymacs for conflict of cedet.
-  ;; (safe-wrap ((lambda ()
-  ;;              (require 'doxymacs)
-  ;;	     (doxymacs-font-lock)
-  ;;	     )))
+   (safe-wrap ((lambda ()
+		 (require 'doxymacs)
+		 (defun doxymacs-font-lock ()
+		   (interactive)
+		   (font-lock-add-keywords nil doxymacs-doxygen-keywords))
+		 (doxymacs-font-lock)
+		 )))
   ;; Auto enable whitespace mode in diff mode
 
   ;;  (global-hl-line-mode t) ;; Highlight current line, seems easier to find the cursor.
 
   (setq wsd-style "roundgreen")
+
+  (hs-minor-mode)
+  (global-set-key (kbd "M-+") 'hs-show-block)
+  (global-set-key (kbd "M-_") 'hs-hide-block)
 
   (global-hi-lock-mode 1)
   ;; enable hightlight, C-x w h word <RET> <RET> to hightlight
@@ -404,7 +592,12 @@
   (c-toggle-hungry-state t)	 ;; hungry delete
 
 ;;  (require 'flyspell)
-;;  (flyspell-prog-mode)             ;; 会对程序中的注释做拼写检查
+  ;;  (flyspell-prog-mode)             ;; 会对程序中的注释做拼写检查
+
+
+  (setq puml-plantuml-jar-path "/Users/jiejing/myconfigure/plantuml.jar")
+  (add-to-list 'auto-mode-alist '("\\.puml\\'" . puml-mode))
+  (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . puml-mode))
                                         ;(hightlight-change-mode)	 ;; 会对做的修改做Hight light
   (which-func-mode t)	 ;; 在状态栏显示当前函数
   ;; (set-variable 'show-trailing-whitespace 1) ;;有多余空格的时候高亮
@@ -446,7 +639,7 @@
   (mapcar #'disable-theme custom-enabled-themes))
 
 (defun reset-theme-list() 
-  (setq all-themes '(monokai adwaita wombat twilight-bright))
+  (setq all-themes '(solarized-light adwaita wombat twilight-bright solarized-light monokai))
   (setq valid-themes all-themes))
 
 (defun color-init()
@@ -463,7 +656,7 @@
 	 (setq current-theme (car valid-themes))
 	 (setq valid-themes (cdr valid-themes))
 	 (load-theme current-theme t)
-	 (message "Current Theme is: %s" current-theme)
+;	 (message "Current Theme is: %s" current-theme)
 	 ))
     (reset-theme-list)
     (disable-theme current-theme)))
@@ -537,17 +730,6 @@
 
   (require 'rinari)
 ;  (add-hook 'ruby-mode-hook(lambda() (setq dash-at-point-docset "rails")))
-  (add-hook 'ruby-mode-hook
-	    (lambda () (flymake-ruby-load))
-	    (rspec-mode)
-	    (global-rinari-mode)
-	    )
-					;(add-hook 'enh-ruby-mode-hook
-  (require 'flymake)
-  (push '(".+\\.rb$" flymake-ruby-init) flymake-allowed-file-name-masks)
-  (push '("Rakefile$" flymake-ruby-init) flymake-allowed-file-name-masks)
-  (push '("Gemfile$" flymake-ruby-init) flymake-allowed-file-name-masks)
-  (push '("^\\(.*\\):\\([0-9]+\\): \\(.*\\)$" 1 2 nil 3) flymake-err-line-patterns)
   (add-hook 'ruby-mode-hook 'hs-minor-mode)
 
   (custom-set-faces
@@ -582,6 +764,8 @@
   (require 'android-mode)
   (setq android-mode-sdk-dir "~/sdk" )
   (load "logcat")
+
+  (add-to-list 'auto-mode-alist '("\\.log?\\'" . logcat-mode))
 ;  (add-hook 'gud-mode-hook
 ;            (lambda ()
 ;	      (add-to-list 'gud-jdb-classpath "/home/gregj/work/android-sdk-linux_86/platforms/android-7/android.jar")
@@ -640,12 +824,13 @@
 	tab-width 4
 	indent-tabs-mode nil)
   ;;(glasses-mode nil) ;; ThisIsAVarInJava
-  (android-setup)
+
   )
 
 (defun load-c-relate-lib ()
   (generic-programming-realted-config)
   (cscope-minor-mode)
+
   )
 
 (defun if-in-tty()
@@ -679,7 +864,7 @@
 					;	 (12-default-font "-apple-Monaco-normal-normal-normal-*-12-*-*-*-*-0-iso10646-1")
 ;;	 (set-face-attribute 'default nil
 	 ;;			     :family "Menlo" :height 10 :weight 'normal)
-	 (set-default-font "Monaco-11")
+	 (set-default-font "Monaco-12")
 	 ))
   )
 
@@ -744,6 +929,7 @@
        (setq mac-option-key-is-meta t))))
   )
 
+
 (require 'find-file) ;; for the "cc-other-file-alist" variable
 (nconc (cadr (assoc "\\.h\\'" cc-other-file-alist)) '(".m" ".mm"))
 (defadvice ff-get-file-name (around ff-get-file-name-framework
@@ -773,15 +959,16 @@
 
 
 
-;;(safe-wrap (ggtag-mode-setup))
-(safe-wrap (stock-init))
+
+(safe-wrap (flycheck-setup))
+;(safe-wrap (stock-init))
 (safe-wrap (company-mode-init))
 (safe-wrap (ace-jump-init))
 (safe-wrap (yas-setup))
 (safe-wrap (nxml-setup))
 (safe-wrap (cedet-init))
 (safe-wrap (ecb-init))
-(safe-wrap (ergoemacs-setup))
+;;(safe-wrap (ergoemacs-setup))
 (safe-wrap (dash-setup))
 (safe-wrap (term-init))
 (safe-wrap (cscope-setup))
@@ -790,10 +977,11 @@
 (safe-wrap (load-python-env))
 (safe-wrap (load-ruby-env))
 (safe-wrap (load-web-env))
-;;(safe-wrap (elscreen-setup))
 (safe-wrap (fic-mode-setup))
-(safe-wrap (complete-func-init))
-(setq Man-notify-method 'pushy)
+;(safe-wrap (complete-func-init))
+(safe-wrap  (android-setup))
+
+
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
 (defalias 'qrr 'query-replace-regexp)   ;; regexp query.
 
@@ -812,8 +1000,8 @@
 (global-set-key [f9] 'gdb)
 (global-set-key [f10] 'sr-speedbar-toggle)
 (global-set-key [\M-f10] 'sr-speedbar-toggle)
-(global-set-key [f12] 'org-todo-list)
-(global-set-key [\M-f12] 'org-todo-list) ;; mac use
+; (global-set-key [f12] 'org-todo-list)
+;;(global-set-key [\M-f12] 'org-todo-list) ;; mac use
 
 (global-set-key[\M-f9] 'looping-select-theme)
 
@@ -842,6 +1030,8 @@
 
 (global-set-key (kbd "M-SPC") 'set-mark-command)
 
+;; switch frame.
+(global-set-key [\M-f12] 'other-frame)
 
 ;; C-M-q will indent whole region, such as a function, or a code block. 
 (global-set-key (kbd "M-h") 'help)
@@ -886,7 +1076,6 @@
 
 (setq speedbar-use-images nil)  ;; don't use image in  speedbar.
 (make-face 'speedbar-face)
-(set-face-font 'speedbar-face "Inconsolata-10")
 (setq speedbar-mode-hook '(lambda () (buffer-face-set 'speedbar-face)))
 
 ;(require 'smartparens-config)
@@ -1020,12 +1209,13 @@
 (add-hook 'c++-mode-hook
 	  (lambda ()
 	    (load-c-relate-lib)
-;;	    (c-set-style "my-cc-style")
+
 	    (c-set-offset 'innamespace 0)
 	    (setq c-basic-offset 4
 		  tab-width 4
 		  indent-tabs-mode nil)
 	    (auto-complete-mode t)	;enable auto complete mode.
+	    (c-set-style "my-cc-style")
 	    ))
 
 (add-hook 'java-mode-hook
@@ -1044,6 +1234,19 @@
 
 ;; The following key-binding iconifies a window -- we disable it:
 (global-unset-key "\C-x\C-z")
+
+(set-frame-parameter nil 'alpha '(100 100))
+;; following is transparency setting.
+(defun toggle-transparency ()
+   (interactive)
+   (if (/=
+        (cadr (frame-parameter nil 'alpha))
+        100)
+       (set-frame-parameter nil 'alpha '(100 100))
+     (set-frame-parameter nil 'alpha '(90 65))))
+;; (global-set-key (kbd "C-c t") 'toggle-transparency)
+(global-set-key [f12] 'toggle-transparency)
+
 
 ;; C-x C-n invokes set-goal-column; disable it.
 (global-unset-key "\C-x\C-n")
@@ -1384,21 +1587,21 @@
   (require 'package)
   (interactive)
   (package-refresh-contents)
-  (package-install 'ggtags)
-  (package-install 'wsd-mode)
+;;  (package-install 'ggtags)
+;;  (package-install 'wsd-mode)
   (package-install 'dash-at-point)
   (package-install 'rinari)
   (package-install 'yasnippet)
   (package-install 'yasnippet-bundle)
   (package-install 'web-mode)
   (package-install 'js2-mode)
-  (package-install 'multi-term)
+  ;(package-install 'multi-term)
 					;  (package-install 'python-mode)
   (package-install 'jedi)
   (package-install '2048-game)
   (jedi:install-server)
   (package-install 'highlight-indentation)
-  (package-install 'rvm)
+  ;(package-install 'rvm)
   (package-install 'grizzl)
   (package-install 'projectile)
   (package-install 'smartparens)
@@ -1406,11 +1609,11 @@
   (package-install 'ag)
   (package-install 'magit)
   (package-install 'markdown-mode)
-  (package-install 'doxymacs)
+;  (package-install 'doxymacs)
   
 					;  (package-install 'enh-ruby-mode) ; this package will disable yasnnipe, no need.
-  (package-install 'flymake)
-  (package-install 'flymake-ruby)
+;  (package-install 'flymake)
+;  (package-install 'flymake-ruby)
   (package-install 'sr-speedbar)
 					;  (package-install 'emacs-rails-reloaded)
   (package-install 'rspec-mode)
@@ -1424,18 +1627,23 @@
   (package-install 'company)
   (package-install 'auto-complete-nxml)
 
-  (package-install 'auto-complete-clang-async)
-  (package-install 'auto-complete-clang)
-  (package-install 'ac-slime)
-  (package-install 'slime)
+;  (package-install 'auto-complete-clang-async)
+;  (package-install 'auto-complete-clang)
+;  (package-install 'ac-slime)
+;  (package-install 'slime)
   (package-install 'go-mode)
 					;  (package-install 'ergoemacs-mode)
-  (package-install 'emacs-eclim)
+;  (package-install 'emacs-eclim)
   (package-install 'erlang)
-  (package-install 'stock-ticker)
+;  (package-install 'stock-ticker)
   (package-install 'android-mode)
   (package-install 'highlight-symbol)
-  (package-install 'squirrel-mode)
+  ;;  (package-install 'squirrel-mode)
+  (package-install 'let-alist)
+  (package-install 'flycheck)
+  (package-install 'puml-mode)
+
+  (package-install 'cpputils-cmake)
   )
 
 (when (memq window-system '(mac ns))
@@ -1574,127 +1782,15 @@
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'reverse)
 
-;;;;;;;;;;;;;;;;;; RSpec mode help.  ;;;;;;;;;;;;;;;;;;;;;
-;; Rspec will use ~/.bash_env, so setup the ruby env there.
-;; From: http://procrastiblog.com/2007/07/09/changing-your-path-in-emacs-compilation-mode/
-;; toggle back and forth between a spec and it’s target (bound to \C-c ,t)
 
-;; verify the spec file associated with the current buffer (bound to \C-c ,v)
+(defun replace_const_char()
+  (interactive)
+  (search-forward "L\"");
+  (backward-char 2)
+  (insert "const_cast<WCHAR *>(")
+  (search-forward "\"")
+  (search-forward "\"")
+  (insert ")"))
 
-;; verify the spec defined in the current buffer if it is a spec file (bound to \C-c ,v)
-
-;; verify the example defined at the point of the current buffer (bound to \C-c ,s)
-
-;; re-run the last verification process (bound to \C-c ,r)
-
-;; toggle the pendingness of the example at the point (bound to \C-c ,d)
-
-;; disable the example at the point by making it pending
-
-;; reenable the disabled example at the point
-
-;; run “spec” rake task for project (bound to \C-c ,a)
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
- '(ansi-term-color-vector
-   [unspecified "#FFFFFF" "#d15120" "#5f9411" "#d2ad00" "#6b82a7" "#a66bab" "#6b82a7" "#505050"] t)
- '(compilation-message-face (quote default))
- '(cua-global-mark-cursor-color "#2aa198")
- '(cua-normal-cursor-color "#657b83")
- '(cua-overwrite-cursor-color "#b58900")
- '(cua-read-only-cursor-color "#859900")
- '(custom-safe-themes
-   (quote
-    ("cea6d15a8333e0c78e1e15a0524000de69aac2afa7bb6cf9d043a2627327844e" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" "3b819bba57a676edf6e4881bd38c777f96d1aa3b3b5bc21d8266fa5b0d0f1ebf" "60f04e478dedc16397353fb9f33f0d895ea3dab4f581307fbf0aa2f07e658a40" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "e24180589c0267df991cf54bf1a795c07d00b24169206106624bb844292807b9" "5ceb2e85215142caad4c2abc1061c0bade80348c4eb323934a909e36f864d5bc" default)))
- '(ecb-layout-window-sizes
-   (quote
-    (("right1"
-      (ecb-directories-buffer-name 0.18143459915611815 . 0.2857142857142857)
-      (ecb-sources-buffer-name 0.18143459915611815 . 0.3392857142857143)
-      (ecb-methods-buffer-name 0.18143459915611815 . 0.35714285714285715))
-     ("left8"
-      (ecb-directories-buffer-name 0.19831223628691982 . 0.2857142857142857)
-      (ecb-sources-buffer-name 0.19831223628691982 . 0.23214285714285715)
-      (ecb-methods-buffer-name 0.19831223628691982 . 0.2857142857142857)
-      (ecb-history-buffer-name 0.19831223628691982 . 0.17857142857142858)))))
- '(ecb-options-version "2.40")
- '(fci-rule-character-color "#d9d9d9")
- '(fci-rule-color "#383838")
- '(gud-gdb-command-name "gdb --annotate=1")
- '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
- '(highlight-symbol-colors
-   (--map
-    (solarized-color-blend it "#fdf6e3" 0.25)
-    (quote
-     ("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2"))))
- '(highlight-symbol-foreground-color "#586e75")
- '(highlight-tail-colors
-   (quote
-    (("#eee8d5" . 0)
-     ("#B4C342" . 20)
-     ("#69CABF" . 30)
-     ("#69B7F0" . 50)
-     ("#DEB542" . 60)
-     ("#F2804F" . 70)
-     ("#F771AC" . 85)
-     ("#eee8d5" . 100))))
- '(large-file-warning-threshold nil)
- '(magit-use-overlays nil)
- '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#eee8d5" 0.2))
- '(syslog-debug-face
-   (quote
-    ((t :background unspecified :foreground "#A1EFE4" :weight bold))))
- '(syslog-error-face
-   (quote
-    ((t :background unspecified :foreground "#F92672" :weight bold))))
- '(syslog-hour-face (quote ((t :background unspecified :foreground "#A6E22E"))))
- '(syslog-info-face
-   (quote
-    ((t :background unspecified :foreground "#66D9EF" :weight bold))))
- '(syslog-ip-face (quote ((t :background unspecified :foreground "#E6DB74"))))
- '(syslog-su-face (quote ((t :background unspecified :foreground "#FD5FF0"))))
- '(syslog-warn-face
-   (quote
-    ((t :background unspecified :foreground "#FD971F" :weight bold))))
- '(term-default-bg-color "#fdf6e3")
- '(term-default-fg-color "#657b83")
- '(vc-annotate-background "#2B2B2B")
- '(vc-annotate-color-map
-   (quote
-    ((20 . "#BC8383")
-     (40 . "#CC9393")
-     (60 . "#DFAF8F")
-     (80 . "#D0BF8F")
-     (100 . "#E0CF9F")
-     (120 . "#F0DFAF")
-     (140 . "#5F7F5F")
-     (160 . "#7F9F7F")
-     (180 . "#8FB28F")
-     (200 . "#9FC59F")
-     (220 . "#AFD8AF")
-     (240 . "#BFEBBF")
-     (260 . "#93E0E3")
-     (280 . "#6CA0A3")
-     (300 . "#7CB8BB")
-     (320 . "#8CD0D3")
-     (340 . "#94BFF3")
-     (360 . "#DC8CC3"))))
- '(vc-annotate-very-old-color "#DC8CC3")
- '(weechat-color-list
-   (quote
-    (unspecified "#fdf6e3" "#eee8d5" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#657b83" "#839496"))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(enh-ruby-op-face ((t (:foreground "#d9045a"))) t))
-
-
+(provide '.emacs)
+;;; .emacs ends here
