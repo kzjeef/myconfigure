@@ -1,4 +1,4 @@
-;;; -*- mode: emacs-lisp -*-
+  ;; -*- mode: emacs-lisp -*-
 ;; .emacs
 ;;; uncomment this line to disable loading of "default.el" at startup
 ;; (setq inhibit-default-init t)
@@ -12,8 +12,9 @@
 ;; Notes about useful tricks I should remember.
 ;; 1. adjust case status of just inputed words, (save the caps key.)
 ;;	M-- M-u : upper case just inputed words. some thing like THIS
-;;	M-- M-c : Capital just input Word: 				
-;; 
+;;	M-- M-c : Capital just input Word
+
+;;
 (defvar system-type-as-string (prin1-to-string system-type))
 
 (defvar on_windows_nt (string-match "windows-nt" system-type-as-string))
@@ -21,6 +22,26 @@
 (defvar on_gnu_linux  (string-match "gnu/linux" system-type-as-string))
 (defvar on_cygwin     (string-match "cygwin" system-type-as-string))
 (defvar on_solaris    (string-match "usg-unix-v" system-type-as-string))
+
+(defun is-in-spacemacs()
+  (boundp 'spacemacs-emacs-min-version))
+
+(defun not-in-spacemacs()
+  (not (is-in-spacemacs)))
+
+(setq dotspacemacs-delete-orphan-packages nil)
+
+
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (package-initialize)
+  (setq package-archives '(
+                           ("elpa" . "http://elpa.gnu.org/packages/")
+                           ("org" . "http://orgmode.org/elpa/")
+                           ("marmalade" . "https://marmalade-repo.org/packages/")
+                                        ;			   ;;("melpa" . "http://melpa.milkbox.net/packages/")
+                           ("melpa" . "http://melpa.org/packages/")
+                           )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;	 编程相关的配置
@@ -45,15 +66,6 @@
 (add-to-list 'load-path "~/.emacs.d/site-lisp/ecb/")
 
 
-;; --- begin space macs configure.
-;; Space t E y
-(setq dotspacemacs-editing-style 'hybrid)
-;(setq dotspacemacs-elpa-https nil)
-;; --------------
-                                        ;(setq dotspacemacs-editing-style 'emacs)
-
-(defun spacemacs-init()
-
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration.
 You should not put any user code in this function besides modifying the variable
@@ -70,39 +82,50 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
+     csv
+     windows-scripts
+     html
      (auto-completion :variables
-                                                                         auto-completion-return-key-behavior 'complete
-                                                                         auto-completion-tab-key-behavior 'complete
-                                                                         auto-completion-enable-help-tooltip nil
-                                                                         auto-completion-complete-with-key-sequence nil
-                                                                         auto-completion-complete-with-key-sequence-delay 0
-                                                                         auto-completion-private-snippets-directory nil)
+                      auto-completion-tab-key-behavior 'complete
+                      auto-completion-enable-help-tooltip nil
+                      auto-completion-complete-with-key-sequence nil
+                      auto-completion-complete-with-key-sequence-delay 0.1
+                      auto-completion-private-snippets-directory t)
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom
+            shell-enable-smart-eshell t
             shell-default-term-shell (getenv "SHELL"))
-    org
-    git
-    javascript
-    markdown
-    cscope
-    dash
-    c-c++
-;;    semantic ;; sematic is too slow...
+     gtags
+     org
+     git
+     javascript
+     markdown
+     cscope
+     dash
+     python
+     chrome
+     themes-megapack
+    (colors :variables
+            colors-enable-nyan-cat-progress-bar t)
+    (c-c++ :variables
+           c-c++-enable-clang-support nil
+           c-c++-default-mode-for-headers 'c++-mode)
+
+    
+
+   ;; semantic ;; sematic is too slow...
     syntax-checking
     version-control
-    ))
-   ;; List of additional packages that will be installed without being
-   ;; wrapped in a layer. If you need some configuration for these
-   ;; packages, then consider creating a layer. You can also put the
-   ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
-   ;; A list of packages and/or extensions that will not be install and loaded.
-   dotspacemacs-excluded-packages '(company-statistics smartparens)
-   ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
-   ;; are declared in a layer which is not a member of
-   ;; the list `dotspacemacs-configuration-layers'. (default t)
-   dotspacemacs-delete-orphan-packages t)
+    )
+   dotspacemacs-excluded-packages '(auto-complete-clang)
+   dotspacemacs-additional-packages '(fold-dwim
+                                      irony company-irony flycheck-irony company-irony-c-headers
+                                      iedit
+                                      fic-mode
+                                      )
+   dotspacemacs-delete-orphan-packages nil))
+
 
 (defun dotspacemacs/init ()
   "Initialization function.
@@ -113,79 +136,35 @@ values."
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
-   ;; If non nil ELPA repositories are contacted via HTTPS whenever it's
-   ;; possible. Set it to nil if you have no way to use HTTPS in your
-   ;; environment, otherwise it is strongly recommended to let it set to t.
-   ;; This variable has no effect if Emacs is launched with the parameter
-   ;; `--insecure' which forces the value of this variable to nil.
-   ;; (default t)
+   dotspacemacs-editing-style 'emacs
    dotspacemacs-elpa-https nil
-   ;; Maximum allowed time in seconds to contact an ELPA repository.
    dotspacemacs-elpa-timeout 5
-   ;; If non nil then spacemacs will check for updates at startup
-   ;; when the current branch is not `develop'. (default t)
    dotspacemacs-check-for-update t
-   ;; One of `vim', `emacs' or `hybrid'. Evil is always enabled but if the
-   ;; variable is `emacs' then the `holy-mode' is enabled at startup. `hybrid'
-   ;; uses emacs key bindings for vim's insert mode, but otherwise leaves evil
-   ;; unchanged. (default 'vim)
-   dotspacemacs-editing-style 'hybrid
-   ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
-   ;; Specify the startup banner. Default value is `official', it displays
-   ;; the official spacemacs logo. An integer value is the index of text
-   ;; banner, `random' chooses a random text banner in `core/banners'
-   ;; directory. A string value must be a path to an image format supported
-   ;; by your Emacs build.
-   ;; If the value is nil then no banner is displayed. (default 'official)
    dotspacemacs-startup-banner 'official
-   ;; List of items to show in the startup buffer. If nil it is disabled.
-   ;; Possible values are: `recents' `bookmarks' `projects'.
-   ;; (default '(recents projects))
    dotspacemacs-startup-lists '(recents projects)
-   ;; Number of recent files to show in the startup buffer. Ignored if
-   ;; `dotspacemacs-startup-lists' doesn't include `recents'. (default 5)
    dotspacemacs-startup-recent-list-size 5
-   ;; Default major mode of the scratch buffer (default `text-mode')
    dotspacemacs-scratch-mode 'text-mode
-   ;; List of themes, the first of the list is loaded when spacemacs starts.
-   ;; Press <SPC> T n to cycle to the next theme in the list (works great
-   ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(zenburn
-                         monokai
+   dotspacemacs-themes '(
                          spacemacs-dark
+                         default
+                         whiteboard
                          spacemacs-light
-                         solarized-light
-                         solarized-dark
-                         leuven
+                         zenburn
+                         monokai
+                         tsdh-light
                          )
-   ;; If non nil the cursor color matches the state color in GUI Emacs.
+
    dotspacemacs-colorize-cursor-according-to-state t
-   ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
-   ;; size to make separators look not too crappy.
    dotspacemacs-default-font '("Source Code Pro"
                                :size 13
                                :weight normal
                                :width normal
-                               :powerline-scale 1.1)
+                               :powerline-scale 1.0)
    dotspacemacs-maximized-at-startup t
-   ;; If non nil smooth scrolling (native-scrolling) is enabled. Smooth
-   ;; scrolling overrides the default behavior of Emacs which recenters the
-   ;; point when it reaches the top or bottom of the screen. (default t)
-   dotspacemacs-smooth-scrolling t
-   ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
-   ;; derivatives. If set to `relative', also turns on relative line numbers.
-   ;; (default nil)
-   ;; List of search tool executable names. Spacemacs uses the first installed
-   ;; tool of the list. Supported tools are `ag', `pt', `ack' and `grep'.
-   ;; (default '("ag" "pt" "ack" "grep"))
-   dotspacemacs-search-tools '("ag" "pt" "ack" "grep")
-   ;; Delete whitespace while saving buffer. Possible values are `all'
-   ;; to aggressively delete empty line and long sequences of whitespace,
-   ;; `trailing' to delete only the whitespace at end of lines, `changed'to
-   ;; delete only whitespace for changed lines or `nil' to disable cleanup.
-   ;; (default nil)
-   dotspacemacs-whitespace-cleanup "changed"
+   dotspacemacs-smooth-scrolling nil
+   dotspacemacs-search-tools '("ag" "grep")
+   dotspacemacs-whitespace-cleanup "nil"
    ))
 
 (defun dotspacemacs/user-init ()
@@ -195,9 +174,9 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  (setq tramp-ssh-controlmaster-options "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
-  (setq c-c++-default-mode-for-headers 'c++-mode)
-  (setq c-c++-enable-clang-support t)
+
+  (setq gc-cons-threshold 100000000)
+
   )
 
 (defun dotspacemacs/user-config ()
@@ -207,55 +186,65 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place you code here."
-  (global-company-mode)
-  (load "rtags/rtags")
+
+
+  ;; disable ac-mode but enable company mode.
+;  (auto-complete-mode -1)
+;  (global-auto-complete-mode -1)
+  (global-company-mode -1)
+
+  (spacemacs|diminish helm-gtags-mode "G" "g")
+
+  (use-package fold-dwim)
+  (global-set-key (kbd "<f7>")      'fold-dwim-toggle)
+  (global-set-key (kbd "<M-f7>")    'fold-dwim-hide-all)
+  (global-set-key (kbd "<S-M-f7>")  'fold-dwim-show-all)
+
+
+  (use-package clang-format)
+  (global-set-key [C-M-tab] 'clang-format-region)
+  ;; Bind clang-format-buffer to tab on the c++-mode only:
+  ;; (add-hook 'c++-mode-hook 'clang-format-bindings)
+  ;; (defun clang-format-bindings ()
+  ;;   (define-key c++-mode-map [tab] 'clang-format-buffer))
+
+  ;;; disable most function of semantic.
+  ;; (global-semantic-idle-completions-mode -1)
+  ;; (global-semantic-idle-summary-mode -1)
+  ;; (global-semantic-idle-breadcrumbs-mode -1)
+  ;; (global-semantic-decoration-mode -1)
+  ;; (global-semantic-highlight-edits-mode -1)
+
+;;  (load "rtags/rtags")
   ;;  (require 'flycheck-rtags) ;; seem it will cause flycheck invalid.
 
 
-  (require 'rtags)
-  (rtags-enable-standard-keybindings)
- ))
+;;  (require 'rtags)
+;;  (rtags-enable-standard-keybindings)
 
-(safe-wrap (spacemacs-init))
+  (safe-wrap (myirony-mode-setup))
+  (menu-bar-mode 1)
 
+  (add-hook 'edit-server-done-hook (lambda () (shell-command "open -a \"Google Chrome\"")))
 
-(setq exec-path (append exec-path '("/usr/local/bin" "/opt/local/bin")))
+  (global-set-key (kbd "M-.") 'helm-gtags-dwim)
+  (global-set-key (kbd "M-,") 'pop-tag-mark)
 
-(setq load-path
-      (remove (concat "/usr/share/emacs/"
-		      (substring emacs-version 0 -2) "/lisp/cedet")
-	      load-path))
+    (setq
+     company-dabbrev-ignore-case nil
+     company-dabbrev-code-ignore-case nil
+     company-dabbrev-downcase nil
+     company-idle-delay 0
+     company-dabbrev-code-everywhere t
+     company-minimum-prefix-length 4)
 
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (package-initialize)
-  (setq package-archives '(
-                           ("elpa" . "http://elpa.gnu.org/packages/")
-         ("org" . "http://orgmode.org/elpa/")
-			   ("marmalade" . "https://marmalade-repo.org/packages/")
-;			   ;;("melpa" . "http://melpa.milkbox.net/packages/")
-         ("melpa" . "http://melpa.org/packages/")
-			   ))
-
-  )
+    ;; disables TAB in company-mode, freeing it for yasnippet
+    (define-key company-active-map [tab] nil)
 
 
-;;________________________________________________________________
-;;    Avoid vertical splits
-;;________________________________________________________________
-;; If a window is wider than split-width-threshold, Emacs will split a
-;; window horizontally (C-x 3) when one compiles. Since my preferred
-;; default is to truncate-lines, it means that I have to scroll
-;; horizontally to read the error messages. Change the variable to
-;; something half of which makes it possible to read compilation
-;; messages.
-
-(setq split-width-threshold 240)
-
-(defun stock-init()
-  (stock-ticker-global-mode +1)
-  (setq stock-ticker-symbols '("002227.SZ" "002183.SZ" "fb"))
-  (setq stock-ticker-display-interval 10))
+  (use-package undo-tree
+    :diminish undo-tree-mode
+    :config (global-undo-tree-mode)))
 
 
 
@@ -451,7 +440,7 @@ you should place you code here."
 ;(add-hook 'css-mode-hook 'ac-css-mode-setup)
 (add-hook 'auto-complete-mode-hook 'ac-common-setup)
 (add-to-list 'ac-modes 'objc-mode)
-(global-auto-complete-mode t)
+;; (global-auto-complete-mode t)
 
 (add-hook 'slime-mode-hook 'set-up-slime-ac)
  (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
@@ -461,9 +450,39 @@ you should place you code here."
 (dolist (m '(c-mode c++-mode java-mode objc-mode))
   (add-to-list 'ac-modes m))
 
-(global-auto-complete-mode t)
+;;(global-auto-complete-mode t)
 )
 
+
+(defun myirony-mode-setup()
+
+  (require 'irony)
+
+  (defun my:irony-enable()
+      (irony-mode 1)
+    )
+
+  (add-hook 'c++-mode-hook 'my:irony-enable)
+  (add-hook 'c-mode-hook 'my:irony-enable)
+  (add-hook 'objc-mode-hook 'my:irony-enable)
+
+  (add-hook 'irony-mode-hook
+            (lambda ()
+              (define-key irony-mode-map [remap completion-at-point]
+                'irony-completion-at-point-async)
+              (define-key irony-mode-map [remap complete-symbol]
+                'irony-completion-at-point-async)))
+
+  (spacemacs|diminish irony-mode " Ⓘ" " I")
+
+  (eval-after-load 'company
+    '(add-to-list 'company-backends 'company-irony))
+  (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+  (add-hook 'irony-mode-hook 'company-mode)
+
+  (eval-after-load 'flycheck
+    '(add-to-list 'flycheck-checkers 'irony))
+  (add-hook 'irony-mode-hook 'flycheck-mode))
 
 
 
@@ -473,14 +492,6 @@ you should place you code here."
 
   (add-hook 'nxml-mode-hook 'nxml-custom-keybindings))
 
-(defun ergoemacs-setup()
-  (setq ergoemacs-theme "lvl1")
-  (setq ergoemacs-keyboard-layout "us")
-  ;; (require 'ergoemacs-mode)
-  
-					;(ergoemacs-mode 0)
-					;(cua-mode nil)
-  )
 
 (defun yas-setup()
   (require 'yasnippet)
@@ -489,13 +500,14 @@ you should place you code here."
 					;	"~/.emacs.d/site-lisp/rails-snippets/"
 					;        ))
 
-  (setq yas-snippet-dirs (append yas-snippet-dirs
+  ;; (setq yas-snippet-dirs (append yas-snippet-dirs
 				 
-                                 '("~/proj/myconfigure/mysnippets/yasmate"
-                                   "~/proj/myconfigure/mysnippets/golang"
-				   )))
+  ;;                                '("~/proj/myconfigure/mysnippets/yasmate"
+  ;;                                  "~/proj/myconfigure/mysnippets/golang"
+	;; 			   )))
 
-  (yas/global-mode 1)
+  ;; Disable yas, too slow on spacemacs.
+  (yas-global-mode 1)
   )
 
 
@@ -536,7 +548,7 @@ you should place you code here."
   (autoload 'dash-at-point "dash-at-point"
     "Search the word at point with Dash." t nil)
   (global-set-key "\C-cd" 'dash-at-point)
-  (global-set-key [f1] 'dash-at-point)
+;;  (global-set-key [f1] 'dash-at-point)
   (global-set-key "\C-ce" 'dash-at-point-with-docset))
 
 (defun markdown-setup()
@@ -584,7 +596,7 @@ you should place you code here."
 
   (add-hook 'diff-mode-hook
 	    (lambda ()
-	      (whitespace-mode t)))
+	      (whitespace-mode -1)))
   ;; Remeber artist-mode can draw picutre !!!
 					; (define-key c-mode-base-map [(return)] 'newline-and-indent)
 					;(c-set-offset 'inextern-lang '0)
@@ -618,9 +630,6 @@ you should place you code here."
   ;;  (safe-wrap (flex-bison-init)) ; cause editor hang, remove it.
 
                                         ;(electric-layout-mode) ;; good control of space line.
-
-
-  (defconst my-speedbar-buffer-name "SPEEDBAR")
 
 
   )
@@ -678,7 +687,7 @@ you should place you code here."
               (ac-stop) ;; ac mode 会造成输入的时候闪烁
 ;              (setq dash-at-point-docset "django")
 	      ;; JEDI document: http://tkf.github.io/emacs-jedi/latest/#jedi:key-complete
-              (when (not (is-aquamacs)) (jedi:setup))
+              (jedi:setup)
               ;; jedi have a bug will not running in acquamcs.
 	      (setq jedi:complete-on-dot t)
 	      (highlight-indentation-current-column-mode)
@@ -739,14 +748,6 @@ you should place you code here."
    ;; If there is more than one, they won't work right.
    '(enh-ruby-op-face ((t (:foreground "#d9045a")))))
 
-  (add-hook 'speedbar-mode-hook
-	    (lambda()
-	      (speedbar-add-supported-extension "\\.rb")
-	      (speedbar-add-supported-extension "\\.ru")
-	      (speedbar-add-supported-extension "\\.erb")
-	      (speedbar-add-supported-extension "\\.rjs")
-	      (speedbar-add-supported-extension "\\.rhtml")
-	      (speedbar-add-supported-extension "\\.rake")))
 
 
   )
@@ -776,15 +777,6 @@ you should place you code here."
 (defun load-web-env()
   (autoload 'js2-mode "js2-mode" nil t)
 
-  (eval-after-load 'js2-mode
-    '(progn
-       (define-key js2-mode-map (kbd "TAB") (lambda()
-					      (interactive)
-					      (let ((yas/fallback-behavior 'return-nil))
-						(unless (yas/expand)
-						  (indent-for-tab-command)
-						  (if (looking-back "^\s*")
-						      (back-to-indentation))))))))
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   (add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
   (add-hook 'js2-mode-hook (lambda()
@@ -864,7 +856,7 @@ you should place you code here."
 					;	 (12-default-font "-apple-Monaco-normal-normal-normal-*-12-*-*-*-*-0-iso10646-1")
 ;;	 (set-face-attribute 'default nil
 	 ;;			     :family "Menlo" :height 10 :weight 'normal)
-	 (set-default-font "Monaco-12")
+;;as	 (set-default-font "Monaco-12")
 	 ))
   )
 
@@ -875,7 +867,8 @@ you should place you code here."
   (setq x-select-enable-clipboard t)	;;让X的剪切板和EMACS联系起来
   (tool-bar-mode -1) ;; 不要工具按钮
   (scroll-bar-mode -1) ;; 不要缩放条
-  (color-init))
+  (safe-wrap (color-init))
+  )
 
 (defun toggle-fullscreen (&optional f)
   (interactive)
@@ -900,15 +893,15 @@ you should place you code here."
 ;;; if no cscope installed, ignore it.
 
 
-;; Config for Mac
+;; ;; Config for Mac
 (cond (on_darwin
-       ;; 为.h文件选择合适的Mode， 根据.h文件的内容来选择是什么mode
        ;; need find-file to do this
        (add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
        (setq mac-option-key-is-meta t)
 					;(setq mac-right-option-modifier nil)
        (setq exec-path (append exec-path '("/opt/local/bin")) )
-       (setenv "LC_CTYPE" "UTF-8")
+       (setenv "LC_ALL" "en_US.UTF-8")
+       (setenv "LANG" "en_US.UTF-8")
        ;; Change control and meta key under mac, make less pain...
        (setq mac-command-modifier 'meta)
        (setq mac-control-modifier 'control)
@@ -949,6 +942,7 @@ you should place you code here."
 (setq cc-search-directories '("." "../include" "/usr/include" "/usr/local/include/*"
 			      "/System/Library/Frameworks" "/Library/Frameworks"))
 
+;;todo should enhance in c-c++
 ;; Objective C settings.
 (add-to-list 'auto-mode-alist '("\\.m?$" . objc-mode))
 (add-to-list 'auto-mode-alist '("\\.mm?$" . objc-mode))
@@ -958,28 +952,57 @@ you should place you code here."
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
 
 
-
+(safe-wrap (yas-setup))
 
 (safe-wrap (flycheck-setup))
-;(safe-wrap (stock-init))
-(safe-wrap (company-mode-init))
+; (safe-wrap (stock-init))
+
+(when (not-in-spacemacs)
+  (message "not in spacemacs")
+  (safe-wrap (company-mode-init))
+
+  (safe-wrap (cedet-init))
+  (safe-wrap (ecb-init))
+  (safe-wrap (cscope-setup))
+  (safe-wrap (myirony-mode-setup))
+  (safe-wrap  (android-setup))
+  (safe-wrap (fic-mode-setup))
+
+  (setq hippie-expand-try-functions-list
+        '(
+          ;;	senator-try-expand-sematic
+          ;; try-expand-line
+          ;; try-expand-line-all-buffers
+          try-expand-dabbrev
+          try-expand-list
+          try-expand-list-all-buffers
+          try-expand-dabbrev-visible
+          try-expand-dabbrev-all-buffers
+          ;; 	try-expand-dabbrev-from-kill ;; don't want to comple some typo words.
+          try-complete-file-name
+          try-complete-file-name-partially
+          try-complete-lisp-symbol
+          try-complete-lisp-symbol-partially
+          ;;	try-expand-whole-kill
+          ))
+
+
+  ); end not in spacemacs config.
+  
+  
 (safe-wrap (ace-jump-init))
-(safe-wrap (yas-setup))
 (safe-wrap (nxml-setup))
-(safe-wrap (cedet-init))
-(safe-wrap (ecb-init))
-;;(safe-wrap (ergoemacs-setup))
 (safe-wrap (dash-setup))
 (safe-wrap (term-init))
-(safe-wrap (cscope-setup))
-(safe-wrap (hightlight-80+-setup))
+
+;;(safe-wrap (hightlight-80+-setup))
 (safe-wrap (git-setup))
-(safe-wrap (load-python-env))
-(safe-wrap (load-ruby-env))
+;;(safe-wrap (load-python-env))
+;;(safe-wrap (load-ruby-env))
 (safe-wrap (load-web-env))
-(safe-wrap (fic-mode-setup))
+
 ;(safe-wrap (complete-func-init))
-(safe-wrap  (android-setup))
+
 
 
 (setq-default kill-whole-line t)	;; 在行首 C-k 时，同时删除该行。
@@ -994,12 +1017,9 @@ you should place you code here."
 ;; F4 reply micro
 (global-set-key [f5] 'revert-buffer)
 (global-set-key [f6] 'ff-find-related-file) ;; Find header file.
-(global-set-key [f7] 'grep-find)
-(global-set-key [\M-f8] 'ecb-toggle)
 (global-set-key [f8] 'compile)
-(global-set-key [f9] 'gdb)
-(global-set-key [f10] 'sr-speedbar-toggle)
-(global-set-key [\M-f10] 'sr-speedbar-toggle)
+(global-set-key [f9] 'spacemacs/jump-in-buffer)
+(global-set-key [f10] 'neotree-toggle)
 ; (global-set-key [f12] 'org-todo-list)
 ;;(global-set-key [\M-f12] 'org-todo-list) ;; mac use
 
@@ -1011,8 +1031,7 @@ you should place you code here."
 
 (global-set-key [\C-\M-f9] 'looping-alpha)
 
-(global-set-key (kbd "C-z")  'undo)  ;; undo by C-z
-(global-set-key (kbd "M-z")  'undo)  ;; undo by C-z
+(global-set-key (kbd "M-z")  'undo-tree)  ;; undo tree is really better.
 (global-set-key (kbd "M-s")  'occur)
 
 (global-set-key (kbd "M-1")  'delete-other-windows)
@@ -1023,10 +1042,10 @@ you should place you code here."
 
 (global-set-key (kbd "M-e") 'move-end-of-line)
 ;; use some vi key move around...
-(global-set-key (kbd "C-k") 'previous-line)
-(global-set-key (kbd "C-l") 'forward-char)
-(global-set-key (kbd "C-h") 'backward-char)
-(global-set-key (kbd "C-j") 'next-line)
+(global-set-key (kbd "M-k") 'previous-line)
+(global-set-key (kbd "M-l") 'forward-char)
+(global-set-key (kbd "M-h") 'backward-char)
+(global-set-key (kbd "M-j") 'next-line)
 
 (global-set-key (kbd "M-SPC") 'set-mark-command)
 
@@ -1034,13 +1053,13 @@ you should place you code here."
 (global-set-key [\M-f12] 'other-frame)
 
 ;; C-M-q will indent whole region, such as a function, or a code block. 
-(global-set-key (kbd "M-h") 'help)
-(global-set-key (kbd "M-k") 'kill-line)
-(global-set-key (kbd "M-l")  'recenter-top-bottom)
+(global-set-key (kbd "C-h") 'help)
+;; (global-set-key (kbd "M-k") 'kill-line)
+(global-set-key (kbd "C-l")  'recenter-top-bottom)
 ;; Use these two mapping to avoid right hand small finger pinky
 ;; Ctrl-M is return key in default.
-(global-set-key "\M-b"  [backspace])
-(global-set-key "\M-m"  [return])
+(global-set-key "\M-b"  'backward-char)
+;;(global-set-key "\M-m"  [return])
 (global-set-key "\C-q" 'backward-kill-word)
 
 
@@ -1056,23 +1075,6 @@ you should place you code here."
 ;; 自动补全的尝试列表
 ;; (global-set-key [(meta ?/)] 'hippie-expand)
 ;; (autoload 'senator-try-expand-sematic "senator")
-(setq hippie-expand-try-functions-list
-      '(
-;;	senator-try-expand-sematic
-	;; try-expand-line
-	;; try-expand-line-all-buffers
-	try-expand-dabbrev
-	try-expand-list
-	try-expand-list-all-buffers
-	try-expand-dabbrev-visible
-	try-expand-dabbrev-all-buffers
-;; 	try-expand-dabbrev-from-kill ;; don't want to comple some typo words.
-	try-complete-file-name
-	try-complete-file-name-partially
-	try-complete-lisp-symbol
-	try-complete-lisp-symbol-partially
-	;;	try-expand-whole-kill
-	))
 
 (setq speedbar-use-images nil)  ;; don't use image in  speedbar.
 (make-face 'speedbar-face)
@@ -1094,7 +1096,7 @@ you should place you code here."
             (load-c-relate-lib)
 
 	    (setq dash-at-point-docset nil)
-            (when (not (is-aquamacs)) (turn-on-auto-revert-mode))
+      (turn-on-auto-revert-mode)
             (setq indent-tabs-mode nil)
 	    ;;          (flymode-init)
             (c-set-style "cc-mode")
@@ -1209,19 +1211,18 @@ you should place you code here."
 (add-hook 'c++-mode-hook
 	  (lambda ()
 	    (load-c-relate-lib)
-
+      (setq comment-start "/* " comment-end   " */") ; like traditional comment style.
 	    (c-set-offset 'innamespace 0)
 	    (setq c-basic-offset 4
 		  tab-width 4
 		  indent-tabs-mode nil)
-	    (auto-complete-mode t)	;enable auto complete mode.
 	    (c-set-style "my-cc-style")
 	    ))
 
 (add-hook 'java-mode-hook
 	  (lambda ()
 					;   (message "with java mode hook")
-	    (when (not (is-aquamacs)) (turn-on-auto-revert-mode)) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
+      (turn-on-auto-revert-mode) ; Auto reload file, if want to enable this global, use (global-auto-revert-mode 1)
 	    (load-java-relate-lib)))
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
@@ -1275,8 +1276,8 @@ you should place you code here."
 
 (setq mail-signature "Jiejing")
 
-(setq org-log-done 'time)
-					;(setq org-log-done 'note)
+;(setq org-log-done 'time)
+(setq org-log-done 'note)
 
 (require 'cl)
 ;; filter not exist files, otherwise agenda mode will report error
@@ -1297,15 +1298,12 @@ you should place you code here."
 
 ;; http://www.emacswiki.org/emacs/MultiTerm
 
-(projectile-global-mode t)   ;; project mode, https://github.com/bbatsov/projectile
 
-(setq projectile-enable-caching nil)
-(setq projectile-completion-system 'grizzl)
-(setq projectile-completion-system 'grizzl)
+
+;(require 'projectile)
+;(projectile-global-mode t)   ;; project mode, https://github.com/bbatsov/projectile
+;(setq projectile-enable-caching nil)
 ;; Press Command-p for fuzzy find in project
-(global-set-key (kbd "s-p") 'projectile-find-file)
-;; Press Command-b for fuzzy switch buffer
-(global-set-key (kbd "s-b") 'projectile-switch-to-buffer)
 
 (require 'ido)
 (require 'ibuffer)
@@ -1336,7 +1334,7 @@ you should place you code here."
 (setq require-final-newline t)
 (setq track-eol t)
 (setq suggest-key-bindings 1)	 ;; 当使用 M-x COMMAND 后，过 1 秒钟显示该 COMMAND 绑定的键。
-(setq line-number-display-limit 100000000);; 当行数超过一定数值，不再显示行号。
+(setq line-number-display-limit 3000);; 当行数超过一定数值，不再显示行号。
 (setq kill-ring-max 200)	 ;; kill-ring 最多的记录个数。
 (setq bookmark-save-flag 1)
 ;; 每当设置书签的时候都保存书签文件，否则只在你退出 Emacs 时保存。
@@ -1484,33 +1482,6 @@ you should place you code here."
     '(setq mumamo-per-buffer-local-vars
 	   (delq 'buffer-file-name mumamo-per-buffer-local-vars))))
 
-(defun is-aquamacs()
-  (if (boundp 'aquamacs-version)
-      t
-    nil))
-
-(when (boundp 'aquamacs-version)
-  (global-set-key [M-left] 'tabbar-backward-tab)
-  (global-set-key [M-right] 'tabbar-forward-tab)
-  (one-buffer-one-frame-mode 0)
-  (tabbar-mode 0)
-  (add-hook 'after-init-hook (lambda () (set-cursor-color "#aa88dd")) 'append)
-  (smartparens-global-mode 0) ;; aquamacs some how have issue with this mode, will not able to type Cap char.
-  (setq-default cursor-type 'box)
-					; (aquamacs-autoface-mode nil)
-  (set-face-attribute 'default nil :height 120)
-  ;; scale the font, default scale is too large.
-
-  ;; fix sr-speedbar 24.4 function miss error
-  (defun ad-advised-definition-p (definition) 
-    "Return non-nil if DEFINITION was generated from advice information." 
-    (if (or (ad-lambda-p definition) 
-	    (macrop definition) (ad-compiled-p definition)) 
-	(let ((docstring (ad-docstring definition)))
-	  (and (stringp docstring)
-	       (get-text-property 0 ‘dynamic-docstring-function docstring)))))
-
-  )
 
 ;; Hack to setup the compile enviroment.
 					;(let ((path (shell-command-to-string ". ~/.bash_env; echo -n $PATH")))
@@ -1644,11 +1615,9 @@ you should place you code here."
   (package-install 'puml-mode)
 
   (package-install 'cpputils-cmake)
+  (package-install 'fold-dwim)
   )
 
-(when (memq window-system '(mac ns))
-  (exec-path-from-shell-initialize)
-  )
 
 
 ;;________________________________________________________________
@@ -1792,5 +1761,21 @@ you should place you code here."
   (search-forward "\"")
   (insert ")"))
 
-(provide '.emacs)
-;;; .emacs ends here
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(gud-gdb-command-name "gdb --annotate=1")
+ '(large-file-warning-threshold nil)
+ '(safe-local-variable-values
+   (quote
+    ((projectile-project-compilation-cmd . "make -C mybuild -j4")))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))

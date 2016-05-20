@@ -8,6 +8,7 @@ alias ll="ls -l"
 alias la="ls -a"
 alias ls="ls -G"
 alias u="cd .."
+alias e="emacsclient"
 
 # Git commands
 alias gf="git fetch"
