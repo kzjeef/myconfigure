@@ -9,10 +9,6 @@
 ;;________________________________________________________________
 
 
-;; Notes about useful tricks I should remember.
-;; 1. adjust case status of just inputed words, (save the caps key.)
-;;	M-- M-u : upper case just inputed words. some thing like THIS
-;;	M-- M-c : Capital just input Word
 
 ;;
 (defvar system-type-as-string (prin1-to-string system-type))
@@ -67,13 +63,8 @@
 
 
 (defun dotspacemacs/layers ()
-  "Configuration Layers declaration.
-You should not put any user code in this function besides modifying the variable
-values."
+
   (setq-default
-   ;; Base distribution to use. This is a layer contained in the directory
-   ;; `+distribution'. For now available distributions are `spacemacs-base'
-   ;; or `spacemacs'. (default 'spacemacs)
    dotspacemacs-distribution 'spacemacs
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
@@ -106,23 +97,25 @@ values."
      python
      chrome
      themes-megapack
-    (colors :variables
-            colors-enable-nyan-cat-progress-bar t)
-    (c-c++ :variables
-           c-c++-enable-clang-support nil
-           c-c++-default-mode-for-headers 'c++-mode)
-
-    
-
+     javascript
+     asm
+     plantuml
+     search-engine ;; M-m a /
+     (c-c++ :variables
+            c-c++-enable-clang-support nil
+            c-c++-default-mode-for-headers 'c++-mode)
    ;; semantic ;; sematic is too slow...
     syntax-checking
     version-control
     )
-   dotspacemacs-excluded-packages '(auto-complete-clang)
+
+   dotspacemacs-excluded-packages '(auto-complete-clang adaptive-wrap)
    dotspacemacs-additional-packages '(fold-dwim
                                       irony company-irony flycheck-irony company-irony-c-headers
                                       iedit
-                                      fic-mode
+                                      ace-jump-mode
+                                      android-mode
+                                      elogcat
                                       )
    dotspacemacs-delete-orphan-packages nil))
 
@@ -168,26 +161,10 @@ values."
    ))
 
 (defun dotspacemacs/user-init ()
-  "Initialization function for user code.
-It is called immediately after `dotspacemacs/init', before layer configuration
-executes.
- This function is mostly useful for variables that need to be set
-before packages are loaded. If you are unsure, you should try in setting them in
-`dotspacemacs/user-config' first."
-
   (setq gc-cons-threshold 100000000)
-
   )
 
 (defun dotspacemacs/user-config ()
-  "Configuration function for user code.
-This function is called at the very end of Spacemacs initialization after
-layers configuration.
-This is the place where most of your configurations should be done. Unless it is
-explicitly specified that a variable should be set before a package is loaded,
-you should place you code here."
-
-
   ;; disable ac-mode but enable company mode.
 ;  (auto-complete-mode -1)
 ;  (global-auto-complete-mode -1)
@@ -203,24 +180,6 @@ you should place you code here."
 
   (use-package clang-format)
   (global-set-key [C-M-tab] 'clang-format-region)
-  ;; Bind clang-format-buffer to tab on the c++-mode only:
-  ;; (add-hook 'c++-mode-hook 'clang-format-bindings)
-  ;; (defun clang-format-bindings ()
-  ;;   (define-key c++-mode-map [tab] 'clang-format-buffer))
-
-  ;;; disable most function of semantic.
-  ;; (global-semantic-idle-completions-mode -1)
-  ;; (global-semantic-idle-summary-mode -1)
-  ;; (global-semantic-idle-breadcrumbs-mode -1)
-  ;; (global-semantic-decoration-mode -1)
-  ;; (global-semantic-highlight-edits-mode -1)
-
-;;  (load "rtags/rtags")
-  ;;  (require 'flycheck-rtags) ;; seem it will cause flycheck invalid.
-
-
-;;  (require 'rtags)
-;;  (rtags-enable-standard-keybindings)
 
   (safe-wrap (myirony-mode-setup))
   (menu-bar-mode 1)
@@ -230,21 +189,31 @@ you should place you code here."
   (global-set-key (kbd "M-.") 'helm-gtags-dwim)
   (global-set-key (kbd "M-,") 'pop-tag-mark)
 
-    (setq
+  (global-set-key (kbd "C-c ;") 'iedit-mode)
+
+  (setq
      company-dabbrev-ignore-case nil
      company-dabbrev-code-ignore-case nil
      company-dabbrev-downcase nil
      company-idle-delay 0
      company-dabbrev-code-everywhere t
-     company-minimum-prefix-length 4)
+     )
+
+;; (setq  company-minimum-prefix-length 4)
 
     ;; disables TAB in company-mode, freeing it for yasnippet
     (define-key company-active-map [tab] nil)
 
-
   (use-package undo-tree
     :diminish undo-tree-mode
-    :config (global-undo-tree-mode)))
+    :config (global-undo-tree-mode))
+
+  (spacemacs/toggle-truncate-lines-on)
+  ;; Visual line navigation for textual modes
+  (add-hook 'text-mode-hook 'spacemacs/toggle-visual-line-navigation-off)
+
+
+); end user-config;
 
 
 
@@ -275,19 +244,14 @@ you should place you code here."
   (setq ecb-is-active nil))
 
 (defun ace-jump-init()
-
-  ;;
-  ;; ace jump mode major function
-  ;; 
-  (add-to-list 'load-path "~/.emacs.d/site-lisp/ace-jump-mode/")
   (autoload
     'ace-jump-mode
     "ace-jump-mode"
     "Emacs quick move minor mode"
     t)
   ;; you can select the key you prefer to
-  (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
-  ;; 
+  (define-key global-map (kbd "C-c j") 'ace-jump-mode)
+  ;;
   ;; enable a more powerful jump back function from ace jump mode
   ;;
   (autoload
@@ -297,12 +261,7 @@ you should place you code here."
     t)
   (eval-after-load "ace-jump-mode"
     '(ace-jump-mode-enable-mark-sync))
-  (define-key global-map (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
-
-  ;;If you use viper mode :
-					;(define-key viper-vi-global-user-map (kbd "SPC") 'ace-jump-mode)
-  ;;If you use evil
-					;(define-key evil-normal-state-map (kbd "SPC") 'ace-jump-mode)
+  (define-key global-map (kbd "C-c u") 'ace-jump-mode-pop-mark)
   )
 
 (defun rtags-setup()
@@ -341,28 +300,6 @@ you should place you code here."
 ;;--------------------------------------------------------------------------------
 ;;                               Copmany mode init
 ;;--------------------------------------------------------------------------------
-
- (defun check-expansion ()
-    (save-excursion
-      (if (looking-at "\\_>") t
-        (backward-char 1)
-        (if (looking-at "\\.") t
-          (backward-char 1)
-          (if (looking-at "->") t nil)))))
-
-(defun do-yas-expand ()
-  (let ((yas-fallback-behavior 'return-nil))
-    (yas/expand)))
-
-(defun tab-indent-or-complete ()
-  (interactive)
-  (if (minibufferp)
-        (minibuffer-complete)
-    (if (or (not yas/minor-mode)
-	    (null (do-yas-expand)))
-	(if (check-expansion)
-	    (company-complete-common)
-	  (indent-for-tab-command)))))
 (defun company-mode-init()
   (global-company-mode)
   (add-hook 'after-init-hook 'global-company-mode)
@@ -384,27 +321,8 @@ you should place you code here."
     (add-hook hook 'company-mode))
   )
 
-(defun java-init()
-  (require 'eclim)
-  (global-eclim-mode)
-  (custom-set-variables
-  '(eclim-eclipse-dirs '("~/nonStandard/eclipse"))
-  '(eclim-executable "~/nonStandard/eclipse/eclim"))
-  )
 
 
-
-(defun ecb-toggle(&optional f)
-  (interactive)
-  (if ecb-is-active
-      ((lambda ()
-	 (ecb-deactivate)
-	 (setq ecb-is-active nil)))
-    (require 'ecb)
-    (ecb-activate)
-    (ecb-layout-switch "right1")
-    (setq ecb-is-active t)
-    ))
 
 (defun flex-bison-init()
   (autoload 'flex-mode "flex-mode" nil t)
@@ -414,7 +332,7 @@ you should place you code here."
   (setq auto-mode-alist
 	(cons '("\\.y" . bison-mode) auto-mode-alist)))
 
-(defun complete-func-init()
+(defun ac-complete-func-init()
 
 (defcustom mycustom-system-include-paths '("./include/" "/opt/local/include" "/usr/include" )
   "This is a list of include paths that are used by the clang auto completion."
@@ -647,7 +565,7 @@ you should place you code here."
   (before theme-dont-propagate activate)
   (mapcar #'disable-theme custom-enabled-themes))
 
-(defun reset-theme-list() 
+(defun reset-theme-list()
   (setq all-themes '(solarized-light adwaita wombat twilight-bright solarized-light monokai))
   (setq valid-themes all-themes))
 
@@ -763,10 +681,10 @@ you should place you code here."
   ;; $ android list targets
   ;; 3. then you can use android mode
   (require 'android-mode)
+  (require 'elogcat)
   (setq android-mode-sdk-dir "~/sdk" )
-  (load "logcat")
 
-  (add-to-list 'auto-mode-alist '("\\.log?\\'" . logcat-mode))
+  (add-to-list 'auto-mode-alist '("\\.log?\\'" . elogcat-mode))
 ;  (add-hook 'gud-mode-hook
 ;            (lambda ()
 ;	      (add-to-list 'gud-jdb-classpath "/home/gregj/work/android-sdk-linux_86/platforms/android-7/android.jar")
@@ -822,7 +740,6 @@ you should place you code here."
 (defun load-c-relate-lib ()
   (generic-programming-realted-config)
   (cscope-minor-mode)
-
   )
 
 (defun if-in-tty()
@@ -878,14 +795,13 @@ you should place you code here."
 			     (if (boundp 'old-fullscreen) old-fullscreen nil)
 			   (progn (setq old-fullscreen current-value)
 				  'fullboth)))))
+
 (defun cscope-setup ()
 					;  (print "cscope setup")
   (require 'xcscope)
 ;;  (setq cscope-do-not-update-database t)
   )
 
-(defun hightlight-80+-setup()
-  (require 'highlight-80+))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; start configure work here
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -967,6 +883,11 @@ you should place you code here."
   (safe-wrap (myirony-mode-setup))
   (safe-wrap  (android-setup))
   (safe-wrap (fic-mode-setup))
+  (safe-wrap (scrolling-setup))
+  (safe-wrap (misc-config-no-nessary))
+  (safe-wrap (load-web-env))
+
+  ;(safe-wrap (ac-complete-func-init))
 
   (setq hippie-expand-try-functions-list
         '(
@@ -995,13 +916,13 @@ you should place you code here."
 (safe-wrap (dash-setup))
 (safe-wrap (term-init))
 
-;;(safe-wrap (hightlight-80+-setup))
+
 (safe-wrap (git-setup))
 ;;(safe-wrap (load-python-env))
 ;;(safe-wrap (load-ruby-env))
-(safe-wrap (load-web-env))
 
-;(safe-wrap (complete-func-init))
+
+
 
 
 
@@ -1229,6 +1150,16 @@ you should place you code here."
 
 (remove-hook 'find-file-hooks 'vc-find-file-hook)
 
+(defun misc-config-no-nessary()
+  (require 'ido)
+  (require 'ibuffer)
+                                        ;(setq ido-auto-merge-work-directories-length -1)
+  (ido-mode)                             ;Ido mode really good.
+  (setq ido-save-directory-list-file "~/.emacs.d/ido.last")
+  (icomplete-mode t)	 ;; 给出用 M-x foo-bar-COMMAND 输入命令的提示。
+  
+  )
+
 ;;-------------------------------------------------------------------------------- 
 ;;	 日常的配置
 ;;--------------------------------------------------------------------------------
@@ -1305,18 +1236,17 @@ you should place you code here."
 ;(setq projectile-enable-caching nil)
 ;; Press Command-p for fuzzy find in project
 
-(require 'ido)
-(require 'ibuffer)
-					;(setq ido-auto-merge-work-directories-length -1)
-(ido-mode)                             ;Ido mode really good.
-(setq ido-save-directory-list-file "~/.emacs.d/ido.last")
+
+
+
+
 (setq-default truncate-lines nil) ;; 自动折行
 (auto-compression-mode 1) ;; 打开压缩文件时自动解压缩
 (auto-image-file-mode)	 ;; 自动打开图片模式
 (column-number-mode 1) ;; 显示列号
 (blink-cursor-mode 1) ;; 光标不要闪烁
 (show-paren-mode 1) ;; 高亮显示匹配的括号
-(icomplete-mode t)	 ;; 给出用 M-x foo-bar-COMMAND 输入命令的提示。
+
 (defalias 'list-buffers 'ibuffer)
 ;; (menu-bar-mode -1)	 ;; 不要 menu-bar。
 ;;(autoload 'big5togb-region "big5togb" "Big5 to GB2312" t)
@@ -1334,7 +1264,7 @@ you should place you code here."
 (setq require-final-newline t)
 (setq track-eol t)
 (setq suggest-key-bindings 1)	 ;; 当使用 M-x COMMAND 后，过 1 秒钟显示该 COMMAND 绑定的键。
-(setq line-number-display-limit 3000);; 当行数超过一定数值，不再显示行号。
+(setq line-number-display-limit 30000);; 当行数超过一定数值，不再显示行号。
 (setq kill-ring-max 200)	 ;; kill-ring 最多的记录个数。
 (setq bookmark-save-flag 1)
 ;; 每当设置书签的时候都保存书签文件，否则只在你退出 Emacs 时保存。
@@ -1374,10 +1304,10 @@ you should place you code here."
 
 
 ;; Set a visible bell function...
-					;(setq visible-bell nil)
-					;(setq ring-bell-function `(lambda ()
-					;                            (set-face-background 'default "DodgerBlue")
-					;                            (set-face-background 'default "black")))
+;(setq visible-bell nil)
+;(setq ring-bell-function `(lambda ()
+;                            (set-face-background 'default "DodgerBlue")
+;                            (set-face-background 'default "black")))
 
 ;; remove the startup message.
 (setq inhibit-splash-screen t)
@@ -1443,7 +1373,7 @@ you should place you code here."
 
   ;; Uncomment this to try out the built-in-to-Emacs function.
   ;;(defalias 'git-grep 'vc-git-grep)
-  
+
 
   (defun git-grep (command-args)
     (interactive
@@ -1475,33 +1405,9 @@ you should place you code here."
     (let ((grep-use-null-device nil))
       (grep command-args))))
 
-;; Kill warnning..
-(when (and (>= emacs-major-version 24)
-	   (>= emacs-minor-version 2))
-  (eval-after-load "mumamo"
-    '(setq mumamo-per-buffer-local-vars
-	   (delq 'buffer-file-name mumamo-per-buffer-local-vars))))
 
 
-;; Hack to setup the compile enviroment.
-					;(let ((path (shell-command-to-string ". ~/.bash_env; echo -n $PATH")))
-					;  (setenv "PATH" path)
-					;  (setq exec-path 
-					;        (append
-					;         (split-string-and-unquote path ":")
-					;         exec-path)))
 
-					;(setq shell-file-name "bash")
-					;(setq shell-command-switch "--rcfile ~/.bash_env -c")
-
-
-;; 开启服务器模式
-					;(Server-force-delete)
-					;(server-start)
-;; 用Daemon替代
-
-
-;; Start useful functions.
 
 (defun dpi  (xres yres inch)
   "return  screen dpi from resolution and inch of screen."
@@ -1528,8 +1434,6 @@ you should place you code here."
 ;;; M-^  -->   delete-indention: make current line connect with last line,
 ;;; very usuful when change multi line to one line, which I often did.
 
-;;; M-m  -->   jump to first char in this line 's indent.
-
 ;;; hightlight-change-mode: it will height light the changes you make in whole process.
 
 ;;; M-x re-builder   --> this function can test the regex in live.
@@ -1553,6 +1457,16 @@ you should place you code here."
 ;;; Q: emacs init too slow ?
 ;;; A: use this command to profile:
 ;;;    emacs -Q -l ~/myconfigure/profile-dotemacs.el -f profile-dotemacs
+
+;; Notes about useful tricks I should remember.
+;; 1. adjust case status of just inputed words, (save the caps key.)
+;;	M-- M-u : upper case just inputed words. some thing like THIS
+;;	M-- M-c : Capital just input Word
+
+;; quick moving in one buffer, use ace mode
+;; C-c j ; start ace-jump mode.
+;; C-c u ; pop ace jump stack, jump back.
+
 
 (defun package-install-refrash-package()
   (require 'package)
@@ -1616,6 +1530,8 @@ you should place you code here."
 
   (package-install 'cpputils-cmake)
   (package-install 'fold-dwim)
+  (package-install 'android-mode)
+  (package-install 'elogcat)
   )
 
 
@@ -1624,111 +1540,97 @@ you should place you code here."
 ;;    Scrolling
 ;;________________________________________________________________
 
+
 ;; We also map scroll wheel and trackpad events to scrolling.
 ;; The mouse wheel on windows generates few events.
 ;; Scroll by 3 unless shifted.
 
-(defun up-slow () (interactive) (scroll-up 1))
-(defun down-slow () (interactive) (scroll-down 1))
+(defun scrolling-setup()
+  (defun up-slow () (interactive) (scroll-up 1))
+  (defun down-slow () (interactive) (scroll-down 1))
 
-(defun up-semi-slow () (interactive) (scroll-up 2))
-(defun down-semi-slow () (interactive) (scroll-down 2))
+  (defun up-semi-slow () (interactive) (scroll-up 2))
+  (defun down-semi-slow () (interactive) (scroll-down 2))
 
-(defun up-medium () (interactive) (scroll-up 3))
-(defun down-medium () (interactive) (scroll-down 3))
+  (defun up-medium () (interactive) (scroll-up 3))
+  (defun down-medium () (interactive) (scroll-down 3))
 
-(cond (on_windows_nt
-       ;; xemacs won't like the following:
-       (global-set-key [mouse-4] 'down-medium)
-       (global-set-key [mouse-5] 'up-medium)
 
-       (global-set-key [S-mouse-4] 'down-slow)
-       (global-set-key [S-mouse-5] 'up-slow)
-       ))
 
-;; The trackpad on Mac OSX generates too many events.
-;; Scroll by 1 unless shifted.
-(cond (on_darwin
-       (global-set-key [mouse-4] 'down-slow)
-       (global-set-key [mouse-5] 'up-slow)
+  (cond (on_gnu_linux
+         (global-set-key [mouse-4] 'down-medium)
+         (global-set-key [mouse-5] 'up-medium)
+         ;;    Scrolling
+         ;;________________________________________________________________
 
-       (global-set-key [S-mouse-4] 'down-medium)
-       (global-set-key [S-mouse-5] 'up-medium)
-       ))
+         ;; We also map scroll wheel and trackpad events to scrolling.
+         ;; The mouse wheel on windows generates few events.
+         ;; Scroll by 3 unless shifted.
 
-(cond (on_gnu_linux
-       (global-set-key [mouse-4] 'down-medium)
-       (global-set-key [mouse-5] 'up-medium)
-       ;;    Scrolling
-       ;;________________________________________________________________
+         (defun up-slow () (interactive) (scroll-up 1))
+         (defun down-slow () (interactive) (scroll-down 1))
 
-       ;; We also map scroll wheel and trackpad events to scrolling.
-       ;; The mouse wheel on windows generates few events.
-       ;; Scroll by 3 unless shifted.
+         (defun up-semi-slow () (interactive) (scroll-up 2))
+         (defun down-semi-slow () (interactive) (scroll-down 2))
 
-       (defun up-slow () (interactive) (scroll-up 1))
-       (defun down-slow () (interactive) (scroll-down 1))
+         (defun up-medium () (interactive) (scroll-up 3))
+         (defun down-medium () (interactive) (scroll-down 3)))
 
-       (defun up-semi-slow () (interactive) (scroll-up 2))
-       (defun down-semi-slow () (interactive) (scroll-down 2))
+        (cond (on_windows_nt
+               ;; xemacs won't like the following:
+               (global-set-key [mouse-4] 'down-medium)
+               (global-set-key [mouse-5] 'up-medium)
 
-       (defun up-medium () (interactive) (scroll-up 3))
-       (defun down-medium () (interactive) (scroll-down 3))
+               (global-set-key [S-mouse-4] 'down-slow)
+               (global-set-key [S-mouse-5] 'up-slow)
+               ))
 
-       (cond (on_windows_nt
-	      ;; xemacs won't like the following:
-	      (global-set-key [mouse-4] 'down-medium)
-	      (global-set-key [mouse-5] 'up-medium)
+        ;; The trackpad on Mac OSX generates too many events.
+        ;; Scroll by 1 unless shifted.
+        (cond (on_darwin
+               (global-set-key [mouse-4] 'down-slow)
+               (global-set-key [mouse-5] 'up-slow)
 
-	      (global-set-key [S-mouse-4] 'down-slow)
-	      (global-set-key [S-mouse-5] 'up-slow)
-	      ))
+               (global-set-key [S-mouse-4] 'down-medium)
+               (global-set-key [S-mouse-5] 'up-medium)
+               ))
 
-       ;; The trackpad on Mac OSX generates too many events.
-       ;; Scroll by 1 unless shifted.
-       (cond (on_darwin
-	      (global-set-key [mouse-4] 'down-slow)
-	      (global-set-key [mouse-5] 'up-slow)
+        (cond (on_gnu_linux
+               (global-set-key [mouse-4] 'down-medium)
+               (global-set-key [mouse-5] 'up-medium)
 
-	      (global-set-key [S-mouse-4] 'down-medium)
-	      (global-set-key [S-mouse-5] 'up-medium)
-	      ))
+               (global-set-key [S-mouse-4] 'down-slow)
+               (global-set-key [S-mouse-5] 'up-slow)
+               ))
 
-       (cond (on_gnu_linux
-	      (global-set-key [mouse-4] 'down-medium)
-	      (global-set-key [mouse-5] 'up-medium)
+        (defun up-fast () (interactive) (scroll-up 8))
+        (defun down-fast () (interactive) (scroll-down 8))
+        (global-set-key [C-mouse-4] 'down-fast)
+        (global-set-key [C-mouse-5] 'up-fast)
+        (global-set-key [S-mouse-4] 'down-slow)
+        (global-set-key [S-mouse-5] 'up-slow)
+        )
 
-	      (global-set-key [S-mouse-4] 'down-slow)
-	      (global-set-key [S-mouse-5] 'up-slow)
-	      ))
+  (defun up-fast () (interactive) (scroll-up 8))
+  (defun down-fast () (interactive) (scroll-down 8))
+  (global-set-key [C-mouse-4] 'down-fast)
+  (global-set-key [C-mouse-5] 'up-fast)
 
-       (defun up-fast () (interactive) (scroll-up 8))
-       (defun down-fast () (interactive) (scroll-down 8))
-       (global-set-key [C-mouse-4] 'down-fast)
-       (global-set-key [C-mouse-5] 'up-fast)
-       (global-set-key [S-mouse-4] 'down-slow)
-       (global-set-key [S-mouse-5] 'up-slow)
-       ))
+  ;; Ordinarily emacs jumps by half a page when scrolling -- reduce:
+  (setq scroll-step 1)
 
-(defun up-fast () (interactive) (scroll-up 8))
-(defun down-fast () (interactive) (scroll-down 8))
-(global-set-key [C-mouse-4] 'down-fast)
-(global-set-key [C-mouse-5] 'up-fast)
+  ;; The default value is 5, which is too fast on a MacBook or a trackpad; reduce:
+  (cond (on_darwin
+         (mouse-wheel-mode 1)
+         (setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
+         (setq mouse-wheel-progressive-speed 'f)
+         ))
 
-;; Ordinarily emacs jumps by half a page when scrolling -- reduce:
-(setq scroll-step 1)
-
-;; The default value is 5, which is too fast on a MacBook or a trackpad; reduce:
-(cond (on_darwin
-       (mouse-wheel-mode 1)
-       (setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
-       (setq mouse-wheel-progressive-speed 'f)
-       ))
-
-;; And finally, the most useful addition to .emacs: the ability to
-;; scroll from the keyboard (what is everyone else using!?)
-(global-set-key "\M-N" 'up-semi-slow)
-(global-set-key "\M-P" 'down-semi-slow)
+  ;; And finally, the most useful addition to .emacs: the ability to
+  ;; scroll from the keyboard (what is everyone else using!?)
+  (global-set-key "m-N" 'up-semi-slow)
+  (global-set-key "m-P" 'down-semi-slow)
+  )
 
 ;;________________________________________________________________
 ;;    Some dired settings
@@ -1744,13 +1646,6 @@ you should place you code here."
 	       (shell-command (concat "open '" file-name "'" nil )))))
        ))
 
-;;________________________________________________________________
-;;    uniquify -- though using <1>, <2> also has its advantages.
-;;________________________________________________________________
-
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'reverse)
-
 
 (defun replace_const_char()
   (interactive)
@@ -1763,19 +1658,6 @@ you should place you code here."
 
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(gud-gdb-command-name "gdb --annotate=1")
- '(large-file-warning-threshold nil)
  '(safe-local-variable-values
    (quote
     ((projectile-project-compilation-cmd . "make -C mybuild -j4")))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
