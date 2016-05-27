@@ -80,7 +80,7 @@
                       auto-completion-tab-key-behavior 'complete
                       auto-completion-enable-help-tooltip nil
                       auto-completion-complete-with-key-sequence nil
-                      auto-completion-complete-with-key-sequence-delay 0.1
+                      auto-completion-complete-with-key-sequence-delay 0.3
                       auto-completion-private-snippets-directory t)
      (shell :variables
             shell-default-height 30
@@ -109,13 +109,18 @@
     version-control
     )
 
-   dotspacemacs-excluded-packages '(auto-complete-clang adaptive-wrap)
+   ;; disable helm-gtags because it have key conflict with ggtags-mode, which is more powerful.
+   dotspacemacs-excluded-packages '(auto-complete-clang
+                                    helm-gtags 
+                                    adaptive-wrap)
    dotspacemacs-additional-packages '(fold-dwim
                                       irony company-irony flycheck-irony company-irony-c-headers
                                       iedit
                                       ace-jump-mode
                                       android-mode
                                       elogcat
+                                      chinese-pyim
+                                      plantuml-mode
                                       )
    dotspacemacs-delete-orphan-packages nil))
 
@@ -186,8 +191,19 @@ values."
 
   (add-hook 'edit-server-done-hook (lambda () (shell-command "open -a \"Google Chrome\"")))
 
-  (global-set-key (kbd "M-.") 'helm-gtags-dwim)
-  (global-set-key (kbd "M-,") 'pop-tag-mark)
+;  (global-set-key (kbd "M-.") 'helm-gtags-dwim)
+                                        ;  (global-set-key (kbd "M-,") 'pop-tag-mark)
+
+
+
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+                (ggtags-mode 1)
+                (local-set-key "\M-." 'ggtags-find-tag-dwim)
+                (global-set-key "\M-," 'tags-loop-continue)
+                (local-set-key "\M-*" 'pop-tag-mark)
+                )))
 
   (global-set-key (kbd "C-c ;") 'iedit-mode)
 
@@ -195,11 +211,14 @@ values."
      company-dabbrev-ignore-case nil
      company-dabbrev-code-ignore-case nil
      company-dabbrev-downcase nil
-     company-idle-delay 0
+     company-idle-delay 0.3
+     company-show-numbers t
+     company-dabbrev-downcase nil
      company-dabbrev-code-everywhere t
+     company-minimum-prefix-length 2
      )
 
-;; (setq  company-minimum-prefix-length 4)
+
 
     ;; disables TAB in company-mode, freeing it for yasnippet
     (define-key company-active-map [tab] nil)
@@ -211,6 +230,25 @@ values."
   (spacemacs/toggle-truncate-lines-on)
   ;; Visual line navigation for textual modes
   (add-hook 'text-mode-hook 'spacemacs/toggle-visual-line-navigation-off)
+
+  (visual-line-mode  -1)
+
+
+  ;; pinyin input setup.
+  ;; This pinyin dict is downlowad by:
+  ;; http://tumashu.github.io/chinese-pyim-bigdict/pyim-bigdict.pyim
+  (setq pyim-dicts
+    (quote
+     ((:name "pinyin" :file "/Users/jiejing/myconfigure/pyim-bigdict.pyim" :coding utf-8-unix :dict-type pinyin-dict))))
+  ;; (require 'chinese-pyim-company)
+  ;; (setq pyim-company-max-length 6) ;; seems  it was very slow.
+  (setq pyim-company-complete-chinese-enable nil)
+
+  (setq puml-plantuml-jar-path "/usr/local/Cellar/plantuml/8037/plantuml.8037.jar")
+  (add-to-list 'auto-mode-alist '("\\.puml\\'" . puml-mode))
+  (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . puml-mode))
+
+  ;; end pinyin input setup.
 
 
 ); end user-config;
@@ -398,8 +436,8 @@ values."
   (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
   (add-hook 'irony-mode-hook 'company-mode)
 
-  (eval-after-load 'flycheck
-    '(add-to-list 'flycheck-checkers 'irony))
+  ;; (eval-after-load 'flycheck
+  ;;   '(add-to-list 'flycheck-checkers 'irony))
   (add-hook 'irony-mode-hook 'flycheck-mode))
 
 
@@ -413,10 +451,10 @@ values."
 
 (defun yas-setup()
   (require 'yasnippet)
-					;(setq yas-snippet-dirs
-					;      '("~/.emacs.d/snippets"                 ;; personal snippets
-					;	"~/.emacs.d/site-lisp/rails-snippets/"
-					;        ))
+(setq yas-snippet-dirs
+     '("~/.emacs.d/snippets"                 ;; personal snippets
+	"~/.emacs.d/site-lisp/rails-snippets/"
+        ))
 
   ;; (setq yas-snippet-dirs (append yas-snippet-dirs
 				 
@@ -726,7 +764,7 @@ values."
 (defun load-java-relate-lib ()
   (generic-programming-realted-config)
   (add-hook 'java-mode-hook (function cscope:hook))
-  (cscope-minor-mode)
+;  (cscope-minor-mode)
   (message "load java")
   (setq c-comment-start-regexp "(@|/(/|[*][*]?))")
   (modify-syntax-entry ?@ "< b" java-mode-syntax-table)
@@ -739,7 +777,8 @@ values."
 
 (defun load-c-relate-lib ()
   (generic-programming-realted-config)
-  (cscope-minor-mode)
+;  (cscope-minor-mode)
+
   )
 
 (defun if-in-tty()
@@ -938,7 +977,11 @@ values."
 ;; F4 reply micro
 (global-set-key [f5] 'revert-buffer)
 (global-set-key [f6] 'ff-find-related-file) ;; Find header file.
-(global-set-key [f8] 'compile)
+
+(if (not-in-spacemacs)
+    (global-set-key [f8] 'compile)
+  (global-set-key [f8] 'projectile-compile-project))
+
 (global-set-key [f9] 'spacemacs/jump-in-buffer)
 (global-set-key [f10] 'neotree-toggle)
 ; (global-set-key [f12] 'org-todo-list)
@@ -1027,7 +1070,8 @@ values."
 
 	    ;;	    (highlight-80+-mode)
 	    ;;	    (setq highlight-80+-columns 200) ;; hight light 100+ colums
-            (cscope-minor-mode)))
+;;            (cscope-minor-mode)
+))
 
 
 ;; For linux kernel
@@ -1472,7 +1516,7 @@ values."
   (require 'package)
   (interactive)
   (package-refresh-contents)
-;;  (package-install 'ggtags)
+  (package-install 'ggtags)
 ;;  (package-install 'wsd-mode)
   (package-install 'dash-at-point)
   (package-install 'rinari)
@@ -1630,6 +1674,7 @@ values."
   ;; scroll from the keyboard (what is everyone else using!?)
   (global-set-key "m-N" 'up-semi-slow)
   (global-set-key "m-P" 'down-semi-slow)
+
   )
 
 ;;________________________________________________________________
@@ -1658,6 +1703,26 @@ values."
 
 
 (custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(gud-gdb-command-name "gdb --annotate=1")
+ '(large-file-warning-threshold nil)
+ '(package-selected-packages
+   (quote
+    (bison-mode mediawiki plantuml-mode chinese-pyim zonokai-theme zenburn-theme zen-and-art-theme xterm-color x86-lookup ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacemacs-theme spaceline spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smooth-scrolling smeargle slim-mode shell-pop seti-theme scss-mode sass-mode reverse-theme restart-emacs rainbow-mode rainbow-identifiers rainbow-delimiters railscasts-theme quelpa pyvenv pytest pyenv-mode purple-haze-theme puml-mode professional-theme powershell popwin planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el pastels-on-dark-theme paradox page-break-lines orgit organic-green-theme org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme neotree nasm-mode naquadah-theme mustang-theme multi-term move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow macrostep lush-theme lorem-ipsum livid-mode live-py-mode linum-relative link-hint light-soap-theme leuven-theme less-css-mode json-mode js3-mode js2-refactor js-doc jbeans-theme jazz-theme jade-mode ir-black-theme inkpot-theme info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-cscope helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md ggtags gandalf-theme fold-dwim flycheck-pos-tip flycheck-irony flx-ido flatui-theme flatland-theme firebelly-theme fill-column-indicator fic-mode farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode elogcat elisp-slime-nav edit-server dracula-theme django-theme disaster diff-hl define-word dash-at-point darktooth-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web company-tern company-statistics company-quickhelp company-irony-c-headers company-irony company-c-headers company-anaconda column-enforce-mode colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode cmake-mode clues-theme clean-aindent-mode clang-format cherry-blossom-theme busybee-theme buffer-move bubbleberry-theme bracketed-paste birds-of-paradise-plus-theme bbdb-android badwolf-theme auto-yasnippet auto-highlight-symbol auto-compile apropospriate-theme anti-zenburn-theme android-mode ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-mode ace-jump-helm-line ac-ispell)))
+ '(pyim-dicts
+   (quote
+    ((:name "pinyin" :file "/Users/jiejing/myconfigure/pyim-bigdict.pyim" :coding utf-8-unix :dict-type pinyin-dict))) t)
  '(safe-local-variable-values
    (quote
-    ((projectile-project-compilation-cmd . "make -C mybuild -j4")))))
+    ((projectile-project-compilation-cmd . "cd /Users/jiejing/project/kalaok/libDirectAudio/; ./build.sh")
+     (projectile-project-compilation-cmd . "make -C mybuild -j4")))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
