@@ -15,6 +15,8 @@ git submodule update
 git submodule sync
 
 
+
+
 ln -s  `pwd`/bash_env ~/.bash_env
 
 mkdir -p ${TARGET_DIR}
@@ -78,4 +80,5 @@ install highlight-80+.el ${TARGET_DIR}
 
 # finally need to recompile all files under install dir.
 emacs --batch --eval '(byte-recompile-directory "~/.emacs.d/site-lisp/")'
+
 

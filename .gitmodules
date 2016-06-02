@@ -41,3 +41,6 @@
 [submodule "mysnippets/golang"]
 	path = mysnippets/golang
 	url = https://github.com/atotto/yasnippet-golang.git
+[submodule "yasnippet-snippets"]
+	path = yasnippet-snippets
+	url = git@github.com:AndreaCrotti/yasnippet-snippets.git

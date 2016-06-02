@@ -97,7 +97,6 @@
      python
      chrome
      themes-megapack
-     javascript
      asm
      plantuml
      search-engine ;; M-m a /
@@ -107,6 +106,7 @@
    ;; semantic ;; sematic is too slow...
     syntax-checking
     version-control
+    logcat-mode
     )
 
    ;; disable helm-gtags because it have key conflict with ggtags-mode, which is more powerful.
@@ -118,8 +118,6 @@
                                       iedit
                                       ace-jump-mode
                                       android-mode
-                                      elogcat
-                                      chinese-pyim
                                       plantuml-mode
                                       )
    dotspacemacs-delete-orphan-packages nil))
@@ -200,6 +198,7 @@ values."
             (lambda ()
               (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
                 (ggtags-mode 1)
+                (setq ggtags-highlight-tag nil)
                 (local-set-key "\M-." 'ggtags-find-tag-dwim)
                 (global-set-key "\M-," 'tags-loop-continue)
                 (local-set-key "\M-*" 'pop-tag-mark)
@@ -218,14 +217,28 @@ values."
      company-minimum-prefix-length 2
      )
 
+  ;; Disable eldoc mode, which is very slow on big proj.
+  (global-eldoc-mode -1)
 
 
     ;; disables TAB in company-mode, freeing it for yasnippet
-    (define-key company-active-map [tab] nil)
+  (define-key company-active-map [tab] nil)
 
   (use-package undo-tree
     :diminish undo-tree-mode
     :config (global-undo-tree-mode))
+
+
+
+  (defun do-org-show-all-inline-images ()
+    (interactive)
+    (org-display-inline-images t t))
+
+  (global-set-key (kbd "C-c C-x C v")
+                  'do-org-show-all-inline-images)
+
+  (setq org-plantuml-jar-path
+        (expand-file-name "/usr/local/Cellar/plantuml/8037/plantuml.8037.jar"))
 
   (spacemacs/toggle-truncate-lines-on)
   ;; Visual line navigation for textual modes
@@ -250,6 +263,29 @@ values."
 
   ;; end pinyin input setup.
 
+
+  (add-hook 'js2-mode-hook (lambda()
+                             (custom-set-variables
+                              '(js2-basic-offset 2)
+                              '(js2-bounce-indent-p nil)
+
+                              )
+                             (smartparens-mode 1)
+                             (company-mode 1)
+                             ))
+
+  (eval-after-load 'js2-mode
+    '(progn
+       (define-key js2-mode-map (kbd "TAB") (lambda()
+                                              (interactive)
+                                              (let ((yas/fallback-behavior 'return-nil))
+                                                (unless (yas/expand)
+                                                  (indent-for-tab-command)
+                                                  (if (looking-back "^\s*")
+                                                      (back-to-indentation))))))))
+
+  ;; do yas-setup again.
+  (safe-wrap (yas-setup))
 
 ); end user-config;
 
@@ -451,19 +487,23 @@ values."
 
 (defun yas-setup()
   (require 'yasnippet)
-(setq yas-snippet-dirs
-     '("~/.emacs.d/snippets"                 ;; personal snippets
-	"~/.emacs.d/site-lisp/rails-snippets/"
-        ))
 
-  ;; (setq yas-snippet-dirs (append yas-snippet-dirs
-				 
-  ;;                                '("~/proj/myconfigure/mysnippets/yasmate"
-  ;;                                  "~/proj/myconfigure/mysnippets/golang"
-	;; 			   )))
+  (setq yas-snippet-dirs '())
+  (add-to-list 'yas-snippet-dirs "~/myconfigure/yasnippet-snippets")
 
-  ;; Disable yas, too slow on spacemacs.
+
+
   (yas-global-mode 1)
+
+  ;; Remove Yasnippet's default tab key binding
+  ;; (define-key yas-minor-mode-map [(tab)]        nil)
+  ;; (define-key yas-minor-mode-map (kbd "<tab>") nil)
+  ;; (define-key yas-minor-mode-map (kbd "TAB") nil)
+  ;; ;; Set Yasnippet's key binding to shift+tab
+  ;; (define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand)
+  ;; ;; Alternatively use Control-c + tab
+  ;; (define-key yas-minor-mode-map (kbd "\C-c TAB") 'yas-expand)
+
   )
 
 
@@ -719,10 +759,10 @@ values."
   ;; $ android list targets
   ;; 3. then you can use android mode
   (require 'android-mode)
-  (require 'elogcat)
+
   (setq android-mode-sdk-dir "~/sdk" )
 
-  (add-to-list 'auto-mode-alist '("\\.log?\\'" . elogcat-mode))
+  
 ;  (add-hook 'gud-mode-hook
 ;            (lambda ()
 ;	      (add-to-list 'gud-jdb-classpath "/home/gregj/work/android-sdk-linux_86/platforms/android-7/android.jar")
@@ -907,7 +947,7 @@ values."
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
 
 
-(safe-wrap (yas-setup))
+
 
 (safe-wrap (flycheck-setup))
 ; (safe-wrap (stock-init))
@@ -915,7 +955,7 @@ values."
 (when (not-in-spacemacs)
   (message "not in spacemacs")
   (safe-wrap (company-mode-init))
-
+  (safe-wrap (yas-setup))
   (safe-wrap (cedet-init))
   (safe-wrap (ecb-init))
   (safe-wrap (cscope-setup))
@@ -1575,7 +1615,7 @@ values."
   (package-install 'cpputils-cmake)
   (package-install 'fold-dwim)
   (package-install 'android-mode)
-  (package-install 'elogcat)
+
   )
 
 
@@ -1701,6 +1741,29 @@ values."
   (search-forward "\"")
   (insert ")"))
 
+(defun kill-matching-lines (regexp &optional rstart rend interactive)
+  "Kill lines containing matches for REGEXP.
+
+See `flush-lines' or `keep-lines' for behavior of this command.
+
+If the buffer is read-only, Emacs will beep and refrain from deleting
+the line, but put the line in the kill ring anyway.  This means that
+you can use this command to copy text from a read-only buffer.
+\(If the variable `kill-read-only-ok' is non-nil, then this won't
+even beep.)"
+  (interactive
+   (keep-lines-read-args "Kill lines containing match for regexp"))
+  (let ((buffer-file-name nil)) ;; HACK for `clone-buffer'
+    (with-current-buffer (clone-buffer nil nil)
+      (let ((inhibit-read-only t))
+        (keep-lines regexp rstart rend interactive)
+        (kill-region (or rstart (line-beginning-position))
+                     (or rend (point-max))))
+      (kill-buffer)))
+  (unless (and buffer-read-only kill-read-only-ok)
+    ;; Delete lines or make the "Buffer is read-only" error.
+    (flush-lines regexp rstart rend interactive)))
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -1708,10 +1771,12 @@ values."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(gud-gdb-command-name "gdb --annotate=1")
+ '(js2-basic-offset 2)
+ '(js2-bounce-indent-p t)
  '(large-file-warning-threshold nil)
  '(package-selected-packages
    (quote
-    (bison-mode mediawiki plantuml-mode chinese-pyim zonokai-theme zenburn-theme zen-and-art-theme xterm-color x86-lookup ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacemacs-theme spaceline spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smooth-scrolling smeargle slim-mode shell-pop seti-theme scss-mode sass-mode reverse-theme restart-emacs rainbow-mode rainbow-identifiers rainbow-delimiters railscasts-theme quelpa pyvenv pytest pyenv-mode purple-haze-theme puml-mode professional-theme powershell popwin planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el pastels-on-dark-theme paradox page-break-lines orgit organic-green-theme org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme neotree nasm-mode naquadah-theme mustang-theme multi-term move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow macrostep lush-theme lorem-ipsum livid-mode live-py-mode linum-relative link-hint light-soap-theme leuven-theme less-css-mode json-mode js3-mode js2-refactor js-doc jbeans-theme jazz-theme jade-mode ir-black-theme inkpot-theme info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-cscope helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md ggtags gandalf-theme fold-dwim flycheck-pos-tip flycheck-irony flx-ido flatui-theme flatland-theme firebelly-theme fill-column-indicator fic-mode farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode elogcat elisp-slime-nav edit-server dracula-theme django-theme disaster diff-hl define-word dash-at-point darktooth-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web company-tern company-statistics company-quickhelp company-irony-c-headers company-irony company-c-headers company-anaconda column-enforce-mode colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode cmake-mode clues-theme clean-aindent-mode clang-format cherry-blossom-theme busybee-theme buffer-move bubbleberry-theme bracketed-paste birds-of-paradise-plus-theme bbdb-android badwolf-theme auto-yasnippet auto-highlight-symbol auto-compile apropospriate-theme anti-zenburn-theme android-mode ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-mode ace-jump-helm-line ac-ispell)))
+    (tide typescript-mode logcat bison-mode mediawiki plantuml-mode chinese-pyim zonokai-theme zenburn-theme zen-and-art-theme xterm-color x86-lookup ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacemacs-theme spaceline spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smooth-scrolling smeargle slim-mode shell-pop seti-theme scss-mode sass-mode reverse-theme restart-emacs rainbow-mode rainbow-identifiers rainbow-delimiters railscasts-theme quelpa pyvenv pytest pyenv-mode purple-haze-theme puml-mode professional-theme powershell popwin planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el pastels-on-dark-theme paradox page-break-lines orgit organic-green-theme org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme neotree nasm-mode naquadah-theme mustang-theme multi-term move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow macrostep lush-theme lorem-ipsum livid-mode live-py-mode linum-relative link-hint light-soap-theme leuven-theme less-css-mode json-mode js3-mode js2-refactor js-doc jbeans-theme jazz-theme jade-mode ir-black-theme inkpot-theme info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-cscope helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md ggtags gandalf-theme fold-dwim flycheck-pos-tip flycheck-irony flx-ido flatui-theme flatland-theme firebelly-theme fill-column-indicator fic-mode farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode elisp-slime-nav edit-server dracula-theme django-theme disaster diff-hl define-word dash-at-point darktooth-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web company-tern company-statistics company-quickhelp company-irony-c-headers company-irony company-c-headers company-anaconda column-enforce-mode colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode cmake-mode clues-theme clean-aindent-mode clang-format cherry-blossom-theme busybee-theme buffer-move bubbleberry-theme bracketed-paste birds-of-paradise-plus-theme bbdb-android badwolf-theme auto-yasnippet auto-highlight-symbol auto-compile apropospriate-theme anti-zenburn-theme android-mode ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-mode ace-jump-helm-line ac-ispell)))
  '(pyim-dicts
    (quote
     ((:name "pinyin" :file "/Users/jiejing/myconfigure/pyim-bigdict.pyim" :coding utf-8-unix :dict-type pinyin-dict))) t)
