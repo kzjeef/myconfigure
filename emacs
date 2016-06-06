@@ -111,7 +111,8 @@
 
    ;; disable helm-gtags because it have key conflict with ggtags-mode, which is more powerful.
    dotspacemacs-excluded-packages '(auto-complete-clang
-                                    helm-gtags 
+                                    helm-gtags
+                                    tern-mode
                                     adaptive-wrap)
    dotspacemacs-additional-packages '(fold-dwim
                                       irony company-irony flycheck-irony company-irony-c-headers
@@ -119,6 +120,7 @@
                                       ace-jump-mode
                                       android-mode
                                       plantuml-mode
+                                      js-comint
                                       )
    dotspacemacs-delete-orphan-packages nil))
 
@@ -152,11 +154,18 @@ values."
                          )
 
    dotspacemacs-colorize-cursor-according-to-state t
-   dotspacemacs-default-font '("Source Code Pro"
-                               :size 13
+   ;; dotspacemacs-default-font '("Source Code Pro"
+   ;;                             :size 13
+   ;;                             :weight normal
+   ;;                             :width normal
+   ;;                             :powerline-scale 0.8)
+
+   dotspacemacs-default-font '("Monaco"
+                               :size 12
                                :weight normal
                                :width normal
-                               :powerline-scale 1.0)
+                               :powerline-scale 0.9)
+
    dotspacemacs-maximized-at-startup t
    dotspacemacs-smooth-scrolling nil
    dotspacemacs-search-tools '("ag" "grep")
@@ -268,7 +277,7 @@ values."
                              (custom-set-variables
                               '(js2-basic-offset 2)
                               '(js2-bounce-indent-p nil)
-
+                              (hungry-delete-mode 1)
                               )
                              (smartparens-mode 1)
                              (company-mode 1)
@@ -284,10 +293,45 @@ values."
                                                   (if (looking-back "^\s*")
                                                       (back-to-indentation))))))))
 
+  ;; disable bold font effect.
+  (mapc
+   (lambda (face)
+     (set-face-attribute face nil :weight 'normal :underline nil))
+   (face-list))
+
+
+
   ;; do yas-setup again.
   (safe-wrap (yas-setup))
 
+
+  (safe-wrap (js-comint-setup))
+
+
+
 ); end user-config;
+
+(defun js-comint-setup()
+  (require 'js-comint)
+  ;; Use node as our repl
+  (setq inferior-js-program-command "node")
+  
+  (setq inferior-js-mode-hook
+        (lambda ()
+          ;; We like nice colors
+          (ansi-color-for-comint-mode-on)
+          ;; Deal with some prompt nonsense
+          (add-to-list 'comint-preoutput-filter-functions
+                       (lambda (output)
+                         (replace-regexp-in-string ".*1G\.\.\..*5G" "..."
+                                                   (replace-regexp-in-string ".*1G.*3G" "&gt;" output))))))
+
+  ;; Doc:
+  ;; This function can send some content to REPL to see the result.
+  ;; start REPL: M-x run-js
+  ;; send region: M-x js-send-region
+  ;; send whole buffer:  M-x js-send-buffer
+  )
 
 
 
@@ -490,20 +534,19 @@ values."
 
   (setq yas-snippet-dirs '())
   (add-to-list 'yas-snippet-dirs "~/myconfigure/yasnippet-snippets")
-
+  (add-to-list 'yas-snippet-dirs "~/myconfigure/mysnippets")
 
 
   (yas-global-mode 1)
 
   ;; Remove Yasnippet's default tab key binding
-  ;; (define-key yas-minor-mode-map [(tab)]        nil)
-  ;; (define-key yas-minor-mode-map (kbd "<tab>") nil)
-  ;; (define-key yas-minor-mode-map (kbd "TAB") nil)
-  ;; ;; Set Yasnippet's key binding to shift+tab
-  ;; (define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand)
-  ;; ;; Alternatively use Control-c + tab
-  ;; (define-key yas-minor-mode-map (kbd "\C-c TAB") 'yas-expand)
-
+  (define-key yas-minor-mode-map [(tab)]        nil)
+  (define-key yas-minor-mode-map (kbd "<tab>") nil)
+  (define-key yas-minor-mode-map (kbd "TAB") nil)
+  ;; Set Yasnippet's key binding to shift+tab
+  (define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand)
+  ;; Alternatively use Control-c + tab
+  (define-key yas-minor-mode-map (kbd "\C-c TAB") 'yas-expand)
   )
 
 
@@ -626,6 +669,7 @@ values."
   ;;  (safe-wrap (flex-bison-init)) ; cause editor hang, remove it.
 
                                         ;(electric-layout-mode) ;; good control of space line.
+
 
 
   )
@@ -832,11 +876,11 @@ values."
 	 (if (>= (x-display-pixel-height) 1080)
 	     (set-default-font "DejaVu Sans Mono-10.5")
 					;       (set-default-font "Ubuntu mono-13")
-					;	    (set-default-font "Lucida Console-11")
+					;	    (set-default-font "Lucida Console-13")
 					;	    (set-default-font "Monaco-10")
 	   (set-default-font "DejaVu Sans Mono-10.5")
-					;	    (set-default-font "-apple-Monaco-normal-normal-normal-*-14-*-*-*-*-0-iso10646-1")
-					;	    (set-default-font "Inconsolata-12")
+					;	    (set-default-font "-apple-Monaco-normal-normal-normal-*-12-*-*-*-*-0-iso10646-1")
+					;	    (set-default-font "Inconsolata-15")
 	   )))
 
   (cond (on_darwin
@@ -850,8 +894,6 @@ values."
 	 ;;	 (set-default-font "AkkurantMonoMono-13")
 					;	 (set-default-font "BitstreamVeraSansMono-set")
 					;	 (12-default-font "-apple-Monaco-normal-normal-normal-*-12-*-*-*-*-0-iso10646-1")
-;;	 (set-face-attribute 'default nil
-	 ;;			     :family "Menlo" :height 10 :weight 'normal)
 ;;as	 (set-default-font "Monaco-12")
 	 ))
   )
@@ -1771,12 +1813,13 @@ even beep.)"
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(gud-gdb-command-name "gdb --annotate=1")
+ '(js-indent-level 2)
  '(js2-basic-offset 2)
- '(js2-bounce-indent-p t)
+ '(js2-bounce-indent-p nil)
  '(large-file-warning-threshold nil)
  '(package-selected-packages
    (quote
-    (tide typescript-mode logcat bison-mode mediawiki plantuml-mode chinese-pyim zonokai-theme zenburn-theme zen-and-art-theme xterm-color x86-lookup ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacemacs-theme spaceline spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smooth-scrolling smeargle slim-mode shell-pop seti-theme scss-mode sass-mode reverse-theme restart-emacs rainbow-mode rainbow-identifiers rainbow-delimiters railscasts-theme quelpa pyvenv pytest pyenv-mode purple-haze-theme puml-mode professional-theme powershell popwin planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el pastels-on-dark-theme paradox page-break-lines orgit organic-green-theme org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme neotree nasm-mode naquadah-theme mustang-theme multi-term move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow macrostep lush-theme lorem-ipsum livid-mode live-py-mode linum-relative link-hint light-soap-theme leuven-theme less-css-mode json-mode js3-mode js2-refactor js-doc jbeans-theme jazz-theme jade-mode ir-black-theme inkpot-theme info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-cscope helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md ggtags gandalf-theme fold-dwim flycheck-pos-tip flycheck-irony flx-ido flatui-theme flatland-theme firebelly-theme fill-column-indicator fic-mode farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode elisp-slime-nav edit-server dracula-theme django-theme disaster diff-hl define-word dash-at-point darktooth-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web company-tern company-statistics company-quickhelp company-irony-c-headers company-irony company-c-headers company-anaconda column-enforce-mode colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode cmake-mode clues-theme clean-aindent-mode clang-format cherry-blossom-theme busybee-theme buffer-move bubbleberry-theme bracketed-paste birds-of-paradise-plus-theme bbdb-android badwolf-theme auto-yasnippet auto-highlight-symbol auto-compile apropospriate-theme anti-zenburn-theme android-mode ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-mode ace-jump-helm-line ac-ispell)))
+    (js-comint tide typescript-mode logcat bison-mode mediawiki plantuml-mode chinese-pyim zonokai-theme zenburn-theme zen-and-art-theme xterm-color x86-lookup ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacemacs-theme spaceline spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smooth-scrolling smeargle slim-mode shell-pop seti-theme scss-mode sass-mode reverse-theme restart-emacs rainbow-mode rainbow-identifiers rainbow-delimiters railscasts-theme quelpa pyvenv pytest pyenv-mode purple-haze-theme puml-mode professional-theme powershell popwin planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el pastels-on-dark-theme paradox page-break-lines orgit organic-green-theme org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme neotree nasm-mode naquadah-theme mustang-theme multi-term move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow macrostep lush-theme lorem-ipsum livid-mode live-py-mode linum-relative link-hint light-soap-theme leuven-theme less-css-mode json-mode js2-refactor js-doc jbeans-theme jazz-theme jade-mode ir-black-theme inkpot-theme info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-cscope helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md ggtags gandalf-theme fold-dwim flycheck-pos-tip flycheck-irony flx-ido flatui-theme flatland-theme firebelly-theme fill-column-indicator fic-mode farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode elisp-slime-nav edit-server dracula-theme django-theme disaster diff-hl define-word dash-at-point darktooth-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web company-tern company-statistics company-quickhelp company-irony-c-headers company-irony company-c-headers company-anaconda column-enforce-mode colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode cmake-mode clues-theme clean-aindent-mode clang-format cherry-blossom-theme busybee-theme buffer-move bubbleberry-theme bracketed-paste birds-of-paradise-plus-theme bbdb-android badwolf-theme auto-yasnippet auto-highlight-symbol auto-compile apropospriate-theme anti-zenburn-theme android-mode ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-mode ace-jump-helm-line ac-ispell)))
  '(pyim-dicts
    (quote
     ((:name "pinyin" :file "/Users/jiejing/myconfigure/pyim-bigdict.pyim" :coding utf-8-unix :dict-type pinyin-dict))) t)
