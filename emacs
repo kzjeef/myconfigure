@@ -115,7 +115,7 @@
                                     tern
                                     adaptive-wrap)
    dotspacemacs-additional-packages '(fold-dwim
-                                      irony company-irony flycheck-irony company-irony-c-headers
+;                                      irony company-irony flycheck-irony company-irony-c-headers
                                       iedit
                                       ace-jump-mode
                                       android-mode
@@ -144,12 +144,12 @@ values."
    dotspacemacs-startup-recent-list-size 5
    dotspacemacs-scratch-mode 'text-mode
    dotspacemacs-themes '(
+                         zenburn
                          default
                          monokai
                          spacemacs-dark
                          whiteboard
                          spacemacs-light
-                         zenburn
                          tsdh-light
                          )
 
@@ -184,6 +184,8 @@ values."
 
   (spacemacs|diminish helm-gtags-mode "G" "g")
 
+  (setq ggtags-global-ignore-case t)
+
   (use-package fold-dwim)
   (global-set-key (kbd "<f7>")      'fold-dwim-toggle)
   (global-set-key (kbd "<M-f7>")    'fold-dwim-hide-all)
@@ -193,7 +195,7 @@ values."
   (use-package clang-format)
   (global-set-key [C-M-tab] 'clang-format-region)
 
-  (safe-wrap (myirony-mode-setup))
+;  (safe-wrap (myirony-mode-setup))
   (menu-bar-mode 1)
 
   (add-hook 'edit-server-done-hook (lambda () (shell-command "open -a \"Google Chrome\"")))
@@ -226,6 +228,13 @@ values."
      company-minimum-prefix-length 2
      )
 
+  ;; (defvar zenburn-override-colors-alist
+  ;;   '(("zenburn-bg+05" . "#282828")
+  ;;     ("zenburn-bg+1"  . "#2F2F2F")
+  ;;     ("zenburn-bg+2"  . "#3F3F3F")
+  ;;     ("zenburn-bg+3"  . "#4F4F4F")))
+;;  (load-theme 'zenburn t)
+
   ;; Disable eldoc mode, which is very slow on big proj.
   (global-eldoc-mode -1)
 
@@ -249,11 +258,11 @@ values."
   (setq org-plantuml-jar-path
         (expand-file-name "/usr/local/Cellar/plantuml/8037/plantuml.8037.jar"))
 
-  (spacemacs/toggle-truncate-lines-on)
+ ; (spacemacs/toggle-truncate-lines-on)
   ;; Visual line navigation for textual modes
-  (add-hook 'text-mode-hook 'spacemacs/toggle-visual-line-navigation-off)
+;  (add-hook 'text-mode-hook 'spacemacs/toggle-visual-line-navigation-off)
 
-  (visual-line-mode  -1)
+;  (visual-line-mode  -1)
 
 
   ;; pinyin input setup.
@@ -298,18 +307,16 @@ values."
      (set-face-attribute face nil :weight 'normal :underline nil))
    (face-list))
 
+  (setq-default evil-escape-key-sequence "jk")
 
 
   ;; do yas-setup again.
   (safe-wrap (yas-setup))
-
-  (spacemacs/toggle-truncate-lines-off) ; this function really slow on big log files.
-
-
   (safe-wrap (js-comint-setup))
 
+  (safe-wrap (hide-if-0))
 
-
+  (global-hl-line-mode -1)
 ); end user-config;
 
 (defun js-comint-setup()
@@ -556,6 +563,7 @@ values."
 (global-flycheck-mode)
 (setq flycheck-check-syntax-automatically '(save mode-enabled))
 (setq flycheck-standard-error-navigation nil)
+(setq flycheck-highlighting-mode 'lines) ;this will make flycheck faster.
 
 
 (global-set-key [\M-f3] 'kmacro-start-macro-or-insert-counter)
@@ -569,6 +577,13 @@ values."
 ;;     '(custom-set-variables
 ;;       '(flycheck-display-errors-function #'flycheck-pos-tip-error-messages))))
 (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11")))
+
+
+(add-hook 'flycheck-mode-hook
+          (lambda ()
+            (when (display-graphic-p)
+              (setq-local flycheck-indication-mode nil))))
+
 (add-hook 'after-init-hook 'global-flycheck-mode))
 
 (defun fic-mode-setup()
@@ -587,9 +602,9 @@ values."
 (defun dash-setup ()
   (autoload 'dash-at-point "dash-at-point"
     "Search the word at point with Dash." t nil)
-  (global-set-key "\C-cd" 'dash-at-point)
-;;  (global-set-key [f1] 'dash-at-point)
-  (global-set-key "\C-ce" 'dash-at-point-with-docset))
+;  (global-set-key "\C-cd" 'dash-at-point) ;; c-c d confict with doxygen default key.
+  (global-set-key [f1] 'dash-at-point)
+;  (global-set-key "\C-ce" 'dash-at-point-with-docset))
 
 (defun markdown-setup()
   (autoload 'markdown-mode "markdown-mode"
@@ -613,19 +628,22 @@ values."
 
 (defun generic-programming-realted-config ()
 
-					; diable doxymacs for conflict of cedet.
+  ; cedet and doxymacs conflict, disable cedet if doxymacs not working.
    (safe-wrap ((lambda ()
 		 (require 'doxymacs)
-		 (defun doxymacs-font-lock ()
-		   (interactive)
-		   (font-lock-add-keywords nil doxymacs-doxygen-keywords))
-		 (doxymacs-font-lock)
+     (defun my-doxymacs-font-lock-hook ()
+       (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
+           (doxymacs-font-lock)))
+
+     (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
+
 		 )))
   ;; Auto enable whitespace mode in diff mode
 
-  ;;  (global-hl-line-mode t) ;; Highlight current line, seems easier to find the cursor.
+  ;;  (global-hl-line-mode nil) ;; Highlight current line, seems easier to find the cursor.
 
   (setq wsd-style "roundgreen")
+
 
   (hs-minor-mode)
   (global-set-key (kbd "M-+") 'hs-show-block)
@@ -899,7 +917,7 @@ values."
 
 (defun config-not-in-tty-mode ()
   (font-configing)
-  (global-visual-line-mode t)        ;; Auto truncate line  
+;;  (global-visual-line-mode nil)        ;; Auto truncate line  
   (mouse-avoidance-mode 'animate)	;; 光标靠近鼠标的时候，　鼠标自己就跑了
   (setq x-select-enable-clipboard t)	;;让X的剪切板和EMACS联系起来
   (tool-bar-mode -1) ;; 不要工具按钮
@@ -1224,6 +1242,25 @@ values."
 		;;                 (highlight-80+-mode)
 		))))
 
+(defun hide-if-0()
+  (require 'hideif)
+  (setq hide-ifdef-initially nil)
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              (hide-ifdef-mode 1)
+              ))
+
+  (defun my-hide-if-0()
+    "hide #if 0 blocks, inspired by internet. --lgfang"
+    (interactive)
+    (require 'hideif)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^[ \t]*#if[ \t]*0" nil t) (hide-ifdef-block)) )
+    )
+  (add-hook 'c-mode-hook 'my-hide-if-0)
+  (add-hook 'c++-mode-hook 'my-hide-if-0)
+  )
 
 ;; --------- Begin Fix enum class in c++11
 (defun inside-class-enum-p (pos)
@@ -1811,18 +1848,41 @@ even beep.)"
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-term-color-vector
+   [unspecified "#FFFFFF" "#d15120" "#5f9411" "#d2ad00" "#6b82a7" "#a66bab" "#6b82a7" "#505050"] t)
+ '(compilation-message-face (quote default))
+ '(custom-safe-themes
+   (quote
+    ("f3d6a49e3f4491373028eda655231ec371d79d6d2a628f08d5aa38739340540b" default)))
+ '(fci-rule-character-color "#d9d9d9")
  '(gud-gdb-command-name "gdb --annotate=1")
+ '(highlight-changes-colors (quote ("#FD5FF0" "#AE81FF")))
+ '(highlight-tail-colors
+   (quote
+    (("#3E3D31" . 0)
+     ("#67930F" . 20)
+     ("#349B8D" . 30)
+     ("#21889B" . 50)
+     ("#968B26" . 60)
+     ("#A45E0A" . 70)
+     ("#A41F99" . 85)
+     ("#3E3D31" . 100))))
  '(large-file-warning-threshold nil)
+ '(magit-diff-use-overlays nil)
  '(package-selected-packages
    (quote
-    (js-comint tide typescript-mode logcat bison-mode mediawiki plantuml-mode chinese-pyim zonokai-theme zenburn-theme zen-and-art-theme xterm-color x86-lookup ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacemacs-theme spaceline spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smooth-scrolling smeargle slim-mode shell-pop seti-theme scss-mode sass-mode reverse-theme restart-emacs rainbow-mode rainbow-identifiers rainbow-delimiters railscasts-theme quelpa pyvenv pytest pyenv-mode purple-haze-theme puml-mode professional-theme powershell popwin planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el pastels-on-dark-theme paradox page-break-lines orgit organic-green-theme org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme neotree nasm-mode naquadah-theme mustang-theme multi-term move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow macrostep lush-theme lorem-ipsum livid-mode live-py-mode linum-relative link-hint light-soap-theme leuven-theme less-css-mode json-mode js2-refactor js-doc jbeans-theme jazz-theme jade-mode ir-black-theme inkpot-theme info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-cscope helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md ggtags gandalf-theme fold-dwim flycheck-pos-tip flycheck-irony flx-ido flatui-theme flatland-theme firebelly-theme fill-column-indicator fic-mode farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode elisp-slime-nav edit-server dracula-theme django-theme disaster diff-hl define-word dash-at-point darktooth-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web  company-statistics company-quickhelp company-irony-c-headers company-irony company-c-headers company-anaconda column-enforce-mode colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode cmake-mode clues-theme clean-aindent-mode clang-format cherry-blossom-theme busybee-theme buffer-move bubbleberry-theme bracketed-paste birds-of-paradise-plus-theme bbdb-android badwolf-theme auto-yasnippet auto-highlight-symbol auto-compile apropospriate-theme anti-zenburn-theme android-mode ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-mode ace-jump-helm-line ac-ispell)))
+    (doxymacs irony nhexl-mode js-comint tide typescript-mode logcat bison-mode mediawiki plantuml-mode chinese-pyim zonokai-theme zenburn-theme zen-and-art-theme xterm-color x86-lookup ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacemacs-theme spaceline spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smooth-scrolling smeargle slim-mode shell-pop seti-theme scss-mode sass-mode reverse-theme restart-emacs rainbow-mode rainbow-identifiers rainbow-delimiters railscasts-theme quelpa pyvenv pytest pyenv-mode purple-haze-theme puml-mode professional-theme powershell popwin planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el pastels-on-dark-theme paradox page-break-lines orgit organic-green-theme org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme neotree nasm-mode naquadah-theme mustang-theme multi-term move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow macrostep lush-theme lorem-ipsum livid-mode live-py-mode linum-relative link-hint light-soap-theme leuven-theme less-css-mode json-mode js2-refactor js-doc jbeans-theme jazz-theme jade-mode ir-black-theme inkpot-theme info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-cscope helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md ggtags gandalf-theme fold-dwim flycheck-pos-tip flx-ido flatui-theme flatland-theme firebelly-theme fill-column-indicator fic-mode farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode elisp-slime-nav edit-server dracula-theme django-theme disaster diff-hl define-word dash-at-point darktooth-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web company-statistics company-quickhelp company-c-headers company-anaconda column-enforce-mode colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode cmake-mode clues-theme clean-aindent-mode clang-format cherry-blossom-theme busybee-theme buffer-move bubbleberry-theme bracketed-paste birds-of-paradise-plus-theme bbdb-android badwolf-theme auto-yasnippet auto-highlight-symbol auto-compile apropospriate-theme anti-zenburn-theme android-mode ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-mode ace-jump-helm-line ac-ispell)))
+ '(pos-tip-background-color "#A6E22E")
+ '(pos-tip-foreground-color "#272822")
  '(pyim-dicts
    (quote
     ((:name "pinyin" :file "/Users/jiejing/myconfigure/pyim-bigdict.pyim" :coding utf-8-unix :dict-type pinyin-dict))) t)
  '(safe-local-variable-values
    (quote
     ((projectile-project-compilation-cmd . "cd /Users/jiejing/project/kalaok/libDirectAudio/; ./build.sh")
-     (projectile-project-compilation-cmd . "make -C mybuild -j4")))))
+     (projectile-project-compilation-cmd . "make -C mybuild -j4"))))
+ '(weechat-color-list
+   (unspecified "#272822" "#3E3D31" "#A20C41" "#F92672" "#67930F" "#A6E22E" "#968B26" "#E6DB74" "#21889B" "#66D9EF" "#A41F99" "#FD5FF0" "#349B8D" "#A1EFE4" "#F8F8F2" "#F8F8F0")))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
