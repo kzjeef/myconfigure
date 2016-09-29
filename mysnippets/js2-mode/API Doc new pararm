@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: API Doc new pararm
+# key: apip
+# --
+
+@apiParam {${1:String}  ${2:name}  ${3: parameter desc}

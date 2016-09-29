@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: apidoc - http document
+# key: apidoc
+# --
+/**
+ * @api {${1:get}} /$2 $3
+ * @apiDescription $3
+ * @apiParam {${5: String}} ${6:name}  ${7:Desc}
+ * @apiGroup $8
+ * @apiSuccess {Bool} res 成功与否
+ * @apiSuccess {Object} data $9
+ * @apiSuccessExample success
+ * @apiError  ${10:error} ${11:error}
+ * @apiPermission ${12:admin}
+ */

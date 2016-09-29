@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: Mongoose Defer Template With Q.
+# key: mongodefer
+# --
+
+var defer = Q.defer();
+${1: model}.${2:findById}( ${3: id}, function(err, doc) {
+
+  if (err) {
+    logger.error("$1:  error: ", err);
+    defer.reject(err);
+  } else {
+    defer.resolve(doc);
+  }
+
+});
+
+return defer.promise;
