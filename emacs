@@ -604,7 +604,8 @@ values."
     "Search the word at point with Dash." t nil)
 ;  (global-set-key "\C-cd" 'dash-at-point) ;; c-c d confict with doxygen default key.
   (global-set-key [f1] 'dash-at-point)
-;  (global-set-key "\C-ce" 'dash-at-point-with-docset))
+					;  (global-set-key "\C-ce" 'dash-at-point-with-docset)
+  )
 
 (defun markdown-setup()
   (autoload 'markdown-mode "markdown-mode"
