@@ -183,6 +183,9 @@ values."
   (global-company-mode -1)
 
   (spacemacs|diminish helm-gtags-mode "G" "g")
+  (spacemacs|diminish doxymacs-mode "☱" "☱")
+  (spacemacs|diminish hide-ifdef-mode "♺" "♺")
+  (spacemacs|diminish ggtags-mode "♕" "♕")
 
   (setq ggtags-global-ignore-case t)
 
@@ -629,16 +632,6 @@ values."
 
 (defun generic-programming-realted-config ()
 
-  ; cedet and doxymacs conflict, disable cedet if doxymacs not working.
-   (safe-wrap ((lambda ()
-		 (require 'doxymacs)
-     (defun my-doxymacs-font-lock-hook ()
-       (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
-           (doxymacs-font-lock)))
-
-     (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
-
-		 )))
   ;; Auto enable whitespace mode in diff mode
 
   ;;  (global-hl-line-mode nil) ;; Highlight current line, seems easier to find the cursor.
@@ -877,8 +870,28 @@ values."
 
   )
 
+(defun doxymacs-init()
+  (require 'doxymacs)
+
+  (defun doxymacs-font-lock ()
+    (interactive)
+    (font-lock-add-keywords nil doxymacs-doxygen-keywords))
+
+  (defun my-doxymacs-font-lock-hook ()
+    (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
+        (doxymacs-font-lock)))
+  (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
+  (add-hook 'c-mode-common-hook 'doxymacs-mode)
+  (add-hook 'c++-mode-hook 'doxymacs-mode)
+  )
+
 (defun load-c-relate-lib ()
   (generic-programming-realted-config)
+
+                                        ; cedet and doxymacs conflict, disable cedet if doxymacs not working.
+
+
+
 ;  (cscope-minor-mode)
 
   )
@@ -1049,7 +1062,7 @@ values."
 
   ); end not in spacemacs config.
   
-  
+(safe-wrap (doxymacs-init))
 (safe-wrap (ace-jump-init))
 (safe-wrap (nxml-setup))
 (safe-wrap (dash-setup))
