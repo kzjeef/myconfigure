@@ -885,8 +885,8 @@ values."
   (message "load java")
   (setq c-comment-start-regexp "(@|/(/|[*][*]?))")
   (modify-syntax-entry ?@ "< b" java-mode-syntax-table)
-  (setq c-basic-offset 4
-	tab-width 4
+  (setq c-basic-offset 2
+	tab-width 2
 	indent-tabs-mode nil)
   ;;(glasses-mode nil) ;; ThisIsAVarInJava
 
@@ -1205,8 +1205,8 @@ values."
             (setq indent-tabs-mode nil)
 	    ;;          (flymode-init)
             (c-set-style "cc-mode")
-            (setq c-basic-offset 4
-                  tab-width 4
+            (setq c-basic-offset 2
+                  tab-width 2
                   indent-tabs-mode nil)
 
 	    ;;	    (highlight-80+-mode)
@@ -1270,8 +1270,8 @@ values."
 (add-hook 'c-mode-hook
 	  (lambda ()
 	    (load-c-relate-lib)
-	    (setq c-basic-offset 4
-		  tab-width 4
+	    (setq c-basic-offset 2
+		  tab-width 2
 		  indent-tabs-mode nil)
 	    (let ((filename (buffer-file-name)))
 	      ;; Enable kernel mode for the appropriate files
@@ -1338,8 +1338,8 @@ values."
 	    (load-c-relate-lib)
       (setq comment-start "/* " comment-end   " */") ; like traditional comment style.
 	    (c-set-offset 'innamespace 0)
-	    (setq c-basic-offset 4
-		  tab-width 4
+	    (setq c-basic-offset 2
+		  tab-width 2
 		  indent-tabs-mode nil)
 	    (c-set-style "my-cc-style")
 	    ))
