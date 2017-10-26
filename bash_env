@@ -4,5 +4,4 @@
 
 export PATH=$PATH:/usr/local/sbin
 export PATH=$PATH:/usr/local/Cellar/imagemagick/6.8.7-7/bin/
-
    

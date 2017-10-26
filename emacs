@@ -62,12 +62,16 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     ruby
+     yaml
+     swift
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     ivy
+;;     ivy // ivy really slow on long line files.
+     helm
      ;; auto-completion
      ;; better-defaults
      emacs-lisp
@@ -80,7 +84,7 @@ values."
      ;; spell-checking
      ;; syntax-checking
      ;; version-control
-
+     scala
      sql
      octave
      csv
@@ -130,6 +134,7 @@ values."
                                       groovy-mode
                                       ;;                                      vlf ;
                                       ag
+                                      log4j-mode
                                       ace-jump-mode
                                       android-mode
                                       plantuml-mode
@@ -231,10 +236,12 @@ values."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '("Monaco"
-                               :size 12
+                               :size 13
                                :weight normal
                                :width normal
                                :powerline-scale 0.9)
+
+
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -400,6 +407,9 @@ executes.
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
 
+  (setq gc-cons-threshold 100000000)
+
+  (setq-default line-spacing 2)
   )
 
 (defun dotspacemacs/user-config ()
@@ -411,6 +421,10 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
   (global-company-mode -1)
+
+  (add-hook 'compilation-mode-hook (lambda() (font-lock-mode -1)))
+
+  (setq-default dotspacemacs-line-numbers nil)
 
 
     (spacemacs|diminish helm-gtags-mode "G" "g")
@@ -424,6 +438,8 @@ you should place your code here."
   (global-set-key (kbd "<f7>")      'fold-dwim-toggle)
   (global-set-key (kbd "<M-f7>")    'fold-dwim-hide-all)
   (global-set-key (kbd "<S-M-f7>")  'fold-dwim-show-all)
+
+  (global-set-key "\M-*" 'pop-tag-mark)
 
 
   (use-package clang-format)
@@ -479,7 +495,7 @@ you should place your code here."
   ;; Disable eldoc mode, which is very slow on big proj.
   (global-eldoc-mode -1)
 
-  (global-nlinum-mode t)
+;;  (global-nlinum-mode t)
 
   (global-set-key[\M-f9] 'spacemacs/cycle-spacemacs-theme)
 
@@ -622,6 +638,16 @@ you should place your code here."
          (exec-path-from-shell-initialize)
          ))
 
+  (global-set-key [f5] 'revert-buffer)
+  (global-set-key [f6] 'ff-find-related-file) ;; Find header file.
+
+  (global-set-key (kbd "M-1")  'delete-other-windows)
+  (global-set-key (kbd "M-3")  'split-window-right)
+  (global-set-key (kbd "M-2")  'split-window-below)
+  (global-set-key (kbd "M-0")  'delete-window)
+  (global-set-key (kbd "M-o")  'other-window)
+
+  (setq vc-follow-symlinks t)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -633,10 +659,30 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (elogcat logcat ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-make helm helm-core google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump popup f s diminish define-word counsel-projectile projectile pkg-info epl counsel swiper ivy column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed dash async aggressive-indent adaptive-wrap ace-window ace-link avy))))
+    (logview log4j-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake minitest chruby bundler inf-ruby yaml-mode tao-theme noflet json-mode js-comint hy-mode gruvbox-theme groovy-mode gitconfig-mode ensime sbt-mode scala-mode diff-hl darktooth-theme color-theme-sanityinc-tomorrow company flycheck yasnippet markdown-mode magit magit-popup haml-mode js2-mode swift-mode elogcat logcat ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-make helm helm-core google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump popup f s diminish define-word counsel-projectile projectile pkg-info epl counsel swiper ivy column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed dash async aggressive-indent adaptive-wrap ace-window ace-link avy))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:foreground "#000000" :background "#FFFFDD")))))
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (white-sand-theme symon string-inflection rebecca-theme realgud test-simple loc-changes load-relative password-generator org-brain ivy-purpose window-purpose imenu-list evil-org evil-lion editorconfig browse-at-remote elogcat logcat ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-make helm helm-core google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump popup f s diminish define-word counsel-projectile projectile pkg-info epl counsel swiper ivy column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed dash async aggressive-indent adaptive-wrap ace-window ace-link avy))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:foreground "#000000" :background "#FFFFDD")))))
+)
