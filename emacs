@@ -120,7 +120,7 @@ values."
      ;; semantic ;; sematic is too slow...
      syntax-checking
      version-control
-     android-logcat
+;     android-logcat
      ;;    logcat-mode
      )
    ;; List of additional packages that will be installed without being
@@ -591,8 +591,10 @@ you should place your code here."
   (set-clipboard-coding-system 'chinese-iso-8bit) ;; 剪切板，用于和其他程序之间复制内容
   (set-clipboard-coding-system 'ctext) ;;解决firefox有时候复制文件有乱马
 
-  (set-keyboard-coding-system 'chinese-iso-8bit) ;; 键盘输入，用于输入法。
-  (set-terminal-coding-system 'chinese-iso-8bit) ;; 终端显示的编码方式。
+  (cond (on_darwin
+         (set-keyboard-coding-system 'chinese-iso-8bit) ;; 键盘输入，用于输入法。
+         (set-terminal-coding-system 'chinese-iso-8bit) ;; 终端显示的编码方式。
+         ))
 
 
   (add-hook 'comint-output-filter-functions
