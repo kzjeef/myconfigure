@@ -120,7 +120,7 @@ values."
      ;; semantic ;; sematic is too slow...
      syntax-checking
      version-control
-     android-logcat
+     ;; android-logcat
      ;;    logcat-mode
      )
    ;; List of additional packages that will be installed without being
@@ -591,9 +591,10 @@ you should place your code here."
   (set-clipboard-coding-system 'chinese-iso-8bit) ;; 剪切板，用于和其他程序之间复制内容
   (set-clipboard-coding-system 'ctext) ;;解决firefox有时候复制文件有乱马
 
-  (set-keyboard-coding-system 'chinese-iso-8bit) ;; 键盘输入，用于输入法。
-  (set-terminal-coding-system 'chinese-iso-8bit) ;; 终端显示的编码方式。
-
+  (cond (on_darwin
+         (set-keyboard-coding-system 'chinese-iso-8bit) ;; 键盘输入，用于输入法。
+         (set-terminal-coding-system 'chinese-iso-8bit) ;; 终端显示的编码方式。
+         ))
 
   (add-hook 'comint-output-filter-functions
             'comint-watch-for-password-prompt) ;; 密码的相关的提示密码
@@ -653,44 +654,3 @@ you should place your code here."
 
   (setq vc-follow-symlinks t)
   )
-
-;; Do not write anything past this comment. This is where Emacs will
-;; auto-generate custom variable definitions.
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (protobuf-mode zonokai-theme zenburn-theme zen-and-art-theme yapfify xterm-color x86-lookup web-mode web-beautify underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme sql-indent spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle slim-mode shell-pop seti-theme scss-mode sass-mode reverse-theme railscasts-theme pyvenv pytest pyenv-mode py-isort purple-haze-theme pug-mode powershell plantuml-mode planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme orgit organic-green-theme org-projectile org-present org-pomodoro alert log4e gntp org-download omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme nlinum niflheim-theme nasm-mode naquadah-theme mustang-theme multi-term monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow madhat2r-theme lush-theme livid-mode skewer-mode simple-httpd live-py-mode light-soap-theme less-css-mode json-snatcher json-reformat js2-refactor multiple-cursors js-doc jbeans-theme jazz-theme ir-black-theme inkpot-theme htmlize heroku-theme hemisu-theme helm-pydoc helm-gitignore helm-dash helm-css-scss helm-cscope xcscope helm-company helm-c-yasnippet hc-zenburn-theme gruber-darker-theme grandshell-theme gotham-theme gnuplot gmail-message-mode ham-mode html-to-markdown gitignore-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md ggtags gandalf-theme fuzzy fold-dwim flymd flycheck-pos-tip pos-tip flatui-theme flatland-theme firebelly-theme farmhouse-theme evil-magit git-commit with-editor espresso-theme eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode edit-server dracula-theme django-theme disaster dash-at-point autothemer darkokai-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web web-completion-data company-tern dash-functional tern company-statistics company-c-headers company-anaconda color-theme-sanityinc-solarized coffee-mode cmake-mode clues-theme clang-format cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme auto-yasnippet apropospriate-theme anti-zenburn-theme android-mode anaconda-mode pythonic ample-zen-theme ample-theme alect-themes ag afternoon-theme ace-jump-mode ac-ispell auto-complete logview log4j-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake minitest chruby bundler inf-ruby yaml-mode tao-theme noflet json-mode js-comint hy-mode gruvbox-theme groovy-mode gitconfig-mode ensime sbt-mode scala-mode diff-hl darktooth-theme color-theme-sanityinc-tomorrow company flycheck yasnippet markdown-mode magit magit-popup haml-mode js2-mode swift-mode elogcat logcat ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-make helm helm-core google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump popup f s diminish define-word counsel-projectile projectile pkg-info epl counsel swiper ivy column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed dash async aggressive-indent adaptive-wrap ace-window ace-link avy)))
- '(safe-local-variable-values
-   (quote
-    ((projectile-project-compilation-cmd . "make -C mybuild -j4")
-     (projectile-project-compilation-cmd . "cd /Users/jiejing/project/kalaok/libDirectAudio/; ./build.sh")))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:foreground "#000000" :background "#FFFFDD")))))
-(defun dotspacemacs/emacs-custom-settings ()
-  "Emacs custom settings.
-This is an auto-generated function, do not modify its content directly, use
-Emacs customize menu instead.
-This function is called at the very end of Spacemacs initialization."
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (white-sand-theme symon string-inflection rebecca-theme realgud test-simple loc-changes load-relative password-generator org-brain ivy-purpose window-purpose imenu-list evil-org evil-lion editorconfig browse-at-remote elogcat logcat ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-make helm helm-core google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump popup f s diminish define-word counsel-projectile projectile pkg-info epl counsel swiper ivy column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed dash async aggressive-indent adaptive-wrap ace-window ace-link avy))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:foreground "#000000" :background "#FFFFDD")))))
-)
