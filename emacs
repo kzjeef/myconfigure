@@ -62,6 +62,8 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     python
+     go
      ruby
      yaml
      swift
@@ -110,7 +112,7 @@ values."
      dash
      python
      chrome
-     themes-megapack
+;;     themes-megapack
      asm
      plantuml
      search-engine ;; M-m a /
@@ -120,7 +122,7 @@ values."
      ;; semantic ;; sematic is too slow...
      syntax-checking
      version-control
-     ;; android-logcat
+;;     android-logcat
      ;;    logcat-mode
      )
    ;; List of additional packages that will be installed without being
@@ -193,7 +195,8 @@ values."
    ;; with `:variables' keyword (similar to layers). Check the editing styles
    ;; section of the documentation for details on available variables.
    ;; (default 'vim)
-   dotspacemacs-editing-style 'emacs
+   ;; dotspacemacs-editing-style 'emacs
+    dotspacemacs-editing-style 'vim
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
    ;; Specify the startup banner. Default value is `official', it displays
@@ -215,33 +218,23 @@ values."
    dotspacemacs-startup-buffer-responsive t
    ;; Default major mode of the scratch buffer (default `text-mode')
    dotspacemacs-scratch-mode 'text-mode
-   ;; List of themes, the first of the list is loaded when spacemacs starts.
+   ;; List of theme, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(
-                         professional
-                         monokai
-                         spacemacs-dark
-                         default
-                         zenburn
-                         whiteboard
-                         solarized-light
-                         adwaita
-                         spacemacs-light
-                         wombat
-                         twilight-bright
-                         tsdh-light
-                         )
    ;; If non nil the cursor color matches the state color in GUI Emacs.
-   dotspacemacs-colorize-cursor-according-to-state t
+   dotspacemacs-colorize-cursor-according-to-state nil
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Monaco"
-                               :size 13
-                               :weight normal
-                               :width normal
-                               :powerline-scale 0.9)
-
+   ;; dotspacemacs-default-font '("Monaco"
+   ;;                             :size 13
+   ;;                             :weight normal
+   ;;                             :width normal
+   ;;                             :powerline-scale 0.9)
+   ;; dotspacemacs-default-font '("Source Code Pro"
+   ;;                             :size 13
+   ;;                             :weight normal
+   ;;                             :width normal
+   ;;                             :powerline-scale 1.1)
 
    ;; The leader key
    dotspacemacs-leader-key "SPC"
@@ -410,8 +403,14 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   (setq gc-cons-threshold 100000000)
 
-  (setq-default line-spacing 2)
+ (setq-default line-spacing 2)
+
+;  (add-hook 'python-mode-hook
+;            (lambda () (setq indent-tabs-mode nil))
+;
   )
+
+
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
@@ -547,10 +546,10 @@ you should place your code here."
                                                       (back-to-indentation))))))))
 
   ;; disable bold font effect.
-  (mapc
-   (lambda (face)
-     (set-face-attribute face nil :weight 'normal :underline nil))
-   (face-list))
+;  (mapc
+;   (lambda (face)
+;     (set-face-attribute face nil :weight 'normal :underline nil))
+;   (face-list))
 
   (setq-default evil-escape-key-sequence "jk")
 
@@ -591,10 +590,12 @@ you should place your code here."
   (set-clipboard-coding-system 'chinese-iso-8bit) ;; 剪切板，用于和其他程序之间复制内容
   (set-clipboard-coding-system 'ctext) ;;解决firefox有时候复制文件有乱马
 
+  ;; this will cause linux 
   (cond (on_darwin
-         (set-keyboard-coding-system 'chinese-iso-8bit) ;; 键盘输入，用于输入法。
-         (set-terminal-coding-system 'chinese-iso-8bit) ;; 终端显示的编码方式。
-         ))
+	 (set-keyboard-coding-system 'chinese-iso-8bit) ;; 键盘输入，用于输入法。
+	 (set-terminal-coding-system 'chinese-iso-8bit) ;; 终端显示的编码方式。
+	 ))
+
 
   (add-hook 'comint-output-filter-functions
             'comint-watch-for-password-prompt) ;; 密码的相关的提示密码
@@ -653,4 +654,4 @@ you should place your code here."
   (global-set-key (kbd "M-o")  'other-window)
 
   (setq vc-follow-symlinks t)
-  )
+)
