@@ -691,3 +691,4 @@ you should place your code here."
 
   (setq vc-follow-symlinks t)
 
+)
