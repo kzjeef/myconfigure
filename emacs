@@ -63,19 +63,17 @@ values."
    dotspacemacs-configuration-layers
    '(
      python
-     go
-     ruby
      yaml
-     swift
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-;;     ivy // ivy really slow on long line files.
-     helm
+;;     ivy ;// ivy really slow on long line files.
+     helm ;helm get stuck in mac.
      ;; auto-completion
      ;; better-defaults
+    ;;counsel-gtags
      emacs-lisp
      ;; git
      ;; markdown
@@ -104,14 +102,16 @@ values."
             shell-enable-smart-eshell t
             shell-default-term-shell (getenv "SHELL"))
      gtags
+     ;spacemacs-theme
      org
      git
      javascript
      markdown
      dash
-     python
+     ;; python
      chrome
-;;     themes-megapack
+     semantic
+     ;themes-megapack
      asm
      plantuml
      search-engine ;; M-m a /
@@ -121,7 +121,7 @@ values."
      ;; semantic ;; sematic is too slow...
      syntax-checking
      version-control
-;;     android-logcat
+     android-logcat
      ;;    logcat-mode
      )
    ;; List of additional packages that will be installed without being
@@ -133,6 +133,7 @@ values."
                                         ;                                      irony company-irony flycheck-irony company-irony-c-headers
                                       iedit
                                       groovy-mode
+                                      anaconda-mode
                                       ;;                                      vlf ;
                                       ag
                                       protobuf-mode
@@ -195,8 +196,7 @@ values."
    ;; with `:variables' keyword (similar to layers). Check the editing styles
    ;; section of the documentation for details on available variables.
    ;; (default 'vim)
-   ;; dotspacemacs-editing-style 'emacs
-    dotspacemacs-editing-style 'vim
+   dotspacemacs-editing-style 'vim
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
    ;; Specify the startup banner. Default value is `official', it displays
@@ -218,13 +218,13 @@ values."
    dotspacemacs-startup-buffer-responsive t
    ;; Default major mode of the scratch buffer (default `text-mode')
    dotspacemacs-scratch-mode 'text-mode
-   ;; List of theme, the first of the list is loaded when spacemacs starts.
+   ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
-                         monokai
-                         professional
                          spacemacs-dark
+                         professional  ;; better on day.
+                         monokai       ;; better on night.
                          default
                          zenburn
                          whiteboard
@@ -236,7 +236,7 @@ values."
                          tsdh-light
                          )
    ;; If non nil the cursor color matches the state color in GUI Emacs.
-   dotspacemacs-colorize-cursor-according-to-state nil
+   dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    ;dotspacemacs-default-font '("Monaco"
@@ -245,16 +245,6 @@ values."
    ;                            :width normal
    ;                            :powerline-scale 0.9)
 
-   ;; dotspacemacs-default-font '("Monaco"
-   ;;                             :size 13
-   ;;                             :weight normal
-   ;;                             :width normal
-   ;;                             :powerline-scale 0.9)
-   ;; dotspacemacs-default-font '("Source Code Pro"
-   ;;                             :size 13
-   ;;                             :weight normal
-   ;;                             :width normal
-   ;;                             :powerline-scale 1.1)
 
    ;; The leader key
    dotspacemacs-leader-key "SPC"
@@ -423,14 +413,8 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   (setq gc-cons-threshold 100000000)
 
- (setq-default line-spacing 2)
-
-;  (add-hook 'python-mode-hook
-;            (lambda () (setq indent-tabs-mode nil))
-;
+  (setq-default line-spacing 2)
   )
-
-
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
@@ -441,11 +425,15 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
   (global-company-mode -1)
+  (customize-set-variable 'tramp-save-ad-hoc-proxies t)
 
   (add-hook 'compilation-mode-hook (lambda() (font-lock-mode -1)))
 
   (setq-default dotspacemacs-line-numbers nil)
+  (setq tramp-copy-size-limit nil)
 
+  (setq-default fill-column 100)
+  (spacemacs/toggle-fill-column-indicator-on)
 
     (spacemacs|diminish helm-gtags-mode "G" "g")
   (spacemacs|diminish doxymacs-mode "☱" "☱")
@@ -454,18 +442,35 @@ you should place your code here."
   (spacemacs|diminish flycheck-mode "☂" "☂")
   (setq ggtags-global-ignore-case t)
 
+  
   (use-package fold-dwim)
   (global-set-key (kbd "<f7>")      'fold-dwim-toggle)
   (global-set-key (kbd "<M-f7>")    'fold-dwim-hide-all)
   (global-set-key (kbd "<S-M-f7>")  'fold-dwim-show-all)
 
-  (global-set-key "\M-*" 'pop-tag-mark)
+  (add-to-list 'auto-mode-alist '("\\.cu$" . c++-mode))
 
-  ;; google c style.
-  (add-hook 'c-mode-common-hook 'google-set-c-style)
-  (add-hook 'c-mode-common-hook 'google-make-newline-indent)
+  (with-eval-after-load 'git-gutter+
+    (defun git-gutter+-remote-default-directory (dir file)
+      (let* ((vec (tramp-dissect-file-name file))
+             (method (tramp-file-name-method vec))
+             (user (tramp-file-name-user vec))
+             (domain (tramp-file-name-domain vec))
+             (host (tramp-file-name-host vec))
+             (port (tramp-file-name-port vec)))
+        (tramp-make-tramp-file-name method user domain host port dir)))
 
+    (defun git-gutter+-remote-file-path (dir file)
+      (let ((file (tramp-file-name-localname (tramp-dissect-file-name file))))
+        (replace-regexp-in-string (concat "\\`" dir) "" file))))
 
+  (eval-after-load 'ggtags
+    '(progn
+       (evil-make-overriding-map ggtags-mode-map 'normal)
+       ;; force update evil keymaps after ggtags-mode loaded
+       (add-hook 'ggtags-mode-hook #'evil-normalize-keymaps)))
+
+ 
   (require 'ansi-color)
   (defun colorize-compilation-buffer ()
     (toggle-read-only)
@@ -473,12 +478,20 @@ you should place your code here."
     (toggle-read-only))
   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
+
+  ;; 关闭在 tramp 下面的自动补全
+  (defun company-files--connected-p (file)
+    (not (file-remote-p file)))
+
   (use-package clang-format)
   (global-set-key [C-M-tab] 'clang-format-region)
 
 ;  (safe-wrap (myirony-mode-setup))
   (menu-bar-mode 1)
 
+  (custom-set-variables
+ '(helm-buffer-max-length 50)
+ )
   (setq large-file-warning-threshold 100000000) ;dont' remove this line, otherwise vlf will crash.
   ;; (require 'vlf)
   ;; (require 'vlf-setup)
@@ -498,9 +511,25 @@ you should place your code here."
               (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
                 ;(ggtags-mode 1)
                 ;(setq ggtags-highlight-tag nil)
-                (local-set-key "\M-." 'ggtags-find-tag-dwim)
-                (global-set-key "\M-," 'tags-loop-continue)
-                (local-set-key "\M-*" 'pop-tag-mark)
+
+                ;; this make sure fly check pop up error message.
+                (setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages)
+
+                ;; 自动把focus窗口调到黄金比例
+                ;(spacemacs/toggle-golden-ratio-on)
+                (spacemacs/toggle-hungry-delete-on)
+                (spacemacs/toggle-indent-guide-on)
+
+                ;; google c style.
+                (google-set-c-style)
+                (google-make-newline-indent)
+
+
+                (flycheck-pos-tip-mode 1)
+                ;;(spacemacs/toggle-fill-column-indicator-on)
+
+                (global-set-key "\M-n" 'helm-gtags-dwim)
+                (global-set-key "\M-r" 'helm-gtags-find-rtag)
                 )))
 
   (global-set-key (kbd "C-c ;") 'iedit-mode)
@@ -526,6 +555,7 @@ you should place your code here."
   ;; Disable eldoc mode, which is very slow on big proj.
   (global-eldoc-mode -1)
 
+  (show-paren-mode t)
 ;;  (global-nlinum-mode t)
 
   (global-set-key[\M-f9] 'spacemacs/cycle-spacemacs-theme)
@@ -534,9 +564,9 @@ you should place your code here."
     ;; disables TAB in company-mode, freeing it for yasnippet
   (define-key company-active-map [tab] nil)
 
-  (use-package undo-tree
-    :diminish undo-tree-mode
-    :config (global-undo-tree-mode))
+ ;; (use-package undo-tree
+ ;;   :diminish undo-tree-mode
+ ;;   :config (global-undo-tree-mode))
 
   (defun do-org-show-all-inline-images ()
     (interactive)
@@ -577,13 +607,15 @@ you should place your code here."
                                                       (back-to-indentation))))))))
 
   ;; disable bold font effect.
-;  (mapc
-;   (lambda (face)
-;     (set-face-attribute face nil :weight 'normal :underline nil))
-;   (face-list))
+  (mapc
+   (lambda (face)
+     (set-face-attribute face nil :weight 'normal :underline nil))
+   (face-list))
 
   (setq-default evil-escape-key-sequence "jk")
 
+  (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11")))
+  (add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++11")))
 
   ;; do yas-setup again.
   ;;(safe-wrap (yas-setup))
@@ -591,7 +623,7 @@ you should place your code here."
 
   (safe-wrap (hide-if-0))
 
-  (global-hl-line-mode -1)
+  (global-hl-line-mode -1) ;; enable hightlight current line.
 
   (auto-compression-mode 1) ;; 打开压缩文件时自动解压缩
 
@@ -621,16 +653,8 @@ you should place your code here."
   (set-clipboard-coding-system 'chinese-iso-8bit) ;; 剪切板，用于和其他程序之间复制内容
   (set-clipboard-coding-system 'ctext) ;;解决firefox有时候复制文件有乱马
 
-<<<<<<< HEAD
   (set-keyboard-coding-system 'chinese-iso-8bit) ;; 键盘输入，用于输入法。
   (set-terminal-coding-system 'chinese-iso-8bit) ;; 终端显示的编码方式。
-=======
-  ;; this will cause linux 
-  (cond (on_darwin
-	 (set-keyboard-coding-system 'chinese-iso-8bit) ;; 键盘输入，用于输入法。
-	 (set-terminal-coding-system 'chinese-iso-8bit) ;; 终端显示的编码方式。
-	 ))
->>>>>>> aad3819ccf14b9d4e24fac88e43edde3a2f3fddf
 
 
   (add-hook 'comint-output-filter-functions
@@ -674,8 +698,8 @@ you should place your code here."
          (setenv "LC_ALL" "en_US.UTF-8")
          (setenv "LANG" "en_US.UTF-8")
          ;; Change control and meta key under mac, make less pain...
-;;         (setq mac-command-modifier 'meta)
-;;         (setq mac-control-modifier 'control)
+         (setq mac-command-modifier 'meta)
+         (setq mac-control-modifier 'control)
 
          (exec-path-from-shell-initialize)
          ))
@@ -689,6 +713,31 @@ you should place your code here."
   (global-set-key (kbd "M-0")  'delete-window)
   (global-set-key (kbd "M-o")  'other-window)
 
-  (setq vc-follow-symlinks t)
+  ;; copy following line to ~/.ssh/config to make tramp faster.
+  ;; Host *
+  ;; ControlMaster auto
+  ;; ControlPath ~/.ssh/master-%r@%h:%p
+  ;;
+  ;;
 
-)
+  (setq vc-follow-symlinks t)
+  )
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(helm-buffer-max-length 50)
+ '(package-selected-packages
+   (quote
+    (counsel-gtags wgrep smex ivy-hydra counsel-projectile counsel-dash counsel swiper ivy yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda cmake-font-lock zenburn-theme yaml-mode xterm-color x86-lookup winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package twilight-bright-theme toc-org tagedit stickyfunc-enhance srefactor sql-indent spaceline solarized-theme smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pug-mode protobuf-mode professional-theme powershell popwin plantuml-mode persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file noflet nlinum neotree nasm-mode multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum logcat log4j-mode livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc js-comint indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode google-translate google-c-style golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md ggtags fuzzy fold-dwim flymd flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime engine-mode emmet-mode elisp-slime-nav edit-server dumb-jump disaster diminish diff-hl define-word dash-at-point csv-mode company-web company-tern company-statistics company-c-headers column-enforce-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile android-mode anaconda-mode aggressive-indent ag ace-window ace-link ace-jump-mode ace-jump-helm-line ac-ispell)))
+ '(tramp-default-proxies-alist nil nil (tramp)))
+
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
