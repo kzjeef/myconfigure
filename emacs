@@ -442,7 +442,8 @@ you should place your code here."
   (spacemacs|diminish flycheck-mode "☂" "☂")
   (setq ggtags-global-ignore-case t)
 
-  
+  (setq whitespace-style (quote (face  tabs newline  tab-mark newline-mark)))
+
   (use-package fold-dwim)
   (global-set-key (kbd "<f7>")      'fold-dwim-toggle)
   (global-set-key (kbd "<M-f7>")    'fold-dwim-hide-all)
