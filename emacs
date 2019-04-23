@@ -84,6 +84,7 @@ values."
      ;; spell-checking
      ;; syntax-checking
      ;; version-control
+     imenu-list
      scala
      sql
      octave
@@ -139,6 +140,7 @@ values."
                                       protobuf-mode
                                       google-c-style
                                       log4j-mode
+                                      yasnippet-snippets
                                       ace-jump-mode
                                       android-mode
                                       plantuml-mode
@@ -222,9 +224,9 @@ values."
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
-                         spacemacs-dark
-                         professional  ;; better on day.
                          monokai       ;; better on night.
+                         professional  ;; better on day.
+                         spacemacs-dark
                          default
                          zenburn
                          whiteboard
@@ -413,7 +415,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   (setq gc-cons-threshold 100000000)
 
-  (setq-default line-spacing 2)
+;;  (setq-default line-spacing 1)
   )
 
 (defun dotspacemacs/user-config ()
@@ -431,9 +433,11 @@ you should place your code here."
 
   (setq-default dotspacemacs-line-numbers nil)
   (setq tramp-copy-size-limit nil)
-
   (setq-default fill-column 100)
-  (spacemacs/toggle-fill-column-indicator-on)
+  (when (display-graphic-p)
+    (spacemacs/toggle-fill-column-indicator-on)
+    )
+  
 
     (spacemacs|diminish helm-gtags-mode "G" "g")
   (spacemacs|diminish doxymacs-mode "☱" "☱")
@@ -732,7 +736,7 @@ you should place your code here."
  '(helm-buffer-max-length 50)
  '(package-selected-packages
    (quote
-    (counsel-gtags wgrep smex ivy-hydra counsel-projectile counsel-dash counsel swiper ivy yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda cmake-font-lock zenburn-theme yaml-mode xterm-color x86-lookup winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package twilight-bright-theme toc-org tagedit stickyfunc-enhance srefactor sql-indent spaceline solarized-theme smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pug-mode protobuf-mode professional-theme powershell popwin plantuml-mode persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file noflet nlinum neotree nasm-mode multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum logcat log4j-mode livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc js-comint indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode google-translate google-c-style golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md ggtags fuzzy fold-dwim flymd flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime engine-mode emmet-mode elisp-slime-nav edit-server dumb-jump disaster diminish diff-hl define-word dash-at-point csv-mode company-web company-tern company-statistics company-c-headers column-enforce-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile android-mode anaconda-mode aggressive-indent ag ace-window ace-link ace-jump-mode ace-jump-helm-line ac-ispell)))
+    (imenu-list yasnippet-snippets counsel-gtags wgrep smex ivy-hydra counsel-projectile counsel-dash counsel swiper ivy yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda cmake-font-lock zenburn-theme yaml-mode xterm-color x86-lookup winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package twilight-bright-theme toc-org tagedit stickyfunc-enhance srefactor sql-indent spaceline solarized-theme smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pug-mode protobuf-mode professional-theme powershell popwin plantuml-mode persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file noflet nlinum neotree nasm-mode multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum logcat log4j-mode livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc js-comint indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode google-translate google-c-style golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md ggtags fuzzy fold-dwim flymd flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime engine-mode emmet-mode elisp-slime-nav edit-server dumb-jump disaster diminish diff-hl define-word dash-at-point csv-mode company-web company-tern company-statistics company-c-headers column-enforce-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile android-mode anaconda-mode aggressive-indent ag ace-window ace-link ace-jump-mode ace-jump-helm-line ac-ispell)))
  '(tramp-default-proxies-alist nil nil (tramp)))
 
 
@@ -741,4 +745,4 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((((class color) (min-colors 257)) (:foreground "#F8F8F2" :background "#272822")) (((class color) (min-colors 89)) (:foreground "#F5F5F5" :background "#1B1E1C")))))
