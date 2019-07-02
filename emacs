@@ -51,10 +51,11 @@ values."
    ;; installation feature and you have to explicitly list a layer in the
    ;; variable `dotspacemacs-configuration-layers' to install it.
    ;; (default 'unused)
-   dotspacemacs-enable-lazy-installation 'unused
+   dotspacemacs-enable-lazy-installation nil
    ;; If non-nil then Spacemacs will ask for confirmation before installing
    ;; a layer lazily. (default t)
-   dotspacemacs-ask-for-lazy-installation t
+   dotspacemacs-ask-for-lazy-installation nil
+   ;; 不要问我， python 我不安
    ;; If non-nil layers with lazy install support are lazy installed.
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
@@ -62,7 +63,6 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     python
      yaml
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -122,7 +122,7 @@ values."
      ;; semantic ;; sematic is too slow...
      syntax-checking
      version-control
-     android-logcat
+     ;; android-logcat
      ;;    logcat-mode
      )
    ;; List of additional packages that will be installed without being
@@ -140,7 +140,7 @@ values."
                                       protobuf-mode
                                       google-c-style
                                       log4j-mode
-                                      yasnippet-snippets
+                                    ;  yasnippet-snippets
                                       ace-jump-mode
                                       android-mode
                                       plantuml-mode
@@ -153,6 +153,7 @@ values."
    ;; disable helm-gtags because it have key conflict with ggtags-mode, which is more powerful.
    dotspacemacs-excluded-packages '(auto-complete-clang
                                     ;helm-gtags
+                                    python ; python mode always not work on tramp editing , disable it.
                                     ws-butler
                                     tern
                                     adaptive-wrap)
@@ -425,14 +426,15 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+ ; (setq tramp-default-method "ssh")
 
   (global-company-mode -1)
-  (customize-set-variable 'tramp-save-ad-hoc-proxies t)
+;  (customize-set-variable 'tramp-save-ad-hoc-proxies t)
 
   (add-hook 'compilation-mode-hook (lambda() (font-lock-mode -1)))
 
   (setq-default dotspacemacs-line-numbers nil)
-  (setq tramp-copy-size-limit nil)
+  ;(setq tramp-copy-size-limit nil)
   (setq-default fill-column 100)
   (when (display-graphic-p)
     (spacemacs/toggle-fill-column-indicator-on)
@@ -697,16 +699,14 @@ you should place your code here."
 
          ;; let meta key also become a command(M) key.
          (setq mac-option-modifier 'meta)
-
+         (setq mac-control-modifier 'control)
                                         ;(setq mac-right-option-modifier nil)
-         (setq exec-path (append exec-path '("/opt/local/bin")) )
+         ;;(setq exec-path (append exec-path '("/opt/local/bin")) )
          (setenv "LC_ALL" "en_US.UTF-8")
          (setenv "LANG" "en_US.UTF-8")
          ;; Change control and meta key under mac, make less pain...
-         (setq mac-command-modifier 'meta)
-         (setq mac-control-modifier 'control)
 
-         (exec-path-from-shell-initialize)
+         ;;(exec-path-from-shell-initialize)
          ))
 
   (global-set-key [f5] 'revert-buffer)
@@ -728,6 +728,13 @@ you should place your code here."
   (setq vc-follow-symlinks t)
   )
 
+
+
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -737,12 +744,30 @@ you should place your code here."
  '(package-selected-packages
    (quote
     (imenu-list yasnippet-snippets counsel-gtags wgrep smex ivy-hydra counsel-projectile counsel-dash counsel swiper ivy yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda cmake-font-lock zenburn-theme yaml-mode xterm-color x86-lookup winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package twilight-bright-theme toc-org tagedit stickyfunc-enhance srefactor sql-indent spaceline solarized-theme smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pug-mode protobuf-mode professional-theme powershell popwin plantuml-mode persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file noflet nlinum neotree nasm-mode multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum logcat log4j-mode livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc js-comint indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode google-translate google-c-style golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md ggtags fuzzy fold-dwim flymd flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime engine-mode emmet-mode elisp-slime-nav edit-server dumb-jump disaster diminish diff-hl define-word dash-at-point csv-mode company-web company-tern company-statistics company-c-headers column-enforce-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile android-mode anaconda-mode aggressive-indent ag ace-window ace-link ace-jump-mode ace-jump-helm-line ac-ispell)))
- '(tramp-default-proxies-alist nil nil (tramp)))
-
-
+ '(tramp-default-proxies-alist nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((((class color) (min-colors 257)) (:foreground "#F8F8F2" :background "#272822")) (((class color) (min-colors 89)) (:foreground "#F5F5F5" :background "#1B1E1C")))))
+ )
+)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
+ '(evil-want-Y-yank-to-eol nil)
+ '(helm-buffer-max-length 50)
+ '(package-selected-packages
+   (quote
+    (yasnippet-snippets yapfify yaml-mode xterm-color x86-lookup winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit stickyfunc-enhance srefactor sql-indent spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode protobuf-mode powershell popwin plantuml-mode pip-requirements persp-mode pcre2el paradox spinner orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-plus-contrib org-mime org-download org-bullets open-junk-file noflet nlinum neotree nasm-mode multi-term move-text mmm-mode markdown-toc magit-gitflow magit-popup macrostep lorem-ipsum log4j-mode livid-mode skewer-mode simple-httpd live-py-mode linum-relative link-hint json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc js-comint indent-guide imenu-list hydra lv hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile projectile helm-mode-manager helm-make helm-gtags helm-gitignore request helm-flx helm-descbinds helm-dash dash-docs helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode groovy-mode google-translate google-c-style golden-ratio gnuplot gmail-message-mode ham-mode markdown-mode html-to-markdown gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md ggtags fuzzy fold-dwim flymd flycheck-pos-tip pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit transient git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime sbt-mode scala-mode engine-mode emmet-mode elisp-slime-nav edit-server dumb-jump disaster diminish diff-hl define-word dash-at-point cython-mode csv-mode company-web web-completion-data company-tern dash-functional tern company-statistics company-c-headers company-anaconda company column-enforce-mode coffee-mode cmake-mode clean-aindent-mode clang-format bind-map bind-key auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed android-mode anaconda-mode pythonic f aggressive-indent ag s dash ace-window ace-link ace-jump-mode ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup monokai-theme))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:family "Source Code Pro" :foundry "nil" :slant normal :weight normal :height 130 :width normal)))))
