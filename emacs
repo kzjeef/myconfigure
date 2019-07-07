@@ -413,9 +413,15 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+  ;; (setq configuration-layer--elpa-archives
+  ;;       '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+  ;;         ("org-cn"   . "http://elpa.emacs-china.org/org/")
+  ;;         ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
 
   (setq gc-cons-threshold 100000000)
-
+  
+;  (setq tramp-ssh-controlmaster-options
+;        "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
 ;;  (setq-default line-spacing 1)
   )
 
@@ -457,11 +463,12 @@ you should place your code here."
 
   (add-to-list 'auto-mode-alist '("\\.cu$" . c++-mode))
 
+
+
   (with-eval-after-load 'git-gutter+
     (defun git-gutter+-remote-default-directory (dir file)
       (let* ((vec (tramp-dissect-file-name file))
-             (method (tramp-file-name-method vec))
-             (user (tramp-file-name-user vec))
+             (method (tramp-file-name-method vec))             (user (tramp-file-name-user vec))
              (domain (tramp-file-name-domain vec))
              (host (tramp-file-name-host vec))
              (port (tramp-file-name-port vec)))
@@ -657,12 +664,17 @@ you should place your code here."
 
   (fset 'yes-or-no-p 'y-or-n-p)	 ;; 把Yes或者用y代替
 
-  (set-clipboard-coding-system 'chinese-iso-8bit) ;; 剪切板，用于和其他程序之间复制内容
-  (set-clipboard-coding-system 'ctext) ;;解决firefox有时候复制文件有乱马
 
-  (set-keyboard-coding-system 'chinese-iso-8bit) ;; 键盘输入，用于输入法。
-  (set-terminal-coding-system 'chinese-iso-8bit) ;; 终端显示的编码方式。
-
+ 
+  ;; linux 在 terminal 下面有的时候会出现乱码，只在有图形界面的时候打开。
+  (when (display-graphic-p)
+    (set-clipboard-coding-system 'chinese-iso-8bit) ;; 剪切板，用于和其他程序之间复制内容
+    (set-clipboard-coding-system 'ctext) ;;解决firefox有时候复制文件有乱马
+    
+    (set-keyboard-coding-system 'chinese-iso-8bit) ;; 键盘输入，用于输入法。
+    (set-terminal-coding-system 'chinese-iso-8bit) ;; 终端显示的编码方式。
+    )
+    
 
   (add-hook 'comint-output-filter-functions
             'comint-watch-for-password-prompt) ;; 密码的相关的提示密码
