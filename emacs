@@ -493,6 +493,15 @@ you should place your code here."
     (toggle-read-only))
   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
+  (require 'ansi-color)
+  (defun endless/colorize-compilation ()
+    "Colorize from `compilation-filter-start' to `point'."
+    (let ((inhibit-read-only t))
+      (ansi-color-apply-on-region
+       compilation-filter-start (point))))
+
+  (add-hook 'compilation-filter-hook
+            #'endless/colorize-compilation)
 
   ;; 关闭在 tramp 下面的自动补全
   (defun company-files--connected-p (file)
@@ -538,7 +547,8 @@ you should place your code here."
                 ;; google c style.
                 (google-set-c-style)
                 (google-make-newline-indent)
-
+                (setq-default c-basic-offset 4)
+                (setq-default tab-width 8)
 
                 (flycheck-pos-tip-mode 1)
                 ;;(spacemacs/toggle-fill-column-indicator-on)
@@ -553,7 +563,7 @@ you should place your code here."
      company-dabbrev-ignore-case nil
      company-dabbrev-code-ignore-case nil
      company-dabbrev-downcase nil
-     company-idle-delay 0.3
+     company-idle-delay 0.1
      company-show-numbers t
      company-dabbrev-downcase nil
      company-dabbrev-code-everywhere t
@@ -635,9 +645,6 @@ you should place your code here."
 
   ;; do yas-setup again.
   ;;(safe-wrap (yas-setup))
-  (safe-wrap (js-comint-setup))
-
-  (safe-wrap (hide-if-0))
 
   (global-hl-line-mode -1) ;; enable hightlight current line.
 
