@@ -64,6 +64,12 @@ values."
    dotspacemacs-configuration-layers
    '(
      yaml
+     (c-c++ :variables
+          ;;    c-c++-backend 'irony
+;               c-c++-enable-clang-support t
+               c-c++-enable-rtags-support t
+               c-c++-enable-clang-support nil
+              c-c++-enable-rtags-completion nil)
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -101,9 +107,6 @@ values."
      git
      ;; python
      ;themes-megapack
-     (c-c++ :variables
-            c-c++-enable-clang-support nil
-            c-c++-default-mode-for-headers 'c++-mode)
      ;; semantic ;; sematic is too slow...
      syntax-checking
      version-control
@@ -114,10 +117,10 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
 
    dotspacemacs-additional-packages '(
-                                        ;                                      irony company-irony flycheck-irony company-irony-c-headers
-                                      ;;                                      vlf ;
+                                     irony company-irony flycheck-irony company-irony-c-headers
                                       ag
                                       protobuf-mode
+;;                                      cmake-ide
                                       google-c-style
                                       log4j-mode
                                     ;  yasnippet-snippets
@@ -131,6 +134,7 @@ values."
                                     python ; python mode always not work on tramp editing , disable it.
                                     ws-butler
                                     yasnippet
+                                    semantic
                                     tern
                                     adaptive-wrap)
    ;; Defines the behaviour of Spacemacs when installing packages.
@@ -386,10 +390,10 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  ;; (setq configuration-layer--elpa-archives
-  ;;       '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
-  ;;         ("org-cn"   . "http://elpa.emacs-china.org/org/")
-  ;;         ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
+;   (setq configuration-layer--elpa-archives
+;         '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+;           ("org-cn"   . "http://elpa.emacs-china.org/org/")
+;           ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
 
   (setq gc-cons-threshold 100000000)
   
@@ -418,7 +422,52 @@ you should place your code here."
   ;;(when (display-graphic-p)
     ;;(spacemacs/toggle-fill-column-indicator-on)
    ;; )
-  
+  (eval-after-load 'flycheck
+    '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))  
+
+  ;; replace the `completion-at-point' and `complete-symbol' bindings in
+  ;; irony-mode's buffers by irony-mode's function
+  (defun my-irony-mode-hook ()
+    (define-key irony-mode-map [remap completion-at-point]
+      'irony-completion-at-point-async)
+    (define-key irony-mode-map [remap complete-symbol]
+      'irony-completion-at-point-async))
+  (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+  (eval-after-load 'company
+    '(add-to-list 'company-backends 'company-irony))
+  (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+  (defun irony--check-expansion ()
+    (save-excursion
+      (if (looking-at "\\_>") t
+        (backward-char 1)
+        (if (looking-at "\\.") t
+          (backward-char 1)
+          (if (looking-at "->") t nil)))))
+  (defun irony--indent-or-complete ()
+    "Indent or Complete"
+    (interactive)
+    (cond ((and (not (use-region-p))
+                (irony--check-expansion))
+           (message "complete")
+           (company-complete-common))
+          (t
+           (message "indent")
+           (call-interactively 'c-indent-line-or-region))))
+  (defun irony-mode-keys ()
+    "Modify keymaps used by `irony-mode'."
+    (local-set-key (kbd "TAB") 'irony--indent-or-complete)
+    (local-set-key [tab] 'irony--indent-or-complete))
+  (add-hook 'c-mode-common-hook 'irony-mode-keys)
+  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+  (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+  (setq company-backends (delete 'company-semantic company-backends))
+  (eval-after-load 'company
+    '(add-to-list
+      'company-backends 'company-irony))
+
+
+
 
     (spacemacs|diminish helm-gtags-mode "G" "g")
   (spacemacs|diminish doxymacs-mode "☱" "☱")
@@ -499,6 +548,7 @@ you should place your code here."
                 ;(spacemacs/toggle-golden-ratio-on)
                 (spacemacs/toggle-hungry-delete-on)
                 ;;(spacemacs/toggle-indent-guide-on)
+                (irony-mode  t)
 
                 ;; google c style.
                 (google-set-c-style)
@@ -523,7 +573,7 @@ you should place your code here."
      company-show-numbers t
      company-dabbrev-downcase nil
      company-dabbrev-code-everywhere t
-     company-minimum-prefix-length 2
+;;     company-minimum-prefix-length 2
      )
 
   ;; (defvar zenburn-override-colors-alist
@@ -713,9 +763,13 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(helm-buffer-max-length 50)
  '(package-selected-packages
    (quote
-    (helm-gtags ggtags yaml-mode xterm-color winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline smeargle shell-pop restart-emacs rainbow-delimiters protobuf-mode popwin persp-mode pcre2el paradox orgit org-bullets open-junk-file noflet neotree multi-term move-text monokai-theme magit-gitflow macrostep lorem-ipsum log4j-mode linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ fuzzy flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime elisp-slime-nav dumb-jump disaster diminish diff-hl define-word company-statistics company-c-headers column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ag ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (company-irony-c-headers company-irony flycheck-irony helm-rtags flycheck-rtags company-rtags rtags flycheck-clangcheck helm-gtags ggtags yaml-mode xterm-color winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline smeargle shell-pop restart-emacs rainbow-delimiters protobuf-mode popwin persp-mode pcre2el paradox orgit org-bullets open-junk-file noflet neotree multi-term move-text monokai-theme magit-gitflow macrostep lorem-ipsum log4j-mode linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ fuzzy flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime elisp-slime-nav dumb-jump disaster diminish diff-hl define-word company-statistics company-c-headers column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ag ace-window ace-link ace-jump-helm-line ac-ispell)))
+ '(safe-local-variable-values
+   (quote
+    ((cmake-ide-build-dir . "/home/jiejing.zjj/video_structured_analysis/build")))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
