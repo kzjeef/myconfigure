@@ -133,6 +133,8 @@ values."
                                     ;helm-gtags
                                     python ; python mode always not work on tramp editing , disable it.
                                     ws-butler
+                                    git-gutter
+                                    git-gutter+
                                     yasnippet
                                     semantic
                                     tern
@@ -466,10 +468,10 @@ you should place your code here."
     '(add-to-list
       'company-backends 'company-irony))
 
+  ;; let clip board works like normal.
+  (setq x-select-enable-clipboard nil)
 
-
-
-    (spacemacs|diminish helm-gtags-mode "G" "g")
+  (spacemacs|diminish helm-gtags-mode "G" "g")
   (spacemacs|diminish doxymacs-mode "☱" "☱")
   (spacemacs|diminish hide-ifdef-mode "♺" "♺")
   (spacemacs|diminish ggtags-mode "♕" "♕")
