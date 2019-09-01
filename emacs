@@ -351,7 +351,7 @@ values."
    ;;                       text-mode
    ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers 'relative
+   dotspacemacs-line-numbers nil   ;; 不要打开linum, 在ssh的时候会导致emacs崩溃
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
@@ -484,8 +484,8 @@ you should place your code here."
   (add-to-list 'auto-mode-alist '("\\.cu$" . c++-mode))
 
 
-  (unless (display-graphic-p)
-    (setq linum-relative-format "%3s "))
+ ;; (unless (display-graphic-p)
+;;    (setq linum-relative-format "%3s "))
 
   ;; Alternatively
 
@@ -588,6 +588,7 @@ you should place your code here."
   ;; Disable eldoc mode, which is very slow on big proj.
   (global-eldoc-mode -1)
 
+  (setq evil-want-fine-undo t)
   (show-paren-mode t)
 ;;  (global-nlinum-mode t)
 
