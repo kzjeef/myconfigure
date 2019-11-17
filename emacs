@@ -119,6 +119,7 @@ values."
    dotspacemacs-additional-packages '(
                                      irony company-irony flycheck-irony company-irony-c-headers
                                       ag
+                                      evil-smartparens
                                       protobuf-mode
 ;;                                      cmake-ide
                                       google-c-style
@@ -357,7 +358,7 @@ values."
    dotspacemacs-folding-method 'evil
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
-   dotspacemacs-smartparens-strict-mode nil
+   dotspacemacs-smartparens-strict-mode nil 
    ;; If non-nil pressing the closing parenthesis `)' key in insert mode passes
    ;; over any automatically added closing parenthesis, bracket, quote, etc…
    ;; This can be temporary disabled by pressing `C-q' before `)'. (default nil)
@@ -424,6 +425,10 @@ you should place your code here."
   ;;(when (display-graphic-p)
     ;;(spacemacs/toggle-fill-column-indicator-on)
    ;; )
+
+
+  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)
+
   (eval-after-load 'flycheck
     '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))  
 
@@ -536,6 +541,48 @@ you should place your code here."
                                         ;  (global-set-key (kbd "M-,") 'pop-tag-mark)
 
 
+  ;; http://stackoverflow.com/questions/23553881/emacs-indenting-of-c11-lambda-functions-cc-mode
+  (defadvice c-lineup-arglist (around my activate)
+    "Improve indentation of continued C++11 lambda function opened as argument."
+    (setq ad-return-value
+          (if (and (equal major-mode 'c++-mode)
+                   (ignore-errors
+                     (save-excursion
+                       (goto-char (c-langelem-pos langelem))
+                       ;; Detect "[...](" or "[...]{". preceded by "," or "(",
+                       ;;   and with unclosed brace.
+                       (looking-at ".*[(,][ \t]*\\[[^]]*\\][ \t]*[({][^}]*$"))))
+              0                           ; no additional indent
+            ad-do-it)))                   ; default behavior
+
+
+  (add-to-list 'load-path "~/myconfigure/doxyemacs")
+  (require 'doxymacs)
+  (defun my-doxymacs-font-lock-hook ()
+    (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
+        (doxymacs-font-lock)))
+  ;; (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
+  (add-hook 'c-mode-common-hook'doxymacs-mode)
+
+  (add-hook 'c++-mode-hook
+          '(lambda()
+             (font-lock-add-keywords
+              nil '(;; complete some fundamental keywords
+                    ("\\<\\(void\\|unsigned\\|signed\\|char\\|short\\|bool\\|int\\|long\\|float\\|double\\)\\>" . font-lock-keyword-face)
+                    ;; add the new C++11 keywords
+                    ("\\<\\(alignof\\|alignas\\|constexpr\\|decltype\\|noexcept\\|nullptr\\|static_assert\\|thread_local\\|override\\|final\\)\\>" . font-lock-keyword-face)
+                    ("\\<\\(char[0-9]+_t\\)\\>" . font-lock-keyword-face)
+                    ;; PREPROCESSOR_CONSTANT
+                    ("\\<[A-Z]+[A-Z_]+\\>" . font-lock-constant-face)
+                    ;; hexadecimal numbers
+                    ("\\<0[xX][0-9A-Fa-f]+\\>" . font-lock-constant-face)
+                    ;; integer/float/scientific numbers
+                    ("\\<[\\-+]*[0-9]*\\.?[0-9]+\\([ulUL]+\\|[eE][\\-+]?[0-9]+\\)?\\>" . font-lock-constant-face)
+                    ;; user-types (customize!)
+                    ("\\<[A-Za-z_]+[A-Za-z_0-9]*_\\(t\\|type\\|ptr\\)\\>" . font-lock-type-face)
+                    ("\\<\\(xstring\\|xchar\\)\\>" . font-lock-type-face)
+                    ))
+             ) t)
 
   (add-hook 'c-mode-common-hook
             (lambda ()
@@ -551,6 +598,7 @@ you should place your code here."
                 (spacemacs/toggle-hungry-delete-on)
                 ;;(spacemacs/toggle-indent-guide-on)
                 (irony-mode  t)
+
 
                 ;; google c style.
                 (google-set-c-style)
@@ -745,6 +793,9 @@ you should place your code here."
   (global-set-key [f5] 'revert-buffer)
   (global-set-key [f6] 'ff-find-related-file) ;; Find header file.
 
+  (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+  (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+
   (global-set-key (kbd "M-1")  'delete-other-windows)
   (global-set-key (kbd "M-3")  'split-window-right)
   (global-set-key (kbd "M-2")  'split-window-below)
@@ -766,10 +817,14 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
+ '(evil-want-Y-yank-to-eol nil)
  '(helm-buffer-max-length 50)
  '(package-selected-packages
    (quote
-    (company-irony-c-headers company-irony flycheck-irony helm-rtags flycheck-rtags company-rtags rtags flycheck-clangcheck helm-gtags ggtags yaml-mode xterm-color winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline smeargle shell-pop restart-emacs rainbow-delimiters protobuf-mode popwin persp-mode pcre2el paradox orgit org-bullets open-junk-file noflet neotree multi-term move-text monokai-theme magit-gitflow macrostep lorem-ipsum log4j-mode linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ fuzzy flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime elisp-slime-nav dumb-jump disaster diminish diff-hl define-word company-statistics company-c-headers column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ag ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (ido-occur highlight-doxygen evil-smartparens company-irony-c-headers company-irony flycheck-irony helm-rtags flycheck-rtags company-rtags rtags flycheck-clangcheck helm-gtags ggtags yaml-mode xterm-color winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline smeargle shell-pop restart-emacs rainbow-delimiters protobuf-mode popwin persp-mode pcre2el paradox orgit org-bullets open-junk-file noflet neotree multi-term move-text monokai-theme magit-gitflow macrostep lorem-ipsum log4j-mode linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ fuzzy flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime elisp-slime-nav dumb-jump disaster diminish diff-hl define-word company-statistics company-c-headers column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ag ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(safe-local-variable-values
    (quote
     ((cmake-ide-build-dir . "/home/jiejing.zjj/video_structured_analysis/build")))))
