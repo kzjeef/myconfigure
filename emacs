@@ -111,7 +111,7 @@ values."
      dash
      ;; python
      chrome
-     semantic
+     ;; semantic
      ;themes-megapack
      asm
      plantuml
@@ -122,6 +122,7 @@ values."
      ;; semantic ;; sematic is too slow...
      syntax-checking
      version-control
+
      ;; android-logcat
      ;;    logcat-mode
      )
@@ -136,7 +137,9 @@ values."
                                       groovy-mode
                                       anaconda-mode
                                       ;;                                      vlf ;
+                                      ;;company-tabnine
                                       ag
+					cmake-mode 
                                       protobuf-mode
                                       google-c-style
                                       log4j-mode
@@ -184,7 +187,7 @@ values."
    dotspacemacs-elpa-https t
    ;; Maximum allowed time in seconds to contact an ELPA repository.
    dotspacemacs-elpa-timeout 5
-   ;; If non nil then spacemacs will check for updates at startup
+   ;; If non nil then spacemacs will check for Updates at startup
    ;; when the current branch is not `develop'. Note that checking for
    ;; new versions works via git commands, thus it calls GitHub services
    ;; whenever you start Emacs. (default nil)
@@ -242,11 +245,11 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   ;dotspacemacs-default-font '("Monaco"
-   ;                            :size 12
-   ;                            :weight normal
-   ;                            :width normal
-   ;                            :powerline-scale 0.9)
+   dotspacemacs-default-font '("Source Code Pro"
+                               :size 13
+                               :weight normal
+                               :width normal
+                               :powerline-scale 0.9)
 
 
    ;; The leader key
@@ -418,7 +421,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
   ;;         ("org-cn"   . "http://elpa.emacs-china.org/org/")
   ;;         ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
 
-  (setq gc-cons-threshold 100000000)
   
 ;  (setq tramp-ssh-controlmaster-options
 ;        "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
@@ -432,14 +434,13 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
- ; (setq tramp-default-method "ssh")
+  (setq tramp-default-method "ssh")
 
   (global-company-mode -1)
 ;  (customize-set-variable 'tramp-save-ad-hoc-proxies t)
 
   (add-hook 'compilation-mode-hook (lambda() (font-lock-mode -1)))
 
-  (setq-default dotspacemacs-line-numbers nil)
   ;(setq tramp-copy-size-limit nil)
   (setq-default fill-column 100)
   (when (display-graphic-p)
@@ -447,7 +448,8 @@ you should place your code here."
     )
   
 
-    (spacemacs|diminish helm-gtags-mode "G" "g")
+  (setq-default evil-escape-delay 0.5) ;; delay 
+  (spacemacs|diminish helm-gtags-mode "G" "g")
   (spacemacs|diminish doxymacs-mode "☱" "☱")
   (spacemacs|diminish hide-ifdef-mode "♺" "♺")
   (spacemacs|diminish ggtags-mode "♕" "♕")
@@ -484,7 +486,7 @@ you should place your code here."
        ;; force update evil keymaps after ggtags-mode loaded
        (add-hook 'ggtags-mode-hook #'evil-normalize-keymaps)))
 
- 
+  (setq-default evil-escape-delay 0.5)
   (require 'ansi-color)
   (defun colorize-compilation-buffer ()
     (toggle-read-only)
@@ -557,7 +559,14 @@ you should place your code here."
      company-dabbrev-downcase nil
      company-dabbrev-code-everywhere t
      company-minimum-prefix-length 2
+
      )
+
+     ;; this front end is better.
+;     (setq company-frontends
+;           '(company-tng-frontend
+;             company-pseudo-tooltip-frontend
+;             company-echo-metadata-frontend))
 
   ;; (defvar zenburn-override-colors-alist
   ;;   '(("zenburn-bg+05" . "#282828")
@@ -576,7 +585,7 @@ you should place your code here."
 
 
     ;; disables TAB in company-mode, freeing it for yasnippet
-  (define-key company-active-map [tab] nil)
+;;  (define-key company-active-map [tab] nil)
 
  ;; (use-package undo-tree
  ;;   :diminish undo-tree-mode
@@ -752,17 +761,21 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
+ '(evil-want-Y-yank-to-eol nil)
  '(helm-buffer-max-length 50)
  '(package-selected-packages
    (quote
-    (imenu-list yasnippet-snippets counsel-gtags wgrep smex ivy-hydra counsel-projectile counsel-dash counsel swiper ivy yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda cmake-font-lock zenburn-theme yaml-mode xterm-color x86-lookup winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package twilight-bright-theme toc-org tagedit stickyfunc-enhance srefactor sql-indent spaceline solarized-theme smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pug-mode protobuf-mode professional-theme powershell popwin plantuml-mode persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file noflet nlinum neotree nasm-mode multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum logcat log4j-mode livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc js-comint indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode google-translate google-c-style golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md ggtags fuzzy fold-dwim flymd flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime engine-mode emmet-mode elisp-slime-nav edit-server dumb-jump disaster diminish diff-hl define-word dash-at-point csv-mode company-web company-tern company-statistics company-c-headers column-enforce-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile android-mode anaconda-mode aggressive-indent ag ace-window ace-link ace-jump-mode ace-jump-helm-line ac-ispell)))
+    (company-tabnine imenu-list yasnippet-snippets counsel-gtags wgrep smex ivy-hydra counsel-projectile counsel-dash counsel swiper ivy yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda cmake-font-lock zenburn-theme yaml-mode xterm-color x86-lookup winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package twilight-bright-theme toc-org tagedit stickyfunc-enhance srefactor sql-indent spaceline solarized-theme smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-delimiters pug-mode protobuf-mode professional-theme powershell popwin plantuml-mode persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file noflet nlinum neotree nasm-mode multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum logcat log4j-mode livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc js-comint indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode google-translate google-c-style golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md ggtags fuzzy fold-dwim flymd flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime engine-mode emmet-mode elisp-slime-nav edit-server dumb-jump disaster diminish diff-hl define-word dash-at-point csv-mode company-web company-tern company-statistics company-c-headers column-enforce-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile android-mode anaconda-mode aggressive-indent ag ace-window ace-link ace-jump-mode ace-jump-helm-line ac-ispell)))
  '(tramp-default-proxies-alist nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:family "Source Code Pro" :foundry "nil" :slant normal :weight normal :height 130 :width normal)))))
 )
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
