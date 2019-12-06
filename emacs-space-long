@@ -64,12 +64,6 @@ values."
    dotspacemacs-configuration-layers
    '(
      yaml
-     (c-c++ :variables
-          ;;    c-c++-backend 'irony
-;               c-c++-enable-clang-support t
-               c-c++-enable-rtags-support t
-               c-c++-enable-clang-support nil
-              c-c++-enable-rtags-completion nil)
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -90,8 +84,13 @@ values."
      ;; spell-checking
      ;; syntax-checking
      ;; version-control
+     imenu-list
      scala
-     gtags
+     sql
+     octave
+     csv
+     windows-scripts
+     html
      (auto-completion :variables
                       auto-completion-tab-key-behavior 'complete
                       auto-completion-enable-help-tooltip nil
@@ -103,27 +102,50 @@ values."
             shell-default-position 'bottom
             shell-enable-smart-eshell t
             shell-default-term-shell (getenv "SHELL"))
+     gtags
      ;spacemacs-theme
+     org
      git
+     javascript
+     markdown
+     dash
      ;; python
+     chrome
+     semantic
      ;themes-megapack
+     asm
+     plantuml
+     search-engine ;; M-m a /
+     (c-c++ :variables
+            c-c++-enable-clang-support nil
+            c-c++-default-mode-for-headers 'c++-mode)
      ;; semantic ;; sematic is too slow...
      syntax-checking
      version-control
+     ;; android-logcat
+     ;;    logcat-mode
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
 
-   dotspacemacs-additional-packages '(
-                                     irony company-irony flycheck-irony company-irony-c-headers
+   dotspacemacs-additional-packages '(fold-dwim
+                                        ;                                      irony company-irony flycheck-irony company-irony-c-headers
+                                      iedit
+                                      groovy-mode
+                                      anaconda-mode
+                                      ;;                                      vlf ;
                                       ag
-                                      evil-smartparens
                                       protobuf-mode
                                       google-c-style
                                       log4j-mode
                                     ;  yasnippet-snippets
+                                      ace-jump-mode
+                                      android-mode
+                                      plantuml-mode
+                                      js-comint
+                                      nlinum  ;; line number mode, have perfomrnace with big file.
                                       )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -133,10 +155,6 @@ values."
                                     ;helm-gtags
                                     python ; python mode always not work on tramp editing , disable it.
                                     ws-butler
-                                    git-gutter
-                                    git-gutter+
-                                    yasnippet
-                                    semantic
                                     tern
                                     adaptive-wrap)
    ;; Defines the behaviour of Spacemacs when installing packages.
@@ -163,10 +181,10 @@ values."
    ;; This variable has no effect if Emacs is launched with the parameter
    ;; `--insecure' which forces the value of this variable to nil.
    ;; (default t)
-   dotspacemacs-elpa-https nil
+   dotspacemacs-elpa-https t
    ;; Maximum allowed time in seconds to contact an ELPA repository.
    dotspacemacs-elpa-timeout 5
-   ;; If non nil then spacemacs will check for Updates at startup
+   ;; If non nil then spacemacs will check for updates at startup
    ;; when the current branch is not `develop'. Note that checking for
    ;; new versions works via git commands, thus it calls GitHub services
    ;; whenever you start Emacs. (default nil)
@@ -221,11 +239,11 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
-                               :size 13
-                               :weight normal
-                               :width normal
-                               :powerline-scale 0.9)
+   ;dotspacemacs-default-font '("Monaco"
+   ;                            :size 12
+   ;                            :weight normal
+   ;                            :width normal
+   ;                            :powerline-scale 0.9)
 
 
    ;; The leader key
@@ -351,13 +369,13 @@ values."
    ;;                       text-mode
    ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers nil   ;; 不要打开linum, 在ssh的时候会导致emacs崩溃
+   dotspacemacs-line-numbers 'relative
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
-   dotspacemacs-smartparens-strict-mode nil 
+   dotspacemacs-smartparens-strict-mode nil
    ;; If non-nil pressing the closing parenthesis `)' key in insert mode passes
    ;; over any automatically added closing parenthesis, bracket, quote, etc…
    ;; This can be temporary disabled by pressing `C-q' before `)'. (default nil)
@@ -392,11 +410,12 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-;   (setq configuration-layer--elpa-archives
-;         '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
-;           ("org-cn"   . "http://elpa.emacs-china.org/org/")
-;           ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
+  ;; (setq configuration-layer--elpa-archives
+  ;;       '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+  ;;         ("org-cn"   . "http://elpa.emacs-china.org/org/")
+  ;;         ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
 
+  (setq gc-cons-threshold 100000000)
   
 ;  (setq tramp-ssh-controlmaster-options
 ;        "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
@@ -410,71 +429,22 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-  (setq tramp-default-method "ssh")
+ ; (setq tramp-default-method "ssh")
 
   (global-company-mode -1)
 ;  (customize-set-variable 'tramp-save-ad-hoc-proxies t)
 
-  ;;(add-hook 'compilation-mode-hook (lambda() (font-lock-mode 1)))
+  (add-hook 'compilation-mode-hook (lambda() (font-lock-mode -1)))
 
-  ;;(setq-default dotspacemacs-line-numbers nil)
+  (setq-default dotspacemacs-line-numbers nil)
   ;(setq tramp-copy-size-limit nil)
-  ;;(setq-default fill-column 100)
+  (setq-default fill-column 100)
   ;;(when (display-graphic-p)
     ;;(spacemacs/toggle-fill-column-indicator-on)
    ;; )
+  
 
-
-  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)
-
-  (eval-after-load 'flycheck
-    '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))  
-
-  ;; replace the `completion-at-point' and `complete-symbol' bindings in
-  ;; irony-mode's buffers by irony-mode's function
-  (defun my-irony-mode-hook ()
-    (define-key irony-mode-map [remap completion-at-point]
-      'irony-completion-at-point-async)
-    (define-key irony-mode-map [remap complete-symbol]
-      'irony-completion-at-point-async))
-  (add-hook 'irony-mode-hook 'my-irony-mode-hook)
-  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-  (eval-after-load 'company
-    '(add-to-list 'company-backends 'company-irony))
-  (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
-  (defun irony--check-expansion ()
-    (save-excursion
-      (if (looking-at "\\_>") t
-        (backward-char 1)
-        (if (looking-at "\\.") t
-          (backward-char 1)
-          (if (looking-at "->") t nil)))))
-  (defun irony--indent-or-complete ()
-    "Indent or Complete"
-    (interactive)
-    (cond ((and (not (use-region-p))
-                (irony--check-expansion))
-           (message "complete")
-           (company-complete-common))
-          (t
-           (message "indent")
-           (call-interactively 'c-indent-line-or-region))))
-  (defun irony-mode-keys ()
-    "Modify keymaps used by `irony-mode'."
-    (local-set-key (kbd "TAB") 'irony--indent-or-complete)
-    (local-set-key [tab] 'irony--indent-or-complete))
-  (add-hook 'c-mode-common-hook 'irony-mode-keys)
-  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-  (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
-  (setq company-backends (delete 'company-semantic company-backends))
-  (eval-after-load 'company
-    '(add-to-list
-      'company-backends 'company-irony))
-
-  ;; let clip board works like normal.
-  (setq x-select-enable-clipboard nil)
-
-  (spacemacs|diminish helm-gtags-mode "G" "g")
+    (spacemacs|diminish helm-gtags-mode "G" "g")
   (spacemacs|diminish doxymacs-mode "☱" "☱")
   (spacemacs|diminish hide-ifdef-mode "♺" "♺")
   (spacemacs|diminish ggtags-mode "♕" "♕")
@@ -484,11 +454,16 @@ you should place your code here."
 ;;  (setq whitespace-style (quote (face  tabs newline  tab-mark newline-mark)))
   ;;(global-whitespace-mode nil)
 
+  (use-package fold-dwim)
+  (global-set-key (kbd "<f7>")      'fold-dwim-toggle)
+  (global-set-key (kbd "<M-f7>")    'fold-dwim-hide-all)
+  (global-set-key (kbd "<S-M-f7>")  'fold-dwim-show-all)
+
   (add-to-list 'auto-mode-alist '("\\.cu$" . c++-mode))
 
 
- ;; (unless (display-graphic-p)
-;;    (setq linum-relative-format "%3s "))
+  (unless (display-graphic-p)
+    (setq linum-relative-format "%3s "))
 
   ;; Alternatively
 
@@ -512,13 +487,23 @@ you should place your code here."
        ;; force update evil keymaps after ggtags-mode loaded
        (add-hook 'ggtags-mode-hook #'evil-normalize-keymaps)))
 
-  (setq-default evil-escape-delay 0.5)
+ 
   (require 'ansi-color)
   (defun colorize-compilation-buffer ()
     (toggle-read-only)
     (ansi-color-apply-on-region compilation-filter-start (point))
     (toggle-read-only))
   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
+  (require 'ansi-color)
+  (defun endless/colorize-compilation ()
+    "Colorize from `compilation-filter-start' to `point'."
+    (let ((inhibit-read-only t))
+      (ansi-color-apply-on-region
+       compilation-filter-start (point))))
+
+  (add-hook 'compilation-filter-hook
+            #'endless/colorize-compilation)
 
   ;; 关闭在 tramp 下面的自动补全
   (defun company-files--connected-p (file)
@@ -546,48 +531,6 @@ you should place your code here."
                                         ;  (global-set-key (kbd "M-,") 'pop-tag-mark)
 
 
-  ;; http://stackoverflow.com/questions/23553881/emacs-indenting-of-c11-lambda-functions-cc-mode
-  (defadvice c-lineup-arglist (around my activate)
-    "Improve indentation of continued C++11 lambda function opened as argument."
-    (setq ad-return-value
-          (if (and (equal major-mode 'c++-mode)
-                   (ignore-errors
-                     (save-excursion
-                       (goto-char (c-langelem-pos langelem))
-                       ;; Detect "[...](" or "[...]{". preceded by "," or "(",
-                       ;;   and with unclosed brace.
-                       (looking-at ".*[(,][ \t]*\\[[^]]*\\][ \t]*[({][^}]*$"))))
-              0                           ; no additional indent
-            ad-do-it)))                   ; default behavior
-
-
-  (add-to-list 'load-path "~/myconfigure/doxyemacs")
-  (require 'doxymacs)
-  (defun my-doxymacs-font-lock-hook ()
-    (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
-        (doxymacs-font-lock)))
-  ;; (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
-  (add-hook 'c-mode-common-hook'doxymacs-mode)
-
-  (add-hook 'c++-mode-hook
-          '(lambda()
-             (font-lock-add-keywords
-              nil '(;; complete some fundamental keywords
-                    ("\\<\\(void\\|unsigned\\|signed\\|char\\|short\\|bool\\|int\\|long\\|float\\|double\\)\\>" . font-lock-keyword-face)
-                    ;; add the new C++11 keywords
-                    ("\\<\\(alignof\\|alignas\\|constexpr\\|decltype\\|noexcept\\|nullptr\\|static_assert\\|thread_local\\|override\\|final\\)\\>" . font-lock-keyword-face)
-                    ("\\<\\(char[0-9]+_t\\)\\>" . font-lock-keyword-face)
-                    ;; PREPROCESSOR_CONSTANT
-                    ("\\<[A-Z]+[A-Z_]+\\>" . font-lock-constant-face)
-                    ;; hexadecimal numbers
-                    ("\\<0[xX][0-9A-Fa-f]+\\>" . font-lock-constant-face)
-                    ;; integer/float/scientific numbers
-                    ("\\<[\\-+]*[0-9]*\\.?[0-9]+\\([ulUL]+\\|[eE][\\-+]?[0-9]+\\)?\\>" . font-lock-constant-face)
-                    ;; user-types (customize!)
-                    ("\\<[A-Za-z_]+[A-Za-z_0-9]*_\\(t\\|type\\|ptr\\)\\>" . font-lock-type-face)
-                    ("\\<\\(xstring\\|xchar\\)\\>" . font-lock-type-face)
-                    ))
-             ) t)
 
   (add-hook 'c-mode-common-hook
             (lambda ()
@@ -602,8 +545,6 @@ you should place your code here."
                 ;(spacemacs/toggle-golden-ratio-on)
                 (spacemacs/toggle-hungry-delete-on)
                 ;;(spacemacs/toggle-indent-guide-on)
-                (irony-mode  t)
-
 
                 ;; google c style.
                 (google-set-c-style)
@@ -631,12 +572,6 @@ you should place your code here."
      company-minimum-prefix-length 2
      )
 
-     ;; this front end is better.
-;     (setq company-frontends
-;           '(company-tng-frontend
-;             company-pseudo-tooltip-frontend
-;             company-echo-metadata-frontend))
-
   ;; (defvar zenburn-override-colors-alist
   ;;   '(("zenburn-bg+05" . "#282828")
   ;;     ("zenburn-bg+1"  . "#2F2F2F")
@@ -647,7 +582,6 @@ you should place your code here."
   ;; Disable eldoc mode, which is very slow on big proj.
   (global-eldoc-mode -1)
 
-  (setq evil-want-fine-undo t)
   (show-paren-mode t)
 ;;  (global-nlinum-mode t)
 
@@ -656,7 +590,7 @@ you should place your code here."
   (setq-default spacemacs-show-trailing-whitespace nil)
 
     ;; disables TAB in company-mode, freeing it for yasnippet
-;;  (define-key company-active-map [tab] nil)
+  (define-key company-active-map [tab] nil)
 
  ;; (use-package undo-tree
  ;;   :diminish undo-tree-mode
@@ -804,9 +738,6 @@ you should place your code here."
   (global-set-key [f5] 'revert-buffer)
   (global-set-key [f6] 'ff-find-related-file) ;; Find header file.
 
-  (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
-  (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
-
   (global-set-key (kbd "M-1")  'delete-other-windows)
   (global-set-key (kbd "M-3")  'split-window-right)
   (global-set-key (kbd "M-2")  'split-window-below)
@@ -821,6 +752,5 @@ you should place your code here."
   ;;
 
   (setq vc-follow-symlinks t)
-  ))
-
+  )
 
