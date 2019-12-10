@@ -121,7 +121,6 @@ values."
                                       ag
                                       evil-smartparens
                                       protobuf-mode
-;;                                      cmake-ide
                                       google-c-style
                                       log4j-mode
                                     ;  yasnippet-snippets
@@ -167,7 +166,7 @@ values."
    dotspacemacs-elpa-https nil
    ;; Maximum allowed time in seconds to contact an ELPA repository.
    dotspacemacs-elpa-timeout 5
-   ;; If non nil then spacemacs will check for updates at startup
+   ;; If non nil then spacemacs will check for Updates at startup
    ;; when the current branch is not `develop'. Note that checking for
    ;; new versions works via git commands, thus it calls GitHub services
    ;; whenever you start Emacs. (default nil)
@@ -222,11 +221,11 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   ;dotspacemacs-default-font '("Monaco"
-   ;                            :size 12
-   ;                            :weight normal
-   ;                            :width normal
-   ;                            :powerline-scale 0.9)
+   dotspacemacs-default-font '("Source Code Pro"
+                               :size 13
+                               :weight normal
+                               :width normal
+                               :powerline-scale 0.9)
 
 
    ;; The leader key
@@ -398,7 +397,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
 ;           ("org-cn"   . "http://elpa.emacs-china.org/org/")
 ;           ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
 
-  (setq gc-cons-threshold 100000000)
   
 ;  (setq tramp-ssh-controlmaster-options
 ;        "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
@@ -412,7 +410,7 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
- ; (setq tramp-default-method "ssh")
+  (setq tramp-default-method "ssh")
 
   (global-company-mode -1)
 ;  (customize-set-variable 'tramp-save-ad-hoc-proxies t)
@@ -516,7 +514,14 @@ you should place your code here."
        ;; force update evil keymaps after ggtags-mode loaded
        (add-hook 'ggtags-mode-hook #'evil-normalize-keymaps)))
 
- 
+  (setq-default evil-escape-delay 0.5)
+  (require 'ansi-color)
+  (defun colorize-compilation-buffer ()
+    (toggle-read-only)
+    (ansi-color-apply-on-region compilation-filter-start (point))
+    (toggle-read-only))
+  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
   ;; 关闭在 tramp 下面的自动补全
   (defun company-files--connected-p (file)
     (not (file-remote-p file)))
@@ -625,8 +630,14 @@ you should place your code here."
      company-show-numbers t
      company-dabbrev-downcase nil
      company-dabbrev-code-everywhere t
-;;     company-minimum-prefix-length 2
+     company-minimum-prefix-length 2
      )
+
+     ;; this front end is better.
+;     (setq company-frontends
+;           '(company-tng-frontend
+;             company-pseudo-tooltip-frontend
+;             company-echo-metadata-frontend))
 
   ;; (defvar zenburn-override-colors-alist
   ;;   '(("zenburn-bg+05" . "#282828")
@@ -647,7 +658,7 @@ you should place your code here."
   (setq-default spacemacs-show-trailing-whitespace nil)
 
     ;; disables TAB in company-mode, freeing it for yasnippet
-  (define-key company-active-map [tab] nil)
+;;  (define-key company-active-map [tab] nil)
 
  ;; (use-package undo-tree
  ;;   :diminish undo-tree-mode
@@ -812,27 +823,6 @@ you should place your code here."
   ;;
 
   (setq vc-follow-symlinks t)
-  )
+  ))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
- '(evil-want-Y-yank-to-eol nil)
- '(helm-buffer-max-length 50)
- '(package-selected-packages
-   (quote
-    (ido-occur highlight-doxygen evil-smartparens company-irony-c-headers company-irony flycheck-irony helm-rtags flycheck-rtags company-rtags rtags flycheck-clangcheck helm-gtags ggtags yaml-mode xterm-color winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline smeargle shell-pop restart-emacs rainbow-delimiters protobuf-mode popwin persp-mode pcre2el paradox orgit org-bullets open-junk-file noflet neotree multi-term move-text monokai-theme magit-gitflow macrostep lorem-ipsum log4j-mode linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ fuzzy flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime elisp-slime-nav dumb-jump disaster diminish diff-hl define-word company-statistics company-c-headers column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ag ace-window ace-link ace-jump-helm-line ac-ispell)))
- '(safe-local-variable-values
-   (quote
-    ((cmake-ide-build-dir . "/home/jiejing.zjj/video_structured_analysis/build")))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
