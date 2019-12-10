@@ -480,6 +480,10 @@ you should place your code here."
   (spacemacs|diminish ggtags-mode "♕" "♕")
   (spacemacs|diminish flycheck-mode "☂" "☂")
   (setq ggtags-global-ignore-case t)
+  (setq-default evil-escape-delay 0.5) ;; delay 
+  
+
+  
 
 ;;  (setq whitespace-style (quote (face  tabs newline  tab-mark newline-mark)))
   ;;(global-whitespace-mode nil)
@@ -632,7 +636,8 @@ you should place your code here."
      company-dabbrev-code-everywhere t
      company-minimum-prefix-length 2
      )
-
+  (delete 'company-dabbrev company-backends) ;; 关闭整行补全
+ 
      ;; this front end is better.
 ;     (setq company-frontends
 ;           '(company-tng-frontend
@@ -823,6 +828,7 @@ you should place your code here."
   ;;
 
   (setq vc-follow-symlinks t)
-  ))
+
+  ) ;; end user-config. 
 
 
