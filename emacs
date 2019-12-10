@@ -487,6 +487,8 @@ you should place your code here."
   ;;(global-whitespace-mode nil)
 
   (add-to-list 'auto-mode-alist '("\\.cu$" . c++-mode))
+  (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+
 
 
  ;; (unless (display-graphic-p)
