@@ -467,10 +467,6 @@ you should place your code here."
   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
   (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
   (setq company-backends (delete 'company-semantic company-backends))
-  (eval-after-load 'company
-    '(add-to-list
-      'company-backends 'company-irony))
-
   ;; let clip board works like normal.
   (setq x-select-enable-clipboard nil)
 
@@ -609,8 +605,7 @@ you should place your code here."
                 (spacemacs/toggle-hungry-delete-on)
                 ;;(spacemacs/toggle-indent-guide-on)
                 (irony-mode  t)
-
-
+                (global-eldoc-mode -1)
                 ;; google c style.
                 (google-set-c-style)
                 (google-make-newline-indent)
