@@ -64,14 +64,6 @@ values."
    dotspacemacs-configuration-layers
    '(
      yaml
-     (c-c++ :variables
-          ;;    c-c++-backend 'irony
-            c-c++-backend 'emacs-ycmd
-            c-c++-enable-google-style t
-;               c-c++-enable-clang-support t
-;               c-c++-enable-rtags-support t
-               c-c++-enable-clang-support nil
-              c-c++-enable-rtags-completion nil)
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -92,23 +84,35 @@ values."
      ;; spell-checking
      ;; syntax-checking
      ;; version-control
+     imenu-list
      scala
-     gtags
+     csv
      (auto-completion :variables
                       auto-completion-tab-key-behavior 'complete
                       auto-completion-enable-help-tooltip nil
                       auto-completion-complete-with-key-sequence nil
-                      auto-completion-complete-with-key-sequence-delay 0.1
+                      auto-completion-complete-with-key-sequence-delay 0.3
                       )
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom
             shell-enable-smart-eshell t
             shell-default-term-shell (getenv "SHELL"))
+     gtags
      ;spacemacs-theme
+     org
      git
+     markdown
+     dash
      ;; python
      ;themes-megapack
+     plantuml
+     (c-c++ :variables
+            c-c++-enable-clang-support nil
+            c-c++-backend 'ycmd
+            c-c++-enable-google-style t
+            c-c++-default-mode-for-headers 'c++-mode)
+
      ;; semantic ;; sematic is too slow...
      syntax-checking
      version-control
@@ -118,10 +122,14 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
 
-   dotspacemacs-additional-packages '(
-                                     irony company-irony flycheck-irony company-irony-c-headers
+   dotspacemacs-additional-packages '(fold-dwim
+                                        ;                                      irony company-irony flycheck-irony company-irony-c-headers
+                                      iedit
+                                      groovy-mode
+                                      anaconda-mode
+                                      company-ycmd company flycheck-ycmd
+                                      ;;                                      vlf ;
                                       ag
-                                      evil-smartparens
                                       protobuf-mode
                                       google-c-style
                                       log4j-mode
@@ -136,10 +144,6 @@ values."
                                     ;helm-gtags
                                     python ; python mode always not work on tramp editing , disable it.
                                     ws-butler
-                                    git-gutter
-                                    git-gutter+
-                                    yasnippet
-                                    semantic
                                     tern
                                     adaptive-wrap)
    ;; Defines the behaviour of Spacemacs when installing packages.
@@ -166,7 +170,7 @@ values."
    ;; This variable has no effect if Emacs is launched with the parameter
    ;; `--insecure' which forces the value of this variable to nil.
    ;; (default t)
-   dotspacemacs-elpa-https nil
+   dotspacemacs-elpa-https t
    ;; Maximum allowed time in seconds to contact an ELPA repository.
    dotspacemacs-elpa-timeout 5
    ;; If non nil then spacemacs will check for Updates at startup
@@ -200,9 +204,7 @@ values."
    ;; `recents' `bookmarks' `projects' `agenda' `todos'."
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
-   dotspacemacs-startup-lists '((recents . 15)
-                                (todos . 5)
-                                (bookmarks . 5)
+   dotspacemacs-startup-lists '((recents . 5)
                                 (projects . 7))
    ;; True if the home buffer should respond to resize events.
    dotspacemacs-startup-buffer-responsive t
@@ -216,8 +218,13 @@ values."
                          monokai       ;; better on night.
                          professional  ;; better on day.
                          default
+                         zenburn
+                         whiteboard
+                         solarized-light
+                         adwaita
                          spacemacs-light
                          wombat
+                         twilight-bright
                          tsdh-light
                          )
    ;; If non nil the cursor color matches the state color in GUI Emacs.
@@ -418,7 +425,7 @@ you should place your code here."
   (global-company-mode -1)
 ;  (customize-set-variable 'tramp-save-ad-hoc-proxies t)
 
-  ;;(add-hook 'compilation-mode-hook (lambda() (font-lock-mode 1)))
+  (add-hook 'compilation-mode-hook (lambda() (font-lock-mode -1)))
 
   ;;(setq-default dotspacemacs-line-numbers nil)
   ;(setq tramp-copy-size-limit nil)
@@ -473,6 +480,7 @@ you should place your code here."
   ;; let clip board works like normal.
   (setq x-select-enable-clipboard nil)
 
+  (setq-default evil-escape-delay 0.5) ;; delay 
   (spacemacs|diminish helm-gtags-mode "G" "g")
   (spacemacs|diminish irony-mode "I" "i")
   (spacemacs|diminish doxymacs-mode "☱" "☱")
@@ -483,15 +491,24 @@ you should place your code here."
   (setq-default evil-escape-delay 0.5) ;; delay 
   
 
-  
+  (setq whitespace-style (quote (face  tabs newline  tab-mark newline-mark)))
 
-;;  (setq whitespace-style (quote (face  tabs newline  tab-mark newline-mark)))
-  ;;(global-whitespace-mode nil)
+  (use-package fold-dwim)
+  (global-set-key (kbd "<f7>")      'fold-dwim-toggle)
+  (global-set-key (kbd "<M-f7>")    'fold-dwim-hide-all)
+  (global-set-key (kbd "<S-M-f7>")  'fold-dwim-show-all)
 
   (add-to-list 'auto-mode-alist '("\\.cu$" . c++-mode))
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 
+  ;; ycmd setup.
+  (cond (on_darwin
+;;         (set-variable 'ycmd-server-command '("python3" "/Users/jiejingzhang/Developer/ycmd/ycmd"))
+;;         (set-variable 'ycmd-global-config "/Users/jiejingzhang/Developer/ycmd/.ycm_extra_conf.py")
+         (set-variable 'ycmd-server-command '("python3" "/Users/jiejingzhang/myconfigure/ycmd-mac/ycmd"))
+         (set-variable 'ycmd-global-config "/Users/jiejingzhang/myconfigure/ycmd-mac/.ycm_extra_conf.py")
+         ))
 
  ;; (unless (display-graphic-p)
 ;;    (setq linum-relative-format "%3s "))
@@ -508,9 +525,18 @@ you should place your code here."
   ;;            (port (tramp-file-name-port vec)))
   ;;       (tramp-make-tramp-file-name method user domain host port dir)))
 
-  ;;   (defun git-gutter+-remote-file-path (dir file)
-  ;;     (let ((file (tramp-file-name-localname (tramp-dissect-file-name file))))
-  ;;       (replace-regexp-in-string (concat "\\`" dir) "" file))))
+  (with-eval-after-load 'git-gutter+
+    (defun git-gutter+-remote-default-directory (dir file)
+      (let* ((vec (tramp-dissect-file-name file))
+             (method (tramp-file-name-method vec))             (user (tramp-file-name-user vec))
+             (domain (tramp-file-name-domain vec))
+             (host (tramp-file-name-host vec))
+             (port (tramp-file-name-port vec)))
+        (tramp-make-tramp-file-name method user domain host port dir)))
+
+    (defun git-gutter+-remote-file-path (dir file)
+      (let ((file (tramp-file-name-localname (tramp-dissect-file-name file))))
+        (replace-regexp-in-string (concat "\\`" dir) "" file))))
 
   (eval-after-load 'ggtags
     '(progn
@@ -628,7 +654,7 @@ you should place your code here."
      company-dabbrev-ignore-case nil
      company-dabbrev-code-ignore-case nil
      company-dabbrev-downcase nil
-     company-idle-delay 0.1
+     company-idle-delay 0.3
      company-show-numbers t
      company-dabbrev-downcase nil
      company-dabbrev-code-everywhere t
@@ -692,7 +718,6 @@ you should place your code here."
                               (setq js2-bounce-indent-p nil)
                               (hungry-delete-mode 1)
                              (smartparens-mode 1)
-                             (company-mode 1)
                              ))
 
   (eval-after-load 'js2-mode
@@ -720,6 +745,9 @@ you should place your code here."
 
   ;; do yas-setup again.
   ;;(safe-wrap (yas-setup))
+  (safe-wrap (js-comint-setup))
+
+  (safe-wrap (hide-if-0))
 
   (global-hl-line-mode -1) ;; enable hightlight current line.
 
