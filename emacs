@@ -76,7 +76,6 @@ values."
     ;;counsel-gtags
      emacs-lisp
      ;; git
-     ;; markdown
      ;; org
      ;; (shell :variables
      ;;        shell-default-height 30
@@ -142,6 +141,7 @@ values."
    dotspacemacs-excluded-packages '(auto-complete-clang
                                     ;helm-gtags
                                     python ; python mode always not work on tramp editing , disable it.
+                                    org-plus-contrib
                                     ws-butler
                                     tern
                                     adaptive-wrap)
@@ -170,6 +170,7 @@ values."
    ;; `--insecure' which forces the value of this variable to nil.
    ;; (default t)
    dotspacemacs-elpa-https t
+   package-check-signature nil
    ;; Maximum allowed time in seconds to contact an ELPA repository.
    dotspacemacs-elpa-timeout 5
    ;; If non nil then spacemacs will check for Updates at startup
@@ -859,23 +860,3 @@ you should place your code here."
   (setq vc-follow-symlinks t)
 
   ) ;; end user-config. 
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
- '(helm-buffer-max-length 50)
- '(package-selected-packages
-   (quote
-    (irony zeal-at-point plantuml-mode org-category-capture org-present gntp org-mime org-download mmm-mode markdown-mode imenu-list htmlize dash-docs groovy-mode gnuplot gh-md fold-dwim csv-mode pythonic flycheck-ycmd company-ycmd ycmd request-deferred deferred irony-eldoc yaml-mode xterm-color winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline smeargle shell-pop restart-emacs rainbow-delimiters protobuf-mode popwin persp-mode pcre2el paradox orgit org-bullets open-junk-file noflet neotree multi-term move-text monokai-theme magit-gitflow macrostep lorem-ipsum log4j-mode linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ ggtags fuzzy flycheck-pos-tip flycheck-irony flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-smartparens evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime elisp-slime-nav dumb-jump disaster diminish diff-hl define-word company-statistics company-irony-c-headers company-irony company-c-headers column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ag ace-window ace-link ace-jump-helm-line ac-ispell))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
