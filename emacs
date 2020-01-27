@@ -86,7 +86,6 @@ values."
      ;; version-control
      imenu-list
      scala
-     csv
      (auto-completion :variables
                       auto-completion-tab-key-behavior 'complete
                       auto-completion-enable-help-tooltip nil
@@ -100,7 +99,6 @@ values."
             shell-default-term-shell (getenv "SHELL"))
      gtags
      ;spacemacs-theme
-     org
      ycmd
      git
      markdown
@@ -124,7 +122,7 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
 
    dotspacemacs-additional-packages '(fold-dwim
-                                        ;                                      irony company-irony flycheck-irony company-irony-c-headers
+                                        irony company-irony flycheck-irony company-irony-c-headers
                                       iedit
                                       groovy-mode
                                       anaconda-mode
@@ -436,7 +434,7 @@ you should place your code here."
    ;; )
 
 
-  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)
+;;  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)
 
   (eval-after-load 'flycheck
     '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))  
@@ -450,8 +448,9 @@ you should place your code here."
       'irony-completion-at-point-async))
   (add-hook 'irony-mode-hook 'my-irony-mode-hook)
   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-  (eval-after-load 'company
-    '(add-to-list 'company-backends 'company-irony))
+
+  ;(eval-after-load 'company
+  ;  '(add-to-list 'company-backends 'company-irony))
   (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
   (defun irony--check-expansion ()
     (save-excursion
@@ -509,6 +508,10 @@ you should place your code here."
 ;;         (set-variable 'ycmd-global-config "/Users/jiejingzhang/Developer/ycmd/.ycm_extra_conf.py")
          (set-variable 'ycmd-server-command '("python3" "/Users/jiejingzhang/myconfigure/ycmd-mac/ycmd"))
          (set-variable 'ycmd-global-config "/Users/jiejingzhang/myconfigure/ycmd-mac/.ycm_extra_conf.py")
+         ))
+  (cond (on_gnu_linux
+         (set-variable 'ycmd-server-command '("python3" "/home/jiejing.zjj/myconfigure/ycmd-linux/ycmd"))
+         (set-variable 'ycmd-global-config "/home/jiejing.zjj/myconfigure/ycmd-linux/.ycm_extra_conf.py")
          ))
 
  ;; (unless (display-graphic-p)
@@ -634,7 +637,7 @@ you should place your code here."
                 ;(spacemacs/toggle-golden-ratio-on)
                 (spacemacs/toggle-hungry-delete-on)
                 ;;(spacemacs/toggle-indent-guide-on)
-                (irony-mode  t)
+;;                (irony-mode  t)
 ;;                (irony-eldoc t)   ;; 可以推算C++类型语义的类型提示， 在状态栏提示变量的类型。 ,, 这个功能会提示return 到js函数
                 ;; google c style.
                 (google-set-c-style)
@@ -869,7 +872,7 @@ you should place your code here."
  '(helm-buffer-max-length 50)
  '(package-selected-packages
    (quote
-    (flycheck-ycmd company-ycmd ycmd request-deferred deferred irony-eldoc yaml-mode xterm-color winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline smeargle shell-pop restart-emacs rainbow-delimiters protobuf-mode popwin persp-mode pcre2el paradox orgit org-bullets open-junk-file noflet neotree multi-term move-text monokai-theme magit-gitflow macrostep lorem-ipsum log4j-mode linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ ggtags fuzzy flycheck-pos-tip flycheck-irony flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-smartparens evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime elisp-slime-nav dumb-jump disaster diminish diff-hl define-word company-statistics company-irony-c-headers company-irony company-c-headers column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ag ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (irony zeal-at-point plantuml-mode org-category-capture org-present gntp org-mime org-download mmm-mode markdown-mode imenu-list htmlize dash-docs groovy-mode gnuplot gh-md fold-dwim csv-mode pythonic flycheck-ycmd company-ycmd ycmd request-deferred deferred irony-eldoc yaml-mode xterm-color winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline smeargle shell-pop restart-emacs rainbow-delimiters protobuf-mode popwin persp-mode pcre2el paradox orgit org-bullets open-junk-file noflet neotree multi-term move-text monokai-theme magit-gitflow macrostep lorem-ipsum log4j-mode linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ ggtags fuzzy flycheck-pos-tip flycheck-irony flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-smartparens evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime elisp-slime-nav dumb-jump disaster diminish diff-hl define-word company-statistics company-irony-c-headers company-irony company-c-headers column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ag ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
