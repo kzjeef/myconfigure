@@ -66,8 +66,10 @@ values."
      yaml
      (c-c++ :variables
           ;;    c-c++-backend 'irony
+            c-c++-backend 'emacs-ycmd
+            c-c++-enable-google-style t
 ;               c-c++-enable-clang-support t
-               c-c++-enable-rtags-support t
+;               c-c++-enable-rtags-support t
                c-c++-enable-clang-support nil
               c-c++-enable-rtags-completion nil)
      ;; ----------------------------------------------------------------
@@ -123,6 +125,7 @@ values."
                                       protobuf-mode
                                       google-c-style
                                       log4j-mode
+                              ;;        irony-eldoc ;; eldoc will show some in return key words. disable.
                                     ;  yasnippet-snippets
                                       )
    ;; A list of packages that cannot be updated.
@@ -209,9 +212,9 @@ values."
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
+                         spacemacs-dark
                          monokai       ;; better on night.
                          professional  ;; better on day.
-                         spacemacs-dark
                          default
                          spacemacs-light
                          wombat
@@ -471,6 +474,7 @@ you should place your code here."
   (setq x-select-enable-clipboard nil)
 
   (spacemacs|diminish helm-gtags-mode "G" "g")
+  (spacemacs|diminish irony-mode "I" "i")
   (spacemacs|diminish doxymacs-mode "☱" "☱")
   (spacemacs|diminish hide-ifdef-mode "♺" "♺")
   (spacemacs|diminish ggtags-mode "♕" "♕")
@@ -514,7 +518,6 @@ you should place your code here."
        ;; force update evil keymaps after ggtags-mode loaded
        (add-hook 'ggtags-mode-hook #'evil-normalize-keymaps)))
 
-  (setq-default evil-escape-delay 0.5)
   (require 'ansi-color)
   (defun colorize-compilation-buffer ()
     (toggle-read-only)
@@ -605,7 +608,7 @@ you should place your code here."
                 (spacemacs/toggle-hungry-delete-on)
                 ;;(spacemacs/toggle-indent-guide-on)
                 (irony-mode  t)
-                (global-eldoc-mode -1)
+;;                (irony-eldoc t)   ;; 可以推算C++类型语义的类型提示， 在状态栏提示变量的类型。 ,, 这个功能会提示return 到js函数
                 ;; google c style.
                 (google-set-c-style)
                 (google-make-newline-indent)
@@ -712,7 +715,6 @@ you should place your code here."
         evil-visual-state-cursor '(box "#F86155"))
   (setq-default evil-escape-key-sequence "jk")
 
-  (setq-default evil-escape-delay 0.5)
   (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11")))
   (add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++11")))
 
@@ -827,3 +829,21 @@ you should place your code here."
   ) ;; end user-config. 
 
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
+ '(helm-buffer-max-length 50)
+ '(package-selected-packages
+   (quote
+    (irony-eldoc yaml-mode xterm-color winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline smeargle shell-pop restart-emacs rainbow-delimiters protobuf-mode popwin persp-mode pcre2el paradox orgit org-bullets open-junk-file noflet neotree multi-term move-text monokai-theme magit-gitflow macrostep lorem-ipsum log4j-mode linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ ggtags fuzzy flycheck-pos-tip flycheck-irony flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-smartparens evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime elisp-slime-nav dumb-jump disaster diminish diff-hl define-word company-statistics company-irony-c-headers company-irony company-c-headers column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ag ace-window ace-link ace-jump-helm-line ac-ispell))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
