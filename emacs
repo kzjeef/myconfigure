@@ -515,6 +515,8 @@ you should place your code here."
          (set-variable 'ycmd-global-config "/home/jiejing.zjj/myconfigure/ycmd-linux/.ycm_extra_conf.py")
          ))
 
+  (setq ycmd-force-semantic-completion t)
+
  ;; (unless (display-graphic-p)
 ;;    (setq linum-relative-format "%3s "))
 
