@@ -127,6 +127,7 @@ values."
                                       anaconda-mode
                                       ;;company-ycmd company flycheck-ycmd
                                       ;;                                      vlf ;
+                                      cmake-ide
                                       ag
                                       protobuf-mode
                                       google-c-style
@@ -436,13 +437,15 @@ you should place your code here."
     (spacemacs/toggle-fill-column-indicator-on)
     (set-frame-width (selected-frame) 100)
    ))
+  (projectile-global-mode)
+
 
 
 ;;  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)
-
-  (eval-after-load 'flycheck
-    '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))  
-
+  (cond (on_gnu_linux
+         (eval-after-load 'flycheck
+              '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))  
+  ))
   ;; replace the `completion-at-point' and `complete-symbol' bindings in
   ;; irony-mode's buffers by irony-mode's function
   (defun my-irony-mode-hook ()
@@ -451,15 +454,12 @@ you should place your code here."
     (define-key irony-mode-map [remap complete-symbol]
       'irony-completion-at-point-async))
   (add-hook 'irony-mode-hook 'my-irony-mode-hook)
-  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-
   (add-hook 'c++-mode-hook 'irony-mode)
   (add-hook 'c-mode-hook 'irony-mode)
   (add-hook 'objc-mode-hook 'irony-mode)
-
+  (setq-default irony-cdb-compilation-databases '(irony-cdb-libclang
+                                                  irony-cdb-clang-complete))
   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-
-
 
   (eval-after-load 'company
     '(add-to-list 'company-backends 'company-irony))
@@ -488,7 +488,8 @@ you should place your code here."
   (add-hook 'c-mode-common-hook 'irony-mode-keys)
   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
   (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
-  (setq company-backends (delete 'company-semantic company-backends))
+  (cmake-ide-setup)
+  (setq cmake-ide-build-dir "build")
   ;; let clip board works like normal.
   (setq x-select-enable-clipboard nil)
 
@@ -662,17 +663,11 @@ you should place your code here."
                 (flycheck-pos-tip-mode 1)
 
                 ;;(spacemacs/toggle-fill-column-indicator-on)
-                (delete 'company-dabbrev company-backends) ;; 关闭整行补全
-                (delete 'company-dabbrev-code company-backends) ;; 关闭整行补全
-                (delete 'company-semantic company-backends) ;; 关闭整行补全
-
                 (global-set-key "\M-n" 'helm-gtags-dwim)
                 (global-set-key "\M-r" 'helm-gtags-find-rtag)
                 )))
 
   (global-set-key (kbd "C-c ;") 'iedit-mode)
-  (setq company-backends (delete 'company-dabbrev company-backends))
-  (setq company-backends (delete 'company-dabbrev-code company-backends))
 
   (setq
      company-dabbrev-ignore-case nil
@@ -764,8 +759,8 @@ you should place your code here."
         evil-visual-state-cursor '(box "#F86155"))
   (setq-default evil-escape-key-sequence "jk")
 
-  (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11")))
-  (add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++11")))
+  (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
+  (add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++14")))
 
   ;; do yas-setup again.
   ;;(safe-wrap (yas-setup))
@@ -882,3 +877,24 @@ you should place your code here."
   (setq vc-follow-symlinks t)
 
   ) ;; end user-config. 
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(helm-buffer-max-length 50)
+ '(package-selected-packages
+   (quote
+    (cmake-project cmake-ide zenburn-theme yasnippet-snippets yaml-mode xterm-color writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package twilight-bright-theme treemacs-projectile treemacs-evil toc-org symon symbol-overlay string-inflection spaceline-all-the-icons solarized-theme smeargle shell-pop restart-emacs rainbow-delimiters protobuf-mode professional-theme popwin plantuml-mode persp-mode pcre2el password-generator paradox overseer org-bullets open-junk-file noflet nameless mvn multi-term move-text monokai-theme mmm-mode meghanada maven-test-mode markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum log4j-mode link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-purpose helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-git-grep helm-flx helm-descbinds helm-dash helm-company helm-c-yasnippet helm-ag groovy-mode groovy-imports gradle-mode google-translate google-c-style golden-ratio gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md ggtags fuzzy font-lock+ fold-dwim flycheck-rtags flycheck-pos-tip flycheck-package flycheck-irony flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline disaster diminish diff-hl devdocs define-word dash-at-point cpp-auto-include counsel-projectile company-statistics company-rtags company-irony-c-headers company-irony company-emacs-eclim company-c-headers column-enforce-mode clean-aindent-mode clang-format centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile anaconda-mode aggressive-indent ag ace-link ace-jump-helm-line ac-ispell))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+)
