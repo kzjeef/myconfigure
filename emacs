@@ -98,7 +98,7 @@ values."
             shell-default-term-shell (getenv "SHELL"))
      gtags
      ;spacemacs-theme
-     ycmd
+;;     ycmd
      git
      markdown
      dash
@@ -125,7 +125,7 @@ values."
                                       iedit
                                       groovy-mode
                                       anaconda-mode
-                                      company-ycmd company flycheck-ycmd
+                                      ;;company-ycmd company flycheck-ycmd
                                       ;;                                      vlf ;
                                       ag
                                       protobuf-mode
@@ -232,7 +232,7 @@ values."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 13
+                               :size 14
                                :weight normal
                                :width normal
                                :powerline-scale 0.9)
@@ -422,17 +422,20 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   (setq tramp-default-method "ssh")
 
-  (global-company-mode -1)
+
+;  (global-company-mode -1)
 ;  (customize-set-variable 'tramp-save-ad-hoc-proxies t)
 
   (add-hook 'compilation-mode-hook (lambda() (font-lock-mode -1)))
 
   ;;(setq-default dotspacemacs-line-numbers nil)
   ;(setq tramp-copy-size-limit nil)
-  ;;(setq-default fill-column 100)
-  ;;(when (display-graphic-p)
-    ;;(spacemacs/toggle-fill-column-indicator-on)
-   ;; )
+  (if (window-system)
+  (setq-default fill-column 100)
+  (when (display-graphic-p)
+    (spacemacs/toggle-fill-column-indicator-on)
+    (set-frame-width (selected-frame) 100)
+   ))
 
 
 ;;  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)
@@ -450,8 +453,16 @@ you should place your code here."
   (add-hook 'irony-mode-hook 'my-irony-mode-hook)
   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
-  ;(eval-after-load 'company
-  ;  '(add-to-list 'company-backends 'company-irony))
+  (add-hook 'c++-mode-hook 'irony-mode)
+  (add-hook 'c-mode-hook 'irony-mode)
+  (add-hook 'objc-mode-hook 'irony-mode)
+
+  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+
+
+
+  (eval-after-load 'company
+    '(add-to-list 'company-backends 'company-irony))
   (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
   (defun irony--check-expansion ()
     (save-excursion
@@ -465,10 +476,10 @@ you should place your code here."
     (interactive)
     (cond ((and (not (use-region-p))
                 (irony--check-expansion))
-           (message "complete")
+           ;(message "complete")
            (company-complete-common))
           (t
-           (message "indent")
+           ;(message "indent")
            (call-interactively 'c-indent-line-or-region))))
   (defun irony-mode-keys ()
     "Modify keymaps used by `irony-mode'."
@@ -488,7 +499,6 @@ you should place your code here."
   (spacemacs|diminish hide-ifdef-mode "♺" "♺")
   (spacemacs|diminish ggtags-mode "♕" "♕")
   (spacemacs|diminish flycheck-mode "☂" "☂")
-  (setq ggtags-global-ignore-case t)
   (setq-default evil-escape-delay 0.5) ;; delay 
   
 
@@ -503,19 +513,19 @@ you should place your code here."
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 
-  ;; ycmd setup.
-  (cond (on_darwin
-;;         (set-variable 'ycmd-server-command '("python3" "/Users/jiejingzhang/Developer/ycmd/ycmd"))
-;;         (set-variable 'ycmd-global-config "/Users/jiejingzhang/Developer/ycmd/.ycm_extra_conf.py")
-         (set-variable 'ycmd-server-command '("python3" "/Users/jiejingzhang/myconfigure/ycmd-mac/ycmd"))
-         (set-variable 'ycmd-global-config "/Users/jiejingzhang/myconfigure/ycmd-mac/.ycm_extra_conf.py")
-         ))
-  (cond (on_gnu_linux
-         (set-variable 'ycmd-server-command '("python3" "/home/jiejing.zjj/myconfigure/ycmd-linux/ycmd"))
-         (set-variable 'ycmd-global-config "/home/jiejing.zjj/myconfigure/ycmd-linux/.ycm_extra_conf.py")
-         ))
+;;   ;; ycmd setup.
+;;   (cond (on_darwin
+;; ;;         (set-variable 'ycmd-server-command '("python3" "/Users/jiejingzhang/Developer/ycmd/ycmd"))
+;; ;;         (set-variable 'ycmd-global-config "/Users/jiejingzhang/Developer/ycmd/.ycm_extra_conf.py")
+;;          (set-variable 'ycmd-server-command '("python3" "/Users/jiejingzhang/myconfigure/ycmd-mac/ycmd"))
+;;          (set-variable 'ycmd-global-config "/Users/jiejingzhang/myconfigure/ycmd-mac/.ycm_extra_conf.py")
+;;          ))
+;;   (cond (on_gnu_linux
+;;          (set-variable 'ycmd-server-command '("python3" "/home/jiejing.zjj/myconfigure/ycmd-linux/ycmd"))
+;;          (set-variable 'ycmd-global-config "/home/jiejing.zjj/myconfigure/ycmd-linux/.ycm_extra_conf.py")
+;;          ))
 
-  (setq ycmd-force-semantic-completion t)
+;;   (setq ycmd-force-semantic-completion t)
 
  ;; (unless (display-graphic-p)
 ;;    (setq linum-relative-format "%3s "))
@@ -548,6 +558,7 @@ you should place your code here."
   (eval-after-load 'ggtags
     '(progn
        (evil-make-overriding-map ggtags-mode-map 'normal)
+       (setq ggtags-global-ignore-case nil)
        ;; force update evil keymaps after ggtags-mode loaded
        (add-hook 'ggtags-mode-hook #'evil-normalize-keymaps)))
 
@@ -649,25 +660,31 @@ you should place your code here."
                 (setq-default tab-width 8)
 
                 (flycheck-pos-tip-mode 1)
+
                 ;;(spacemacs/toggle-fill-column-indicator-on)
+                (delete 'company-dabbrev company-backends) ;; 关闭整行补全
+                (delete 'company-dabbrev-code company-backends) ;; 关闭整行补全
+                (delete 'company-semantic company-backends) ;; 关闭整行补全
 
                 (global-set-key "\M-n" 'helm-gtags-dwim)
                 (global-set-key "\M-r" 'helm-gtags-find-rtag)
                 )))
 
   (global-set-key (kbd "C-c ;") 'iedit-mode)
+  (setq company-backends (delete 'company-dabbrev company-backends))
+  (setq company-backends (delete 'company-dabbrev-code company-backends))
 
   (setq
      company-dabbrev-ignore-case nil
-     company-dabbrev-code-ignore-case nil
      company-dabbrev-downcase nil
-     company-idle-delay 0.3
+     company-dabbrev-other-buffers     'all
+     company-tooltip-limit             10
+     company-idle-delay 0.1
      company-show-numbers t
-     company-dabbrev-downcase nil
-     company-dabbrev-code-everywhere t
+     company-dabbrev-code-everywhere nil
      company-minimum-prefix-length 2
+     company-disabled-backends '(copmany-dabbrev company-dabbrev-code company-gtags)
      )
-  (delete 'company-dabbrev company-backends) ;; 关闭整行补全
  
      ;; this front end is better.
 ;     (setq company-frontends
@@ -851,6 +868,9 @@ you should place your code here."
   (global-set-key (kbd "M-2")  'split-window-below)
   (global-set-key (kbd "M-0")  'delete-window)
   (global-set-key (kbd "M-o")  'other-window)
+  
+  (setq select-enable-clipboard t)
+  (setq interprogram-paste-function (lambda() (shell-command-to-string "pbpaste")))
 
   ;; copy following line to ~/.ssh/config to make tramp faster.
   ;; Host *
