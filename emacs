@@ -74,7 +74,6 @@ values."
      ;; auto-completion
      ;; better-defaults
     ;;counsel-gtags
-     emacs-lisp
      ;; git
      ;; org
      ;; (shell :variables
@@ -83,33 +82,33 @@ values."
      ;; spell-checking
      ;; syntax-checking
      ;; version-control
-     imenu-list
-     scala
-     (auto-completion :variables
-                      auto-completion-tab-key-behavior 'complete
-                      auto-completion-enable-help-tooltip nil
-                      auto-completion-complete-with-key-sequence nil
-                      auto-completion-complete-with-key-sequence-delay 0.3
-                      )
+     auto-completion
+     ;; (auto-completion :variables
+     ;;                  auto-completion-tab-key-behavior 'complete
+     ;;                  auto-completion-enable-help-tooltip nil
+     ;;                  auto-completion-complete-with-key-sequence nil
+     ;;                  auto-completion-complete-with-key-sequence-delay 0.1
+     ;;                  )
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom
             shell-enable-smart-eshell t
             shell-default-term-shell (getenv "SHELL"))
-     gtags
+     ;; gtags
      ;spacemacs-theme
-;;     ycmd
      git
      markdown
      dash
+     lsp
      ;; python
      ;themes-megapack
      plantuml
      (c-c++ :variables
-            c-c++-enable-clang-support nil
-            c-c++-backend 'ycmd
+           ; c-c++-enable-clang-support nil
+            c-c++-backend 'lsp-ccls
             c-c++-enable-google-style t
             c-c++-default-mode-for-headers 'c++-mode)
+
 
      ;; semantic ;; sematic is too slow...
      syntax-checking
@@ -121,7 +120,7 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
 
    dotspacemacs-additional-packages '(fold-dwim
-                                        irony company-irony flycheck-irony company-irony-c-headers
+                                       ; irony company-irony flycheck-irony company-irony-c-headers
                                       iedit
                                       groovy-mode
                                       anaconda-mode
@@ -130,6 +129,7 @@ values."
                                       cmake-ide
                                       ag
                                       protobuf-mode
+                                      company-lsp
                                       google-c-style
                                       log4j-mode
                               ;;        irony-eldoc ;; eldoc will show some in return key words. disable.
@@ -423,11 +423,20 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   (setq tramp-default-method "ssh")
 
+  (require 'company-lsp)
+  ;; fly check for ccls;
+  (setq lsp-prefer-flymake nil)
 
+  ;; release M-. key for tag.
+  (with-eval-after-load 'evil
+    (define-key evil-normal-state-map (kbd "M-.") nil))
+
+  (eval-after-load 'company
+  '(add-to-list 'company-backends 'company-lsp))
+
+  (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
 ;  (global-company-mode -1)
 ;  (customize-set-variable 'tramp-save-ad-hoc-proxies t)
-
-  (add-hook 'compilation-mode-hook (lambda() (font-lock-mode -1)))
 
   ;;(setq-default dotspacemacs-line-numbers nil)
   ;(setq tramp-copy-size-limit nil)
@@ -442,10 +451,10 @@ you should place your code here."
 
 
 ;;  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)
-  (cond (on_gnu_linux
-         (eval-after-load 'flycheck
-              '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))  
-  ))
+;;  (cond (on_gnu_linux
+;;         (eval-after-load 'flycheck
+;;              '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))  
+;;  ))
   ;; replace the `completion-at-point' and `complete-symbol' bindings in
   ;; irony-mode's buffers by irony-mode's function
   (defun my-irony-mode-hook ()
@@ -461,9 +470,11 @@ you should place your code here."
                                                   irony-cdb-clang-complete))
   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
-  (eval-after-load 'company
-    '(add-to-list 'company-backends 'company-irony))
-  (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+
+
+;;  (eval-after-load 'company
+;;    '(add-to-list 'company-backends 'company-irony))
+;;  (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
   (defun irony--check-expansion ()
     (save-excursion
       (if (looking-at "\\_>") t
@@ -488,6 +499,10 @@ you should place your code here."
   (add-hook 'c-mode-common-hook 'irony-mode-keys)
   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
   (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+
+
+  (setq gc-cons-threshold 100000000) ;; 100mb gc threshold
+
   (cmake-ide-setup)
   (setq cmake-ide-build-dir "build")
   ;; let clip board works like normal.
@@ -542,19 +557,6 @@ you should place your code here."
   ;;            (host (tramp-file-name-host vec))
   ;;            (port (tramp-file-name-port vec)))
   ;;       (tramp-make-tramp-file-name method user domain host port dir)))
-
-  (with-eval-after-load 'git-gutter+
-    (defun git-gutter+-remote-default-directory (dir file)
-      (let* ((vec (tramp-dissect-file-name file))
-             (method (tramp-file-name-method vec))             (user (tramp-file-name-user vec))
-             (domain (tramp-file-name-domain vec))
-             (host (tramp-file-name-host vec))
-             (port (tramp-file-name-port vec)))
-        (tramp-make-tramp-file-name method user domain host port dir)))
-
-    (defun git-gutter+-remote-file-path (dir file)
-      (let ((file (tramp-file-name-localname (tramp-dissect-file-name file))))
-        (replace-regexp-in-string (concat "\\`" dir) "" file))))
 
   (eval-after-load 'ggtags
     '(progn
@@ -669,17 +671,17 @@ you should place your code here."
 
   (global-set-key (kbd "C-c ;") 'iedit-mode)
 
-  (setq
-     company-dabbrev-ignore-case nil
-     company-dabbrev-downcase nil
-     company-dabbrev-other-buffers     'all
-     company-tooltip-limit             10
-     company-idle-delay 0.1
-     company-show-numbers t
-     company-dabbrev-code-everywhere nil
-     company-minimum-prefix-length 2
-     company-disabled-backends '(copmany-dabbrev company-dabbrev-code company-gtags)
-     )
+  ;; (setq
+  ;;    company-dabbrev-ignore-case nil
+  ;;    company-dabbrev-downcase nil
+  ;;    company-dabbrev-other-buffers     'all
+  ;;    company-tooltip-limit             10
+  ;;    company-idle-delay 0.1
+  ;;    company-show-numbers t
+  ;;    company-dabbrev-code-everywhere nil
+  ;;    company-minimum-prefix-length 2
+  ;;    company-disabled-backends '(copmany-dabbrev company-dabbrev-code company-gtags)
+  ;;    )
  
      ;; this front end is better.
 ;     (setq company-frontends
@@ -730,25 +732,6 @@ you should place your code here."
 
   (add-to-list 'auto-mode-alist '("\\.gradle\\'" . groovy-mode))
 
-
-  (add-hook 'js2-mode-hook (lambda()
-
-                              (setq js2-basic-offset 2)
-                              (setq js2-bounce-indent-p nil)
-                              (hungry-delete-mode 1)
-                             (smartparens-mode 1)
-                             ))
-
-  (eval-after-load 'js2-mode
-    '(progn
-       (define-key js2-mode-map (kbd "TAB") (lambda()
-                                              (interactive)
-                                              (let ((yas/fallback-behavior 'return-nil))
-                                                (unless (yas/expand)
-                                                  (indent-for-tab-command)
-                                                  (if (looking-back "^\s*")
-                                                      (back-to-indentation))))))))
-
   ;; disable bold font effect.
   (mapc
    (lambda (face)
@@ -764,9 +747,6 @@ you should place your code here."
 
   ;; do yas-setup again.
   ;;(safe-wrap (yas-setup))
-  (safe-wrap (js-comint-setup))
-
-  (safe-wrap (hide-if-0))
 
   (global-hl-line-mode -1) ;; enable hightlight current line.
 
@@ -877,24 +857,3 @@ you should place your code here."
   (setq vc-follow-symlinks t)
 
   ) ;; end user-config. 
-(defun dotspacemacs/emacs-custom-settings ()
-  "Emacs custom settings.
-This is an auto-generated function, do not modify its content directly, use
-Emacs customize menu instead.
-This function is called at the very end of Spacemacs initialization."
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(helm-buffer-max-length 50)
- '(package-selected-packages
-   (quote
-    (cmake-project cmake-ide zenburn-theme yasnippet-snippets yaml-mode xterm-color writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package twilight-bright-theme treemacs-projectile treemacs-evil toc-org symon symbol-overlay string-inflection spaceline-all-the-icons solarized-theme smeargle shell-pop restart-emacs rainbow-delimiters protobuf-mode professional-theme popwin plantuml-mode persp-mode pcre2el password-generator paradox overseer org-bullets open-junk-file noflet nameless mvn multi-term move-text monokai-theme mmm-mode meghanada maven-test-mode markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum log4j-mode link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-purpose helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-git-grep helm-flx helm-descbinds helm-dash helm-company helm-c-yasnippet helm-ag groovy-mode groovy-imports gradle-mode google-translate google-c-style golden-ratio gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md ggtags fuzzy font-lock+ fold-dwim flycheck-rtags flycheck-pos-tip flycheck-package flycheck-irony flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline disaster diminish diff-hl devdocs define-word dash-at-point cpp-auto-include counsel-projectile company-statistics company-rtags company-irony-c-headers company-irony company-emacs-eclim company-c-headers column-enforce-mode clean-aindent-mode clang-format centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile anaconda-mode aggressive-indent ag ace-link ace-jump-helm-line ac-ispell))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-)
