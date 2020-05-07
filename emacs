@@ -72,6 +72,7 @@ values."
 ;;     ivy ;// ivy really slow on long line files.
      helm ;helm get stuck in mac.
      ;; auto-completion
+     markdown
      ;; better-defaults
     ;;counsel-gtags
      ;; git
@@ -126,6 +127,7 @@ values."
                                       anaconda-mode
                                       ;;company-ycmd company flycheck-ycmd
                                       ;;                                      vlf ;
+                                      evil-smartparens
                                       cmake-ide
                                       ag
                                       ccls
@@ -422,8 +424,19 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-  (setq tramp-default-method "ssh")
+  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)
 
+  (setq tramp-default-method "ssh")
+  (add-hook 'c++-mode-hook 'lsp-mode)
+  (add-hook 'c-mode-hook 'lsp-mode)
+  (add-hook 'prog-mode-hook #'lsp)
+  (cond (on_darwin
+         (setq ccls-executable "/usr/local/bin/ccls")
+         ))
+
+
+
+ 
   (require 'company-lsp)
   ;; fly check for ccls;
   (setq lsp-prefer-flymake nil)
@@ -434,6 +447,12 @@ you should place your code here."
 
   (eval-after-load 'company
   '(add-to-list 'company-backends 'company-lsp))
+
+  (setq company-transformers nil company-lsp-async t company-lsp-cache-candidates nil)
+  (setq ccls-sem-highlight-method 'font-lock)
+  ;; alternatively, (setq ccls-sem-highlight-method 'overlay)
+  ;; For rainbow semantic highlighting
+
 
   (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
 ;  (global-company-mode -1)
@@ -857,5 +876,13 @@ you should place your code here."
   ;;
 
   (setq vc-follow-symlinks t)
+  (eval-after-load "org"
+    '(require 'ox-md nil t))
 
   ) ;; end user-config. 
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+
