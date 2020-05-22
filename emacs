@@ -69,7 +69,7 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-;;     ivy ;// ivy really slow on long line files.
+     ;;ivy ;// ivy really slow on long line files.
      helm ;helm get stuck in mac.
      ;; auto-completion
      markdown
@@ -236,7 +236,7 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
+   dotspacemacs-default-font '("Inconsolate"
                                :size 14
                                :weight normal
                                :width normal
@@ -417,8 +417,8 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
 
   
-;  (setq tramp-ssh-controlmaster-options
-;        "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+;;  (setq tramp-ssh-controlmaster-options
+ ;;       "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
 ;;  (setq-default line-spacing 1)
   )
 
@@ -445,6 +445,12 @@ before packages are loaded. If you are unsure, you should try in setting them in
            )
           ))))
 
+
+(defun ali/dev-config()
+  (add-to-list 'tramp-default-proxies-alist
+               '("11.177.85.148" nil "/ssh:jiejing.zjj@login1.cm10.alibaba.org:"))
+  )
+
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
@@ -465,6 +471,7 @@ you should place your code here."
 
 
   (safe-wrap (my-input-method-setup))
+  (safe-wrap (ali/dev-config))
 
 
   (with-eval-after-load 'org
@@ -618,14 +625,14 @@ you should place your code here."
   ;; Alternatively
 
   ;; hight light what changed.
-  ;; (with-eval-after-load 'git-gutter+
-  ;;   (defun git-gutter+-remote-default-directory (dir file)
-  ;;     (let* ((vec (tramp-dissect-file-name file))
-  ;;            (method (tramp-file-name-method vec))             (user (tramp-file-name-user vec))
-  ;;            (domain (tramp-file-name-domain vec))
-  ;;            (host (tramp-file-name-host vec))
-  ;;            (port (tramp-file-name-port vec)))
-  ;;       (tramp-make-tramp-file-name method user domain host port dir)))
+  (with-eval-after-load 'git-gutter+
+    (defun git-gutter+-remote-default-directory (dir file)
+      (let* ((vec (tramp-dissect-file-name file))
+             (method (tramp-file-name-method vec))             (user (tramp-file-name-user vec))
+             (domain (tramp-file-name-domain vec))
+             (host (tramp-file-name-host vec))
+             (port (tramp-file-name-port vec)))
+        (tramp-make-tramp-file-name method user domain host port dir))))
 
   (eval-after-load 'ggtags
     '(progn
