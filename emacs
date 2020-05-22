@@ -132,6 +132,7 @@ values."
                                       evil-smartparens
                                       cmake-ide
                                       ag
+                                      ccls
                                       protobuf-mode
                                       company-lsp
                                       google-c-style
@@ -407,10 +408,10 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-;   (setq configuration-layer--elpa-archives
-;         '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
-;           ("org-cn"   . "http://elpa.emacs-china.org/org/")
-;           ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
+  (setq configuration-layer-elpa-archives
+        '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+          ("org-cn"   . "http://elpa.emacs-china.org/org/")
+          ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
 
   (add-to-list 'package-archives
                '("melpa-stable" . "https://stable.melpa.org/packages/") t)
@@ -538,13 +539,14 @@ you should place your code here."
       'irony-completion-at-point-async)
     (define-key irony-mode-map [remap complete-symbol]
       'irony-completion-at-point-async))
-  (add-hook 'irony-mode-hook 'my-irony-mode-hook)
-  (add-hook 'c++-mode-hook 'irony-mode)
-  (add-hook 'c-mode-hook 'irony-mode)
-  (add-hook 'objc-mode-hook 'irony-mode)
+;  (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+;  (add-hook 'c++-mode-hook 'irony-mode)
+  (add-hook 'c++-mode-hook 'lsp)
+;  (add-hook 'c-mode-hook 'irony-mode)
+;  (add-hook 'objc-mode-hook 'irony-mode)
   (setq-default irony-cdb-compilation-databases '(irony-cdb-libclang
                                                   irony-cdb-clang-complete))
-  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+;  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
 
 
@@ -572,9 +574,9 @@ you should place your code here."
     "Modify keymaps used by `irony-mode'."
     (local-set-key (kbd "TAB") 'irony--indent-or-complete)
     (local-set-key [tab] 'irony--indent-or-complete))
-  (add-hook 'c-mode-common-hook 'irony-mode-keys)
-  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-  (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+;  (add-hook 'c-mode-common-hook 'irony-mode-keys)
+;  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+;  (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
 
 
   (setq gc-cons-threshold 100000000) ;; 100mb gc threshold
