@@ -37,8 +37,8 @@ alias alogk="adb logcat -vtime -s DirectAudio:v KaraokeService:v"
 alias ap="adb push"
 alias a='adb'
 
-export TERM=xterm-256color
 export PATH=$PATH:/home/jiejing/.local/bin/
 export PATH=$PATH:/Applications/Sublime\ Text.app/Contents/SharedSupport/bin
 
+export CLICOLOR=1
 export TERM=xterm-256color

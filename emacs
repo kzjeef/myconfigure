@@ -69,14 +69,16 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-;;     ivy ;// ivy really slow on long line files.
+     ;;ivy ;// ivy really slow on long line files.
      helm ;helm get stuck in mac.
      ;; auto-completion
      markdown
      ;; better-defaults
     ;;counsel-gtags
      ;; git
-     ;; org
+     org
+
+     chinese
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
@@ -235,7 +237,7 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
+   dotspacemacs-default-font '("Inconsolate"
                                :size 14
                                :weight normal
                                :width normal
@@ -411,10 +413,43 @@ before packages are loaded. If you are unsure, you should try in setting them in
           ("org-cn"   . "http://elpa.emacs-china.org/org/")
           ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
 
+  (add-to-list 'package-archives
+               '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+
+
   
-;  (setq tramp-ssh-controlmaster-options
-;        "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+;;  (setq tramp-ssh-controlmaster-options
+ ;;       "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
 ;;  (setq-default line-spacing 1)
+  )
+
+(defun my-input-method-setup()
+  (interactive)
+
+  (setq pyim-dicts
+   (quote
+    ((:name "greatdict" :file "/Users/jiejingzhang/myconfigure/input/pyim-greatdict.pyim.gz"))))
+
+  (let* ((file (concat (file-name-directory
+                        "~/myconfigure/input")
+                       "pyim-greatdict.pyim.gz")))
+    (message file)
+    (when (file-exists-p file)
+      (if (featurep 'pyim)
+          (pyim-extra-dicts-add-dict
+           `(:name "Greatdict"
+                   :file ,file
+                   :coding utf-8-unix
+                   :dict-type pinyin-dict
+                   :elpa nil)
+           (message "pyim not install, pyim greatdict install failed.")
+           )
+          ))))
+
+
+(defun ali/dev-config()
+  (add-to-list 'tramp-default-proxies-alist
+               '("11.177.85.148" nil "/ssh:jiejing.zjj@login1.cm10.alibaba.org:"))
   )
 
 (defun dotspacemacs/user-config ()
@@ -430,12 +465,34 @@ you should place your code here."
   (add-hook 'c++-mode-hook 'lsp-mode)
   (add-hook 'c-mode-hook 'lsp-mode)
   (add-hook 'prog-mode-hook #'lsp)
+;  (add-hook 'prog-mode-hook #'imenu-list-minor-mode) ;; 侧边栏显示函数成员，并且自动刷新。
+
   (cond (on_darwin
-         (setq ccls-executable "/usr/local/bin/ccls")
-         ))
+         (setq ccls-executable "/usr/local/bin/ccls")))
 
 
+  (safe-wrap (my-input-method-setup))
+  (safe-wrap (ali/dev-config))
 
+
+  (with-eval-after-load 'org
+    ;; here goes your Org config :)
+    ;; ....
+    (require 'ox-md nil t)
+
+    (setq org-agenda-files '("~/Dropbox/org/"))
+
+ 
+    (defun do-org-show-all-inline-images ()
+      (interactive)
+      (org-display-inline-images t t))
+
+    (global-set-key (kbd "C-c C-x C v")
+                    'do-org-show-all-inline-images)
+
+    (setq org-plantuml-jar-path
+          (expand-file-name "/usr/local/Cellar/plantuml/8037/plantuml.8037.jar"))
+    )
  
   (require 'company-lsp)
   ;; fly check for ccls;
@@ -570,14 +627,14 @@ you should place your code here."
   ;; Alternatively
 
   ;; hight light what changed.
-  ;; (with-eval-after-load 'git-gutter+
-  ;;   (defun git-gutter+-remote-default-directory (dir file)
-  ;;     (let* ((vec (tramp-dissect-file-name file))
-  ;;            (method (tramp-file-name-method vec))             (user (tramp-file-name-user vec))
-  ;;            (domain (tramp-file-name-domain vec))
-  ;;            (host (tramp-file-name-host vec))
-  ;;            (port (tramp-file-name-port vec)))
-  ;;       (tramp-make-tramp-file-name method user domain host port dir)))
+  (with-eval-after-load 'git-gutter+
+    (defun git-gutter+-remote-default-directory (dir file)
+      (let* ((vec (tramp-dissect-file-name file))
+             (method (tramp-file-name-method vec))             (user (tramp-file-name-user vec))
+             (domain (tramp-file-name-domain vec))
+             (host (tramp-file-name-host vec))
+             (port (tramp-file-name-port vec)))
+        (tramp-make-tramp-file-name method user domain host port dir))))
 
   (eval-after-load 'ggtags
     '(progn
@@ -735,15 +792,6 @@ you should place your code here."
  ;;   :diminish undo-tree-mode
  ;;   :config (global-undo-tree-mode))
 
-  (defun do-org-show-all-inline-images ()
-    (interactive)
-    (org-display-inline-images t t))
-
-  (global-set-key (kbd "C-c C-x C v")
-                  'do-org-show-all-inline-images)
-
-  (setq org-plantuml-jar-path
-        (expand-file-name "/usr/local/Cellar/plantuml/8037/plantuml.8037.jar"))
 
 
     (setq puml-plantuml-jar-path "/usr/local/Cellar/plantuml/8037/plantuml.8037.jar")
@@ -782,6 +830,7 @@ you should place your code here."
   (setq display-time-24hr-format t)
   (setq display-time-day-and-date t)
   (setq display-time-interval 10)
+  (display-time-mode 1)
 
   (setq suggest-key-bindings 1)	 ;; 当使用 M-x COMMAND 后，过 1 秒钟显示该 COMMAND 绑定的键。
 
@@ -877,10 +926,8 @@ you should place your code here."
   ;;
 
   (setq vc-follow-symlinks t)
-  (eval-after-load "org"
-    '(require 'ox-md nil t))
-
-  ) ;; end user-config. 
+) ;; end user-config. 
+;; 后面都是emacs自己添加的， 随时可以删除的。 
 (defun dotspacemacs/emacs-custom-settings ()
   "Emacs custom settings.
 This is an auto-generated function, do not modify its content directly, use
@@ -902,3 +949,4 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  )
 )
+
