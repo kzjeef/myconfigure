@@ -31,6 +31,17 @@
 (add-to-list 'auto-mode-alist '("\\.inc\\'" . +cc-c-c++-objc-mode))
 
  (add-hook 'c-mode-common-hook 'google-set-c-style)
+
+(add-hook 'c-mode-common-hook
+          (lambda()
+            (hl-line-mode -1)
+            (global-hl-line-mode -1))
+          't
+          )
+;; will apply clang-format iff there is a .clang-format file under project.
+;; will only format the modify line,  really handy.
+(add-hook 'c-mode-common-hook #'clang-format+-mode)
+
 (after! cc-mode
   (c-add-style
    "my-cc" '("user"

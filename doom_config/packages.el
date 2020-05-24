@@ -56,7 +56,8 @@
 
 (package! helm-tramp)
 (package! google-c-style)
-
+(package! clang-format)
+(package! clang-format-plus)
 
 (when (package! lsp-mode)
   (package! lsp-ui)
