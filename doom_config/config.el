@@ -1,24 +1,16 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+;;;
 
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
-
+(load! "google-c-style")
+(load! "+prog")
+(load! "misc")
+(load! "+bindings")
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
 (setq user-full-name "Jiejing Zhang"
       user-mail-address "jiejing.zjj@alibaba-inc.com")
 (require 'cl)
-;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
-;; are the three important ones:
-;;
-;; + `doom-font'
-;; + `doom-variable-pitch-font'
-;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;;
-;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
-;; font string. You generally only need these two:
 (setq doom-font (font-spec :family "Source Code Pro" :size 14))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
@@ -26,8 +18,6 @@
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one)
 
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/Dropbox/org/")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
@@ -81,11 +71,14 @@
 
 (setq pyim-dicts
    (quote
-    ((:name "greatdict" :file "/Users/jiejingzhang/myconfigure/input/pyim-greatdict.pyim.gz"))))
+    ((:name "greatdict" :file "~/myconfigure/input/pyim-greatdict.pyim.gz"))))
 
 
 (cond (on_darwin
          (setq ccls-executable "/usr/local/bin/ccls")))
+
+(cond (on_gnu_linux
+       (setq ccls-executable "/var/lib/snapd/snap/ccls/current/bin/ccls")))
 
 (with-eval-after-load 'org
     ;; here goes your Org config :)
@@ -102,24 +95,12 @@
     (global-set-key (kbd "C-c C-x C v")
                     'do-org-show-all-inline-images)
 
-    (setq org-plantuml-jar-path
-          (expand-file-name "/usr/local/Cellar/plantuml/8037/plantuml.8037.jar"))
+    (cond (on_darwin
+           (setq org-plantuml-jar-path
+                 (expand-file-name "/usr/local/Cellar/plantuml/8037/plantuml.8037.jar"))
+           ))
+
     )
-
-
-(if (window-system)
-  (setq-default fill-column 100)
-  (when (display-graphic-p)
-    (set-frame-width (selected-frame) 100)
-   ))
-
-  (add-to-list 'auto-mode-alist '("\\.cu$" . c++-mode))
-  (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-
-  ;; 关闭在 tramp 下面的自动补全
-  (defun company-files--connected-p (file)
-    (not (file-remote-p file)))
-
 
 
 (setq large-file-warning-threshold 100000000) ;dont' remove this line, otherwise vlf will crash.
@@ -140,14 +121,6 @@
             ad-do-it)))                   ; default behavior
 
 
-;; setup doxymacs
-  (add-to-list 'load-path "~/myconfigure/doxyemacs")
-  (require 'doxymacs)
-  (defun my-doxymacs-font-lock-hook ()
-    (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
-        (doxymacs-font-lock)))
-  ;; (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
-  (add-hook 'c-mode-common-hook'doxymacs-mode)
 
 
 
@@ -202,82 +175,81 @@
    (face-list))
 
 
-;;  (setq-default evil-escape-key-sequence "jk")
+(setq-default evil-escape-key-sequence "jk")
 
-  (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
-  (add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++14")))
+(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
+(add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++14")))
 
-  ;(global-hl-line-mode -1) ;; enable hightlight current line.
+                                        ;(global-hl-line-mode -1) ;; enable hightlight current line.
 
-  (auto-compression-mode 1) ;; 打开压缩文件时自动解压缩
+(auto-compression-mode 1) ;; 打开压缩文件时自动解压缩
+
+(setq visiable-bell t)	 ;; 把嘟的声音去掉
+(setq ring-bell-function 'ignore)	;; 不要让那个DIDI的响
+
+(setq transient-mark-mode nil)	 ;; 两次按C－space以后高亮显示区域
+
+(setq display-time-24hr-format t)
+(setq display-time-day-and-date t)
+(setq display-time-interval 10)
+(display-time-mode 1)
 
 
-  (setq visiable-bell t)	 ;; 把嘟的声音去掉
-  (setq ring-bell-function 'ignore)	;; 不要让那个DIDI的响
+(setq suggest-key-bindings 1)	 ;; 当使用 M-x COMMAND 后，过 1 秒钟显示该 COMMAND 绑定的键。
 
-  (setq transient-mark-mode nil)	 ;; 两次按C－space以后高亮显示区域
+(setq kept-old-versions 2)
+(setq kept-new-versions 5)
+(setq delete-old-versions t)
+(setq backup-directory-alist '(("." . "~/emacs.bak")))
+(setq backup-by-copying t)
+(ansi-color-for-comint-mode-on)	 ;; 消除shell中的乱码
+(fset 'yes-or-no-p 'y-or-n-p)	 ;; 把Yes或者用y代替
 
-  (setq display-time-24hr-format t)
-  (setq display-time-day-and-date t)
-  (setq display-time-interval 10)
-  (display-time-mode 1)
+(when (display-graphic-p)
+  (set-clipboard-coding-system 'chinese-iso-8bit) ;; 剪切板，用于和其他程序之间复制内容
+  (set-clipboard-coding-system 'ctext) ;;解决firefox有时候复制文件有乱马
 
-
-  (setq suggest-key-bindings 1)	 ;; 当使用 M-x COMMAND 后，过 1 秒钟显示该 COMMAND 绑定的键。
-
-  (setq kept-old-versions 2)
-  (setq kept-new-versions 5)
-  (setq delete-old-versions t)
-  (setq backup-directory-alist '(("." . "~/emacs.bak")))
-  (setq backup-by-copying t)
-  (ansi-color-for-comint-mode-on)	 ;; 消除shell中的乱码
-  (fset 'yes-or-no-p 'y-or-n-p)	 ;; 把Yes或者用y代替
-
-  (when (display-graphic-p)
-    (set-clipboard-coding-system 'chinese-iso-8bit) ;; 剪切板，用于和其他程序之间复制内容
-    (set-clipboard-coding-system 'ctext) ;;解决firefox有时候复制文件有乱马
-
-    (set-keyboard-coding-system 'chinese-iso-8bit) ;; 键盘输入，用于输入法。
-    (set-terminal-coding-system 'chinese-iso-8bit) ;; 终端显示的编码方式。
-    )
-  (add-hook 'comint-output-filter-functions
-            'comint-watch-for-password-prompt) ;; 密码的相关的提示密码
+  (set-keyboard-coding-system 'chinese-iso-8bit) ;; 键盘输入，用于输入法。
+  (set-terminal-coding-system 'chinese-iso-8bit) ;; 终端显示的编码方式。
+  )
+(add-hook 'comint-output-filter-functions
+          'comint-watch-for-password-prompt) ;; 密码的相关的提示密码
 ;;  (setq kill-emacs-query-functions
- ;;       (lambda() (y-or-n-p "Do you really want to quit?")))
+;;       (lambda() (y-or-n-p "Do you really want to quit?")))
 
-  (cond (on_darwin
-         (require 'dired)
+(cond (on_darwin
+       (require 'dired)
 
-         (define-key dired-mode-map "o" 'dired-open-mac)
-         (defun dired-open-mac ()
-           (interactive)
-           (let ((file-name (dired-get-file-for-visit)))
-             (if (file-exists-p file-name)
-                 (shell-command (concat "open '" file-name "'" nil )))))
-         ))
+       (define-key dired-mode-map "o" 'dired-open-mac)
+       (defun dired-open-mac ()
+         (interactive)
+         (let ((file-name (dired-get-file-for-visit)))
+           (if (file-exists-p file-name)
+               (shell-command (concat "open '" file-name "'" nil )))))
+       ))
 
-  (cond (on_darwin
-         ;; need find-file to do this
-         (add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
+(cond (on_darwin
+       ;; need find-file to do this
+       (add-to-list 'load-path "/opt/local/share/emacs/site-lisp")
 
-         ;; let meta key also become a command(M) key.
-         (setq mac-option-modifier 'meta)
-         (setq mac-control-modifier 'control)
+       ;; let meta key also become a command(M) key.
+       (setq mac-option-modifier 'meta)
+       (setq mac-control-modifier 'control)
                                         ;(setq mac-right-option-modifier nil)
-         ;;(setq exec-path (append exec-path '("/opt/local/bin")) )
-         (setenv "LC_ALL" "en_US.UTF-8")
-         (setenv "LANG" "en_US.UTF-8")
-         ;; Change control and meta key under mac, make less pain...
+       ;;(setq exec-path (append exec-path '("/opt/local/bin")) )
+       (setenv "LC_ALL" "en_US.UTF-8")
+       (setenv "LANG" "en_US.UTF-8")
+       ;; Change control and meta key under mac, make less pain...
 
-         ;;(exec-path-from-shell-initialize)
-         ))
-
-
-  (global-set-key [f5] 'revert-buffer)
-  (global-set-key [f6] 'ff-find-related-file) ;; Find header file.
+       ;;(exec-path-from-shell-initialize)
+       ))
 
 
-  (setq vc-follow-symlinks t)
+(global-set-key [f5] 'revert-buffer)
+(global-set-key [f6] 'ff-find-related-file) ;; Find header file.
+
+
+(setq vc-follow-symlinks t)
 
 
 (after! company
@@ -296,11 +268,35 @@
   (setq create-lockfiles nil)
   (setq helm-tramp-custom-connections '(/ssh:gtrun@10.220.170.112:/home/gtrun /ssh:test@10.220.170.113:/home/test/http.log))
   (add-hook 'helm-tramp-pre-command-hook '(lambda () ;;(global-aggressive-indent-mode 0)
-             (projectile-mode 0)
-             ;;(editorconfig-mode 0)
-             ))
+                                            (projectile-mode 0)
+                                            ;;(editorconfig-mode 0)
+                                            ))
   (add-hook 'helm-tramp-quit-hook '(lambda () ;;(global-aggressive-indent-mode 1)
-            (projectile-mode 1)
-            ;;(editorconfig-mode 1)
-            ))
-)
+                                     (projectile-mode 1)
+                                     ;;(editorconfig-mode 1)
+                                     ))
+  )
+
+;; (evil-set-initial-state 'ccls-tree-mode 'emacs)
+
+
+
+;; (set-company-backend! '(c-mode
+;;                         c++-mode
+;;                         ess-mode
+;;                         haskell-mode
+;;                         ;;emacs-lisp-mode
+;;                         lisp-mode
+;;                         sh-mode
+;;                         php-mode
+;;                         python-mode
+;;                         go-mode
+;;                         ruby-mode
+;;                         rust-mode
+;;                         js-mode
+;;                         css-mode
+;;                         web-mode
+;;                         )
+;;   '(:separate company-tabnine
+;;               company-files
+;;               company-yasnippet))

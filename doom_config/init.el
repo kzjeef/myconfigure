@@ -74,6 +74,7 @@
        ;;shell             ; simple shell REPL for Emacs
        ;;term              ; basic terminal emulator for Emacs
        ;;vterm             ; the best terminal emulation in Emacs
+       gtagr
 
        :checkers
        syntax              ; tasing you for every semicolon you forget
@@ -104,7 +105,8 @@
 
        :lang
        ;;agda              ; types of types of types of types...
-       cc
+;;       cc
+       (cc +lsp)        ; lsp on server will fail.
        ;;clojure           ; java with a lisp
        ;;common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
@@ -178,3 +180,4 @@
        :config
        ;;literate
        (default +bindings +smartparens))
+

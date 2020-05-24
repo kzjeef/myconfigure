@@ -46,36 +46,7 @@
 ;; our package manager can't deal with; see raxod502/straight.el#279)
 ;(package! builtin-package :recipe (:branch "develop"))
 
-(when (package! lsp-mode)
-  (package! lsp-ui)
-  (package! company-lsp)
-  (package! dap-mode))
-
-;  (when (featurep! +javascript)
-;    (package! lsp-typescript
-;;       :recipe (:fetcher
-;;                github
-;;                :repo "emacs-lsp/lsp-javascript"
-;;                :files ("lsp-typescript.el")))
-;;     (package! tide :disable t))
-
-;;   (when (featurep! +java)
-;;     (packages! lsp-java))
-
-;;   (when (featurep! +sh)
-;;     (package! company-shell :disable t)))
-
-(package! bm)
-(package! w3m)
-(package! discover :recipe (:host github :repo "mickeynp/discover.el"))
-(package! xah-fly-keys :recipe (:host github :repo "xahlee/xah-fly-keys"))
 (package! hungry-delete)
-(package! flymake-json)
-(package! maple-iedit :recipe (:host github :repo "honmaple/emacs-maple-iedit"))
-(package! yatemplate)
-(package! pinyin-search)
-(package! grab-x-link)
-(package! ctrlf :recipe (:host github :repo "raxod502/ctrlf"))
 
 ;; window
 (package! dimmer)
@@ -84,3 +55,10 @@
 (package! writegood-mode)
 
 (package! helm-tramp)
+(package! google-c-style)
+
+
+(when (package! lsp-mode)
+  (package! lsp-ui)
+  (package! company-lsp)
+  (package! dap-mode))
