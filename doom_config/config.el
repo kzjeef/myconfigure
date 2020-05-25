@@ -251,14 +251,31 @@
 
 (setq vc-follow-symlinks t)
 
+(after! ggtags
+  (ggtags-global-mode))
+(after! company
+(add-to-list 'company-backends 'company-gtags)
+)
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+              (ggtags-mode 1))))
+
+  ;; release M-. key for tag.
+(with-eval-after-load 'evil
+    (define-key evil-normal-state-map (kbd "M-.") nil))
+
 
 (after! company
   (setq company-idle-delay 0.1
         company-minimum-prefix-length 2
+        company-tooltip-limit           20
+        company-dabbrev-downcase        nil
         company-transformers nil)
   (setq company-show-numbers t)
   (define-key company-active-map (kbd "C-n") 'company-select-next-or-abort)
   (define-key company-active-map (kbd "C-j") 'company-select-previous-or-abort))
+
 
 
 (use-package! helm-tramp
@@ -278,25 +295,3 @@
   )
 
 ;; (evil-set-initial-state 'ccls-tree-mode 'emacs)
-
-
-
-;; (set-company-backend! '(c-mode
-;;                         c++-mode
-;;                         ess-mode
-;;                         haskell-mode
-;;                         ;;emacs-lisp-mode
-;;                         lisp-mode
-;;                         sh-mode
-;;                         php-mode
-;;                         python-mode
-;;                         go-mode
-;;                         ruby-mode
-;;                         rust-mode
-;;                         js-mode
-;;                         css-mode
-;;                         web-mode
-;;                         )
-;;   '(:separate company-tabnine
-;;               company-files
-;;               company-yasnippet))
