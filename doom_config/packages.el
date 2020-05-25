@@ -47,22 +47,20 @@
 
 (package! ggtags)
 (package! helm-gtags)
+(package! hungry-delete)
+
+;; window
+(package! dimmer)
+(package! beacon)
+(package! golden-ratio)
+(package! writegood-mode)
+
+(package! helm-tramp)
+(package! google-c-style)
+(package! clang-format)
+(package! clang-format-plus)
 
 (when (package! lsp-mode)
   (package! lsp-ui)
   (package! company-lsp)
   (package! dap-mode))
-
-;  (when (featurep! +javascript)
-;    (package! lsp-typescript
-;;       :recipe (:fetcher
-;;                github
-;;                :repo "emacs-lsp/lsp-javascript"
-;;                :files ("lsp-typescript.el")))
-;;     (package! tide :disable t))
-
-;;   (when (featurep! +java)
-;;     (packages! lsp-java))
-
-;;   (when (featurep! +sh)
-;;     (package! company-shell :disable t)))
