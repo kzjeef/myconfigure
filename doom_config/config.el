@@ -279,28 +279,43 @@
 
   (setq vc-follow-symlinks t)
 
+(after! ggtags
+  (ggtags-global-mode))
+(after! company
+(add-to-list 'company-backends 'company-gtags)
+)
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+              (ggtags-mode 1))))
+
+  ;; release M-. key for tag.
+(with-eval-after-load 'evil
+    (define-key evil-normal-state-map (kbd "M-.") nil))
+
 
 (after! company
   (setq company-idle-delay 0.1
         company-minimum-prefix-length 2
+        company-tooltip-limit           20
+        company-dabbrev-downcase        nil
         company-transformers nil)
   (setq company-show-numbers t)
   (define-key company-active-map (kbd "C-n") 'company-select-next-or-abort)
   (define-key company-active-map (kbd "C-j") 'company-select-previous-or-abort))
 
 
-(use-package! helm-tramp
-  :config
-  (setq tramp-default-method "ssh")
-  (setq make-backup-files nil)
-  (setq create-lockfiles nil)
-  (setq helm-tramp-custom-connections '(/ssh:gtrun@10.220.170.112:/home/gtrun /ssh:test@10.220.170.113:/home/test/http.log))
-  (add-hook 'helm-tramp-pre-command-hook '(lambda () ;;(global-aggressive-indent-mode 0)
-             (projectile-mode 0)
-             ;;(editorconfig-mode 0)
-             ))
-  (add-hook 'helm-tramp-quit-hook '(lambda () ;;(global-aggressive-indent-mode 1)
-            (projectile-mode 1)
-            ;;(editorconfig-mode 1)
-            ))
-)
+;; (use-package! helm-tramp
+;;   :config
+;;   (setq tramp-default-method "ssh")
+;;   (setq make-backup-files nil)
+;;   (setq create-lockfiles nil)
+;;   (setq helm-tramp-custom-connections '(/ssh:gtrun@10.220.170.112:/home/gtrun /ssh:test@10.220.170.113:/home/test/http.log))
+;;   (add-hook 'helm-tramp-pre-command-hook '(lambda () ;;(global-aggressive-indent-mode 0)
+;;              (projectile-mode 0)
+;;              ;;(editorconfig-mode 0)
+;;              ))
+;;   (add-hook 'helm-tramp-quit-hook '(lambda () ;;(global-aggressive-indent-mode 1)
+;;             (projectile-mode 1)
+;;             ;;(editorconfig-mode 1)
+;;             )))

@@ -25,8 +25,7 @@
 ;  :recipe (:host github :repo "username/repo"))
 
 ;; If the package you are trying to install does not contain a PACKAGENAME.el
-;; file, or is located in a subdirectory of the repo, you'll need to specify
-;; `:files' in the `:recipe':
+;; file, or is located in a subdirectory of the repo, you'll need to specify ;; `:files' in the `:recipe':
 ;(package! this-package
 ;  :recipe (:host github :repo "username/repo"
 ;           :files ("some-file.el" "src/lisp/*.el")))
@@ -46,6 +45,9 @@
 ;; our package manager can't deal with; see raxod502/straight.el#279)
 ;(package! builtin-package :recipe (:branch "develop"))
 
+(package! ggtags)
+(package! helm-gtags)
+
 (when (package! lsp-mode)
   (package! lsp-ui)
   (package! company-lsp)
@@ -64,23 +66,3 @@
 
 ;;   (when (featurep! +sh)
 ;;     (package! company-shell :disable t)))
-
-(package! bm)
-(package! w3m)
-(package! discover :recipe (:host github :repo "mickeynp/discover.el"))
-(package! xah-fly-keys :recipe (:host github :repo "xahlee/xah-fly-keys"))
-(package! hungry-delete)
-(package! flymake-json)
-(package! maple-iedit :recipe (:host github :repo "honmaple/emacs-maple-iedit"))
-(package! yatemplate)
-(package! pinyin-search)
-(package! grab-x-link)
-(package! ctrlf :recipe (:host github :repo "raxod502/ctrlf"))
-
-;; window
-(package! dimmer)
-(package! beacon)
-(package! golden-ratio)
-(package! writegood-mode)
-
-(package! helm-tramp)
