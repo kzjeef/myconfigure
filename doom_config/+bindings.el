@@ -81,6 +81,9 @@
  :gnmvi "C-e" #'doom/forward-to-last-non-comment-or-eol
  :gnmvi "C-a" #'doom/backward-to-bol-or-indent
  :gnmvi "M-." #'+lookup/definition
+ :gnmvi "M-," #'+lookup/references
+ :gnmvi "M-*" #'pop-tag-mark
+ :gnmvi "M-[" #'pop-tag-mark
  :nv "ge"  #'counsel-etags-find-tag-at-point
  :nv "gE"  #'counsel-etags-find-tag
 
