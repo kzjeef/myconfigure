@@ -15,7 +15,6 @@
 (defun company-files--connected-p (file)
   (not (file-remote-p file)))
 
-
 (use-package! bazel-mode
   :defer t
   :commands bazel-mode
@@ -30,9 +29,9 @@
 (add-to-list 'auto-mode-alist '("\\.inl\\'" . +cc-c-c++-objc-mode))
 (add-to-list 'auto-mode-alist '("\\.inc\\'" . +cc-c-c++-objc-mode))
 
- (add-hook 'c-mode-common-hook 'google-set-c-style)
+;; 精细的undo, 不然会和默认的undo行为不同.
+(setq evil-want-fine-undo 't)
 
-(set-face-attribute 'flycheck-error nil :foreground "pink")
 
 (add-hook 'c-mode-common-hook
           (lambda()
@@ -46,22 +45,7 @@
 ;; too much change!!!!
 ;;(add-hook 'c-mode-common-hook #'clang-format+-mode)
 
-(after! cc-mode
-  (c-add-style
-   "my-cc" '("user"
-             (c-basic-offset . 2)
-             (c-offsets-alist
-              . ((innamespace . 0)
-                 (access-label . -)
-                 (case-label . 0)
-                 (member-init-intro . +)
-                 (topmost-intro . 0)
-                 (arglist-cont-nonempty . +)))))
-;; (setq c-default-style "my-cc")
-;  (google-make-new-line-indent)
-;;  (flycheck-pos-tip-mode 1)
-
-  (setq-default c-basic-offset 2))
+(add-hook 'c-mode-common-hook 'google-set-c-style)
 
 ;; setup doxymacs
 (add-to-list 'load-path "~/myconfigure/doxyemacs")
@@ -75,4 +59,7 @@
 
 
 (with-eval-after-load 'projectile
-  (add-to-list 'projectile-globally-ignored-directories ".ccls-cache"))
+  (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
+  (add-to-list 'projectile-globally-ignored-directories "build")
+  (add-to-list 'projectile-globally-ignored-directories "build_101")
+  )
