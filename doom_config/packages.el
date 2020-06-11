@@ -60,6 +60,10 @@
 (package! clang-format)
 (package! clang-format-plus)
 
+(package! ox-ioslide)
+(package! theme-changer
+  :recipe (:fork (:host github :repo "cnsunyour/theme-changer")))
+
 (when (package! lsp-mode)
   (package! lsp-ui)
   (package! company-lsp)

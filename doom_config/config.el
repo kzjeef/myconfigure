@@ -16,8 +16,9 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
-
+;(setq doom-theme 'doom-one)
+;(setq doom-theme 'doom-gruvbox)
+(setq doom-theme 'doom-monokai-pro)
 (setq org-directory "~/Dropbox/org/")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
@@ -56,6 +57,11 @@
 (defun not-in-spacemacs()
   (not (is-in-spacemacs)))
 
+;(cond (on_darwin
+; (setq url-proxy-services
+;       '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+;         ("http" . "localhost:7890")
+;         ("https" . "localhost:7890")))))
 
 (defmacro safe-wrap (fn &rest clean-up)
   `(unwind-protect
@@ -119,7 +125,6 @@
                        (looking-at ".*[(,][ \t]*\\[[^]]*\\][ \t]*[({][^}]*$"))))
               0                           ; no additional indent
             ad-do-it)))                   ; default behavior
-
 
 
 
@@ -251,15 +256,15 @@
 
 (setq vc-follow-symlinks t)
 
-(after! ggtags
-  (ggtags-global-mode))
-(after! company
-(add-to-list 'company-backends 'company-gtags)
-)
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
-              (ggtags-mode 1))))
+;; (after! ggtags
+;;   (ggtags-global-mode))
+;; (after! company
+;; (add-to-list 'company-backends 'company-gtags)
+;; )
+;(add-hook 'c-mode-common-hook
+;          (lambda ()
+;            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+;              (ggtags-mode 1))))
 
   ;; release M-. key for tag.
 (with-eval-after-load 'evil
@@ -294,4 +299,75 @@
                                      ))
   )
 
+(after! org
+  (lambda()
+    (require ox-ioslide)
+    )
+  )
+
 ;; (evil-set-initial-state 'ccls-tree-mode 'emacs)
+
+
+
+;; 每天根据日出日落时间自动换主题
+;; 本插件的加载时机很关键，Doom 的加载顺序为：
+;;
+;; ~/.emacs.d/init.el
+;; ~/.emacs.d/core/core.el
+;; ~/.doom.d/init.el
+;; Module init.el files
+;; `doom-before-init-modules-hook'
+;; Module config.el files
+;; ~/.doom.d/config.el
+;; `doom-init-modules-hook'
+;; `after-init-hook'
+;; `emacs-startup-hook'
+;; `doom-init-ui-hook'
+;; `window-setup-hook'
+;;
+;; 只有放在module config.el files之后，doom-init-ui-hook之前才能正常执行
+(use-package! theme-changer
+  :custom
+  (theme-changer-delay-seconds 1200)
+  :config
+(add-hook! emacs-startup
+             :append
+             (change-theme '(doom-one-light
+                             doom-acario-light
+                             doom-nord-light
+                             doom-opera-light
+                             doom-solarized-light
+                             doom-tomorrow-day
+                             )
+                           '(doom-one
+                             doom-vibrant
+                             doom-acario-dark
+                             doom-city-lights
+                             doom-challenger-deep
+                             doom-dark+
+                             doom-dracula
+                             doom-gruvbox
+                             doom-horizon
+                             doom-Iosvkem
+                             doom-laserwave
+                             doom-material
+                             doom-molokai
+                             doom-monokai-classic
+                             doom-monokai-pro
+                             doom-monokai-spectrum
+                             doom-moonlight
+                             doom-oceanic-next
+                             doom-palenight
+                             doom-peacock
+                             doom-rouge
+                             doom-snazzy
+                             ;; doom-sourcerer
+                             doom-spacegrey
+                             doom-tomorrow-night
+                             doom-vibrant
+                             ))
+             (add-hook! doom-load-theme
+                        :append
+                        (unless (string-prefix-p "doom-" (symbol-name doom-theme))
+                          (set-face-background 'solaire-hl-line-face nil)
+                          (set-face-background 'solaire-default-face nil)))))

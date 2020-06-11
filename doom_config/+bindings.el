@@ -60,7 +60,8 @@
  "M-e"    #'+ivy/switch-workspace-buffer
  "C-M-\\" #'indent-region-or-buffer
  "M-m"    #'kmacro-call-macro
- "M-/"    #'doom/toggle-comment-region-or-line)
+; "M-/"    #'doom/toggle-comment-region-or-line
+ )
 
 (map!
  ;; Unix text-editing keys & motions

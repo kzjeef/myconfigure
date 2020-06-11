@@ -7,6 +7,14 @@
 (after! company
   (setq company-idle-delay 0.2))
 
+(use-package! theme-changer
+  :defer t
+  :config
+(setq calendar-location-name "Shanghai")
+(setq calendar-latitude +31.11)
+(setq calendar-longitude +121.29)
+(change-theme 'doom-one-light  'doom-one))
+
 
 (add-to-list 'auto-mode-alist '("\\.cu$" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
