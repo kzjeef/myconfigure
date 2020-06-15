@@ -40,6 +40,8 @@
 ;; 精细的undo, 不然会和默认的undo行为不同.
 (setq evil-want-fine-undo 't)
 
+;; 长行换行
+(set-default 'truncate-lines t)
 
 (add-hook 'c-mode-common-hook
           (lambda()
