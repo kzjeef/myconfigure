@@ -7,13 +7,16 @@
 (after! company
   (setq company-idle-delay 0.2))
 
-(use-package! theme-changer
-  :defer t
-  :config
-(setq calendar-location-name "Shanghai")
-(setq calendar-latitude +31.11)
-(setq calendar-longitude +121.29)
-(change-theme 'doom-one-light  'doom-one))
+ (use-package! theme-changer
+   :defer t
+   :config
+ (setq calendar-location-name "Shanghai")
+ (setq calendar-latitude +31.11)
+ (setq calendar-longitude +121.29)
+; (change-theme 'doom-one-light  'doom-one)
+(change-theme 'doom-one 'doom-one)
+
+ )
 
 
 (add-to-list 'auto-mode-alist '("\\.cu$" . c++-mode))
@@ -73,3 +76,33 @@
   (add-to-list 'projectile-globally-ignored-directories "build")
   (add-to-list 'projectile-globally-ignored-directories "build_101")
   )
+
+
+(when IS-MAC
+;; method0 是英文输入法，method1是中文输入法
+(setq input-switch-method0 "com.apple.keylayout.ABC")
+(setq input-switch-method1 "com.sogou.inputmethod.sogou.pinyin")
+(setq input-switch-is-on nil)
+
+;; 通过运行命令切换输入法
+(defun input-switch-use-method (method)
+  (when input-switch-is-on
+    (shell-command (replace-regexp-in-string "method" method "swim use method"))))
+
+;; 开启或关闭输入法切换
+(defun input-switch-enable () (interactive) (setq input-switch-is-on t))
+(defun input-switch-disable () (interactive) (setq input-switch-is-on nil))
+
+;; 进入insert mode切换第二输入法（中文）
+(add-hook 'evil-insert-state-entry-hook
+          (lambda () (input-switch-use-method input-switch-method1)))
+;; 退出insert mode切换第一输入法（英文）
+(add-hook 'evil-insert-state-exit-hook
+          (lambda () (input-switch-use-method input-switch-method0)))
+
+;; 在org mode 下面自动打开.
+(add-hook 'org-mode-hook (lambda()
+                           (input-switch-enable)
+                           ))
+
+)

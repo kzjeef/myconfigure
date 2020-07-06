@@ -23,8 +23,11 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type t)
+;; 关闭行号, 在mac下面org-mode会非常的卡.
+(setq display-line-numbers-type nil)
 
+;;; 防止tramp出现小文件打不开的
+(setq tramp-inline-compress-start-size 1000000)
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -330,44 +333,59 @@
   :custom
   (theme-changer-delay-seconds 1200)
   :config
-(add-hook! emacs-startup
-             :append
-             (change-theme '(doom-one-light
-                             doom-acario-light
-                             doom-nord-light
-                             doom-opera-light
-                             doom-solarized-light
-                             doom-tomorrow-day
-                             )
-                           '(doom-one
-                             doom-vibrant
-                             doom-acario-dark
-                             doom-city-lights
-                             doom-challenger-deep
-                             doom-dark+
-                             doom-dracula
-                             doom-gruvbox
-                             doom-horizon
-                             doom-Iosvkem
-                             doom-laserwave
-                             doom-material
-                             doom-molokai
-                             doom-monokai-classic
-                             doom-monokai-pro
-                             doom-monokai-spectrum
-                             doom-moonlight
-                             doom-oceanic-next
-                             doom-palenight
-                             doom-peacock
-                             doom-rouge
-                             doom-snazzy
-                             ;; doom-sourcerer
-                             doom-spacegrey
-                             doom-tomorrow-night
-                             doom-vibrant
-                             ))
-             (add-hook! doom-load-theme
-                        :append
-                        (unless (string-prefix-p "doom-" (symbol-name doom-theme))
-                          (set-face-background 'solaire-hl-line-face nil)
-                          (set-face-background 'solaire-default-face nil)))))
+
+  ;; Uncomment below lines to enable change by time
+;; (add-hook! emacs-startup
+;;              :append
+;;              (change-theme '(doom-one-light
+;;                              doom-acario-light
+;;                              doom-nord-light
+;;                              doom-opera-light
+;;                              doom-solarized-light
+;;                              doom-tomorrow-day
+;;                              )
+;;                            '(doom-one
+;;                              doom-vibrant
+;;                              doom-acario-dark
+;;                              doom-city-lights
+;;                              doom-challenger-deep
+;;                              doom-dark+
+;;                              doom-dracula
+;;                              doom-gruvbox
+;;                              doom-horizon
+;;                              doom-Iosvkem
+;;                              doom-laserwave
+;;                              doom-material
+;;                              doom-molokai
+;;                              doom-monokai-classic
+;;                              doom-monokai-pro
+;;                              doom-monokai-spectrum
+;;                              doom-moonlight
+;;                              doom-oceanic-next
+;;                              doom-palenight
+;;                              doom-peacock
+;;                              doom-rouge
+;;                              doom-snazzy
+;;                              ;; doom-sourcerer
+;;                              doom-spacegrey
+;;                              doom-tomorrow-night
+;;                              doom-vibrant
+;;                              ))
+;;              (add-hook! doom-load-theme
+;;                         :append
+;;                         (unless (string-prefix-p "doom-" (symbol-name doom-theme))
+;;                           (set-face-background 'solaire-hl-line-face nil)
+;;                           (set-face-background 'solaire-default-face nil))))
+
+)
+
+
+(after! centaur-tabs
+  (centaur-tabs-mode 1)
+  (setq centaur-tabs-height 36
+        centaur-tabs-set-icons t
+        centaur-tabs-modified-marker "o"
+        centaur-tabs-close-button "×"
+        centaur-tabs-set-bar 'above)
+        centaur-tabs-gray-out-icons 'buffer
+  (centaur-tabs-change-fonts "P22 Underground Book" 160))
