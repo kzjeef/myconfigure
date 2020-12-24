@@ -63,6 +63,24 @@
 ; "M-/"    #'doom/toggle-comment-region-or-line
  )
 
+(map! :leader
+      :desc "Pop tag mark" "c u" #'pop-tag-mark
+      :desc "Pop tag mark" "c p" #'pop-tag-mark
+      )
+
+(map! :leader
+      (:prefix-map ("c" . "code")
+       (:prefix ("M" . "Doxymacs" )
+        :desc "Doxymacs in function comment" "f" #'doxymacs-insert-function-comment
+        :desc "Doxymacs in member comment" "m" #'doxymacs-insert-member-comment
+        )))
+
+(map! :leader :desc "Doxymacs in function comment"
+      "c m f" #'doxymacs-insert-function-comment)
+(map! :leader :desc "Doxymacs in member comment"
+      "c m m" #'doxymacs-insert-member-comment)
+
+
 (map!
  ;; Unix text-editing keys & motions
  :gi "C-n" #'next-line
