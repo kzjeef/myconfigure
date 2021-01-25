@@ -14,10 +14,17 @@
  (setq calendar-latitude +31.11)
  (setq calendar-longitude +121.29)
 ; (change-theme 'doom-one-light  'doom-one)
-(change-theme 'doom-one 'doom-one)
-
- )
-
+                                        ;
+;      (change-theme 'doom-one 'doom-one)
+ (if (display-graphic-p)
+    (progn
+    ;; if graphic
+ (change-theme 'doom-one' doom-one)
+      )
+    ;; else (optional)
+; (change-theme 'doom-zenburn 'doom-zenburn)
+    )
+)
 (setq py-python-command "python3")
 (add-to-list 'auto-mode-alist '("\\.cu$" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
@@ -50,6 +57,10 @@
           (lambda()
             ;(hl-line-mode -1)
             ;(global-hl-line-mode -1)
+            ;
+               (setq lsp-enable-file-watchers nil)
+               (setq lsp-auto-guess-root nil)
+
             )
           't
           )
