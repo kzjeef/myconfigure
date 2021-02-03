@@ -22,7 +22,8 @@
  (change-theme 'doom-one' doom-one)
       )
     ;; else (optional)
-; (change-theme 'doom-zenburn 'doom-zenburn)
+    (message "no color theme under console.")
+;;  (change-theme 'doom-molokai 'doom-molokai)
     )
 )
 (setq py-python-command "python3")
@@ -52,6 +53,8 @@
 
 ;; 长行换行
 (set-default 'truncate-lines t)
+
+
 
 (add-hook 'c-mode-common-hook
           (lambda()

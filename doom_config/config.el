@@ -18,7 +18,8 @@
 ;; `load-theme' function. This is the default:
 ;(setq doom-theme 'doom-one)
 ;(setq doom-theme 'doom-gruvbox)
-(setq doom-theme 'doom-monokai-pro)
+;(setq doom-theme 'doom-monokai)
+(setq doom-theme 'doom-dracula)
 (setq org-directory "~/Dropbox/org/")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
@@ -195,6 +196,8 @@
 (setq visiable-bell t)	 ;; 把嘟的声音去掉
 (setq ring-bell-function 'ignore)	;; 不要让那个DIDI的响
 
+(global-visual-line-mode t) ;; 长行折行
+
 (setq transient-mark-mode nil)	 ;; 两次按C－space以后高亮显示区域
 
 (setq display-time-24hr-format t)
@@ -329,12 +332,12 @@
 ;; `window-setup-hook'
 ;;
 ;; 只有放在module config.el files之后，doom-init-ui-hook之前才能正常执行
-(use-package! theme-changer
-  :custom
-  (theme-changer-delay-seconds 1200)
-  :config
+;; (use-package! theme-changer
+;;   :custom
+;;   (theme-changer-delay-seconds 1200)
+;;   :config
 
-  ;; Uncomment below lines to enable change by time
+;;   ;; Uncomment below lines to enable change by time
 ;; (add-hook! emacs-startup
 ;;              :append
 ;;              (change-theme '(doom-one-light
@@ -344,7 +347,9 @@
 ;;                              doom-solarized-light
 ;;                              doom-tomorrow-day
 ;;                              )
-;;                            '(doom-one
+;;                            '(
+;;                              doom-molokai
+;;                              doom-one
 ;;                              doom-vibrant
 ;;                              doom-acario-dark
 ;;                              doom-city-lights
@@ -356,7 +361,6 @@
 ;;                              doom-Iosvkem
 ;;                              doom-laserwave
 ;;                              doom-material
-;;                              doom-molokai
 ;;                              doom-monokai-classic
 ;;                              doom-monokai-pro
 ;;                              doom-monokai-spectrum
@@ -375,13 +379,21 @@
 ;;                         :append
 ;;                         (unless (string-prefix-p "doom-" (symbol-name doom-theme))
 ;;                           (set-face-background 'solaire-hl-line-face nil)
-;;                           (set-face-background 'solaire-default-face nil))))
-
-)
+;;                            (set-face-background 'solaire-default-face nil)))))
 
 (remove-hook 'doom-post-init-hook #'osx-clipboard-mode)
 
+;(custom-set-faces
+;   '(solaire-hl-line-face ((t (:inherit hl-line :background "#0D343E" :foreground "gray13")))))
 
+(defun my-remap-hl-line ()
+  "Remap hl-line face."
+  (face-remap-add-relative 'hl-line `(:background ,(face-background 'default) :foreground ,(face-foreground 'lazy-highlight))))
+
+(with-eval-after-load 'treemacs
+  (add-hook 'treemacs-mode-hook #'my-remap-hl-line))
+
+(advice-add #'doom-highlight-non-default-indentation-h :override #'ignore)
 
 (after! centaur-tabs
   (centaur-tabs-mode 1)
