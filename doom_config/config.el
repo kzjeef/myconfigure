@@ -12,6 +12,7 @@
       user-mail-address "jiejing.zjj@alibaba-inc.com")
 (require 'cl)
 (setq doom-font (font-spec :family "Source Code Pro" :size 14))
+;;(setq doom-font (font-spec :family "Fira Code" :size 14))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -20,12 +21,15 @@
 ;(setq doom-theme 'doom-gruvbox)
 ;(setq doom-theme 'doom-monokai)
 (setq doom-theme 'doom-dracula)
-(setq org-directory "~/Dropbox/org/")
+;(setq org-directory "~/Dropbox/org/")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 ;; 关闭行号, 在mac下面org-mode会非常的卡.
 (setq display-line-numbers-type nil)
+
+;; 解决中文卡顿的问题.
+(set-language-environment 'utf-8)
 
 ;;; 防止tramp出现小文件打不开的
 (setq tramp-inline-compress-start-size 1000000)
