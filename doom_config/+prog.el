@@ -121,6 +121,15 @@
 
 )
 
+;(with-eval-after-load 'valign
+;(setq valign-fancy-bar non-nil))
+
+
+;; 让中文表格对齐.
+(setq valign-fancy-bar 1)
+(add-hook 'org-mode-hook 'valign-mode)
+
+
 (defun remove-dos-eol ()
   "Do not show ^M in files containing mixed UNIX and DOS line endings."
   (interactive)

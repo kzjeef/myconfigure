@@ -2,10 +2,7 @@
 ;;; $DOOMDIR/packages.el
 
 ;; To install a package with Doom you must declare them here, run 'doom sync' on
-;; the command line, then restart Emacs for the changes to take effect.
-;; Alternatively, use M-x doom/reload.
-
-
+;; the command line, then restart Emacs for the changes to take effect. ;; Alternatively, use M-x doom/reload.
 ;; Doom's packages are pinned to a specific commit and updated from release to
 ;; release. The `unpin!' macro allows you to unpin single packages...
 ;(unpin! pinned-package)
@@ -48,6 +45,7 @@
 (package! ggtags)
 (package! helm-gtags)
 (package! hungry-delete)
+(package! magit-section)
 
 ;; window
 (package! dimmer)
@@ -68,3 +66,7 @@
   (package! lsp-ui)
   (package! company-lsp)
   (package! dap-mode))
+
+
+(package! valign
+  :recipe (:host github :repo "casouri/valign"))
