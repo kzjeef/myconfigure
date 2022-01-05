@@ -57,6 +57,21 @@ create `.ccls` file, and `.ccls` file content should at leaset have
 
 link json to root folder (.ccls) folder
 
+4. flycheck.
 
+by default, fly check use clang directly, and the ccls compile flag(eg, include path) cannot used by flycheck, therefore some include path error will be occurs.
+to fix this issue, 
+create a `.dir-locals.el` file under the project root folder.
+and the content of this fly should like this, the incldue path list can be copy from compile_commands.json
+```
+((nil . ((flycheck-clang-language-standard . "gnu++14") ; c++ standard.
+         (flycheck-clang-include-path . ("."          ; include path.
+                                         "src"
+                                         "util"
+                                         "include"
+                                         ))
+         )
+      ))
+```
 
 
