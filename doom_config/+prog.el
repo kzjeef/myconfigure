@@ -54,15 +54,19 @@
 ;; 长行换行
 (set-default 'truncate-lines t)
 
-
+(with-eval-after-load 'lsp-mode
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.git\\'")
+  ;; or
+  (setq lsp-auto-guess-root nil)
+  (add-to-list 'lsp-file-watch-ignored-files "[/\\\\]\\.my-files\\'"))
 
 (add-hook 'c-mode-common-hook
           (lambda()
             ;(hl-line-mode -1)
             ;(global-hl-line-mode -1)
             ;
-               (setq lsp-enable-file-watchers nil)
-               (setq lsp-auto-guess-root nil)
+           ;  (setq lsp-enable-file-watchers nil) ; 如果禁用file watch 去掉前面注释。
+;               (setq lsp-auto-guess-root nil)
 
             )
           't
@@ -98,9 +102,9 @@
 (setq input-switch-method1 "com.sogou.inputmethod.sogou.pinyin")
 (setq input-switch-is-on nil)
 
-;; 通过运行命令切换输入法
+;; 通过运行命令切换输入法，只在非编程模式下才做这个输入法切换。
 (defun input-switch-use-method (method)
-  (when input-switch-is-on
+  (when (and input-switch-is-on (not (derived-mode-p 'prog-mode)))
     (shell-command (replace-regexp-in-string "method" method "swim use method"))))
 
 ;; 开启或关闭输入法切换

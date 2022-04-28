@@ -12,9 +12,6 @@
       user-mail-address "jiejing.zjj@alibaba-inc.com")
 (require 'cl)
 (setq doom-font (font-spec :family "Source Code Pro" :size 14))
-;;(setq doom-font (font-spec :family "Fira Code" :size 14))
-
-;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;(setq doom-theme 'doom-one)
@@ -406,15 +403,6 @@
 
 (advice-add #'doom-highlight-non-default-indentation-h :override #'ignore)
 
-(after! centaur-tabs
-  (centaur-tabs-mode 1)
-  (setq centaur-tabs-height 36
-        centaur-tabs-set-icons t
-        centaur-tabs-modified-marker "o"
-        centaur-tabs-close-button "×"
-        centaur-tabs-set-bar 'above)
-        centaur-tabs-gray-out-icons 'buffer
-  (centaur-tabs-change-fonts "P22 Underground Book" 160))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
