@@ -61,12 +61,17 @@
   (add-to-list 'lsp-file-watch-ignored-files "[/\\\\]\\.my-files\\'"))
 
 (add-hook 'c-mode-common-hook
+
+          ;; 在mac的UI模式下关闭高亮当前行，有些速度慢
           (lambda()
-            ;(hl-line-mode -1)
-            ;(global-hl-line-mode -1)
-            ;
-           ;  (setq lsp-enable-file-watchers nil) ; 如果禁用file watch 去掉前面注释。
-;               (setq lsp-auto-guess-root nil)
+            (if (display-graphic-p)
+                (when IS-MAC
+                  (progn
+                    (hl-line-mode -1)
+                    (global-hl-line-mode -1))))
+                                        ;
+                                        ;  (setq lsp-enable-file-watchers nil) ; 如果禁用file watch 去掉前面注释。
+                                        ;               (setq lsp-auto-guess-root nil)
 
             )
           't

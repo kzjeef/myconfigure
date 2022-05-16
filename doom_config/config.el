@@ -197,7 +197,14 @@
 (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
 (add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++14")))
 
-                                        ;(global-hl-line-mode -1) ;; enable hightlight current line.
+;(global-hl-line-mode -1) ;; enable hightlight current line.
+
+;; Increase threshold to fire garbage collection
+(setq gc-cons-threshold 1073741824)
+(setq garbage-collection-messages t)
+
+;; Run GC every 60 seconds if emacs is idle.
+(run-with-idle-timer 60.0 t #'garbage-collect)
 
 (auto-compression-mode 1) ;; 打开压缩文件时自动解压缩
 

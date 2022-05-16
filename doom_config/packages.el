@@ -48,7 +48,6 @@
 (package! magit-section)
 
 ;; window
-(package! dimmer)
 (package! beacon)
 (package! golden-ratio)
 (package! writegood-mode)
@@ -67,6 +66,11 @@
   (package! company-lsp)
   (package! dap-mode))
 
-
+(package! gitconfig-mode
+	  :recipe (:host github :repo "magit/git-modes"
+			 :files ("gitconfig-mode.el")))
+(package! gitignore-mode
+	  :recipe (:host github :repo "magit/git-modes"
+			 :files ("gitignore-mode.el")))
 (package! valign
   :recipe (:host github :repo "casouri/valign"))
