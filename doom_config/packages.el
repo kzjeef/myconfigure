@@ -42,17 +42,17 @@
 ;; our package manager can't deal with; see raxod502/straight.el#279)
 ;(package! builtin-package :recipe (:branch "develop"))
 
-(package! ggtags)
-(package! helm-gtags)
+;(package! ggtags)
+;(package! helm-gtags)
 (package! hungry-delete)
-(package! magit-section)
+;(package! magit-section)
 
 ;; window
-(package! beacon)
-(package! golden-ratio)
-(package! writegood-mode)
+;(package! beacon)
+;(package! golden-ratio)
+;(package! writegood-mode)
 
-(package! helm-tramp)
+;(package! helm-tramp)
 (package! google-c-style)
 (package! clang-format)
 (package! clang-format-plus)
