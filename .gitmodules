@@ -1,27 +1,3 @@
-[submodule "yasnippet"]
-	path = yasnippet
-	url = https://github.com/capitaomorte/yasnippet.git
 [submodule "emacs-clang-complete-async"]
 	path = emacs-clang-complete-async
 	url = https://github.com/Golevka/emacs-clang-complete-async.git
-[submodule "multiple-cursors"]
-	path = multiple-cursors
-	url = https://github.com/emacsmirror/multiple-cursors.git
-[submodule "web-mode"]
-	path = web-mode
-	url = https://github.com/fxbois/web-mode
-[submodule "yasnippet-ruby-mode"]
-	path = yasnippet-ruby-mode
-	url = git@github.com:bmaland/yasnippet-ruby-mode.git
-[submodule "emacs-rails"]
-	path = emacs-rails
-	url = git://github.com/remvee/emacs-rails.git
-[submodule "auto-complete"]
-	path = auto-complete
-	url = https://github.com/auto-complete/auto-complete.git
-[submodule "mysnippets/golang"]
-	path = mysnippets/golang
-	url = https://github.com/atotto/yasnippet-golang.git
-[submodule "yasnippet-snippets"]
-	path = yasnippet-snippets
-	url = git@github.com:AndreaCrotti/yasnippet-snippets.git

@@ -215,8 +215,8 @@
 
 (setq transient-mark-mode nil)	 ;; 两次按C－space以后高亮显示区域
 
-(setq display-time-24hr-format t)
-(setq display-time-day-and-date t)
+(setq display-time-24hr-format nil)
+(setq display-time-day-and-date nil)
 (setq display-time-interval 10)
 (display-time-mode 1)
 
