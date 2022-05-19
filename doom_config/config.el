@@ -291,6 +291,19 @@
 (with-eval-after-load 'evil
     (define-key evil-normal-state-map (kbd "M-.") nil))
 
+(after! lsp-mode (
+setq lsp-lens-enable nil
+lsp-ui-peek-enable t
+lsp-ui-doc-enable nil
+lsp-ui-doc-position 'bottom
+lsp-ui-doc-max-height 70
+lsp-ui-doc-max-width 150
+lsp-ui-sideline-show-diagnostics t
+lsp-ui-sideline-show-hover nil
+lsp-ui-sideline-show-code-actions t
+lsp-ui-sideline-diagnostic-max-lines 20
+lsp-ui-sideline-ignore-duplicate t
+lsp-ui-sideline-enable t))
 
 (after! company
   (setq company-idle-delay 0.4

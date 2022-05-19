@@ -33,7 +33,7 @@
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        ;;hydra
        ;;indent-guides     ; highlighted indent columns
-       (ligatures +extra)           ; ligatures and symbols to make your code pretty again
+       ;;(ligatures +extra)           ; ligatures and symbols to make your code pretty again
 
        modeline          ; snazzy, Atom-inspired modeline, plus API
        ;;nav-flash         ; blink cursor line after big motions
