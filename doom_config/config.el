@@ -215,10 +215,11 @@
 
 (setq transient-mark-mode nil)	 ;; 两次按C－space以后高亮显示区域
 
-(setq display-time-24hr-format nil)
+(setq display-time-24hr-format nil
+)
 (setq display-time-day-and-date nil)
 (setq display-time-interval 10)
-(display-time-mode 1)
+(display-time-mode nil)
 
 
 (setq suggest-key-bindings 1)	 ;; 当使用 M-x COMMAND 后，过 1 秒钟显示该 COMMAND 绑定的键。
@@ -298,11 +299,13 @@ lsp-ui-doc-enable nil
 lsp-ui-doc-position 'bottom
 lsp-ui-doc-max-height 70
 lsp-ui-doc-max-width 150
+lsp-diagnostics-provider 'flycheck
 lsp-ui-sideline-show-diagnostics t
 lsp-ui-sideline-show-hover nil
 lsp-ui-sideline-show-code-actions t
 lsp-ui-sideline-diagnostic-max-lines 20
 lsp-ui-sideline-ignore-duplicate t
+ lsp-prefer-flymake nil
 lsp-ui-sideline-enable t))
 
 (after! company
