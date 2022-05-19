@@ -61,10 +61,13 @@
 (package! theme-changer
   :recipe (:fork (:host github :repo "cnsunyour/theme-changer")))
 
+(package! ivy-rich :disable t) ;; ivy rich 造成翻页非常慢
+
 (when (package! lsp-mode)
-  (package! lsp-ui)
+;  (package! lsp-ui)
   (package! company-lsp)
-  (package! dap-mode))
+ ; (package! dap-mode)
+  )
 
 (package! gitconfig-mode
 	  :recipe (:host github :repo "magit/git-modes"

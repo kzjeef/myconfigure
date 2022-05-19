@@ -10,31 +10,12 @@
 [submodule "web-mode"]
 	path = web-mode
 	url = https://github.com/fxbois/web-mode
-[submodule "enhanced-ruby-mode"]
-	path = enhanced-ruby-mode
-	url = https://github.com/zenspider/enhanced-ruby-mode.git
-[submodule "ergoemacs-mode"]
-	path = ergoemacs-mode
-	url = https://github.com/ergoemacs/ergoemacs-mode.git
-	branch = master
 [submodule "yasnippet-ruby-mode"]
 	path = yasnippet-ruby-mode
 	url = git@github.com:bmaland/yasnippet-ruby-mode.git
-[submodule "yas-rails"]
-	path = yas-rails
-	url = git://github.com/eschulte/yasnippets-rails.git
 [submodule "emacs-rails"]
 	path = emacs-rails
 	url = git://github.com/remvee/emacs-rails.git
-[submodule "ecb"]
-	path = ecb
-	url = https://github.com/emacsmirror/ecb.git
-[submodule "ace-jump-mode"]
-	path = ace-jump-mode
-	url = https://github.com/winterTTr/ace-jump-mode.git
-[submodule "cedet"]
-	path = cedet
-	url = http://git.randomsample.de/cedet.git
 [submodule "auto-complete"]
 	path = auto-complete
 	url = https://github.com/auto-complete/auto-complete.git

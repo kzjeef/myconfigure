@@ -293,8 +293,8 @@
 
 
 (after! company
-  (setq company-idle-delay 0.1
-        company-minimum-prefix-length 2
+  (setq company-idle-delay 0.4
+        company-minimum-prefix-length 3
         company-tooltip-limit           20
         company-dabbrev-downcase        nil
         company-transformers nil)
@@ -400,9 +400,9 @@
 ;(custom-set-faces
 ;   '(solaire-hl-line-face ((t (:inherit hl-line :background "#0D343E" :foreground "gray13")))))
 
-(defun my-remap-hl-line ()
-  "Remap hl-line face."
-  (face-remap-add-relative 'hl-line `(:background ,(face-background 'default) :foreground ,(face-foreground 'lazy-highlight))))
+;;(defun my-remap-hl-line ()
+;;  "Remap hl-line face."
+;;  (face-remap-add-relative 'hl-line `(:background ,(face-background 'default) :foreground ,(face-foreground 'lazy-highlight))))
 
 (with-eval-after-load 'treemacs
   (add-hook 'treemacs-mode-hook #'my-remap-hl-line))

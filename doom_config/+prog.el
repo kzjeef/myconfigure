@@ -5,7 +5,7 @@
 ;; https://github.com/ztlevi/doom-config
 ;;
 (after! company
-  (setq company-idle-delay 0.2))
+  (setq company-idle-delay 0.5))
 
  (use-package! theme-changer
    :defer t
