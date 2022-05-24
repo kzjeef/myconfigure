@@ -11,7 +11,9 @@
 (setq user-full-name "Jiejing Zhang"
       user-mail-address "jiejing.zjj@alibaba-inc.com")
 (require 'cl)
-(setq doom-font (font-spec :family "Source Code Pro" :size 14))
+(setq doom-font (font-spec :family "Source Code Pro" :size 13))
+;(setq doom-font (font-spec :family "Fira Code" :size 12))
+
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;(setq doom-theme 'doom-one)
@@ -272,7 +274,6 @@
        ))
 
 
-(global-set-key [f5] 'revert-buffer)
 (global-set-key [f6] 'ff-find-related-file) ;; Find header file.
 
 

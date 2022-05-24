@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: express-callback
-# key: ecb
-# --
-function(req, res, next) {
-  $1
-}

@@ -64,6 +64,11 @@
 
           ;; 在mac的UI模式下关闭高亮当前行，有些速度慢
           (lambda()
+
+            (global-set-key (kbd "<f5>") (lambda ()
+                                           (interactive)
+                                           (setq-local compilation-read-command nil)
+                                           (call-interactively 'compile)))
             (if (display-graphic-p)
                 (when IS-MAC
                   (progn
@@ -80,6 +85,13 @@
 ;; will only format the modify line,  really handy.
 ;; too much change!!!!
 ;;(add-hook 'c-mode-common-hook #'clang-format+-mode)
+;;
+;;
+(with-eval-after-load 'evil-maps
+  (define-key evil-normal-state-map (kbd ";") 'evil-ex)
+  (define-key evil-normal-state-map (kbd "J")  'evil-next-visual-line)
+  (define-key evil-normal-state-map (kbd "K") 'evil-previous-visual-line))
+
 
 (add-hook 'c-mode-common-hook 'google-set-c-style)
 
@@ -93,6 +105,9 @@
 (add-hook 'c-mode-common-hook'doxymacs-mode)
 
 
+(with-eval-after-load 'yasnnipe
+(define-key yas-minor-mode-map [(tab)] nil)
+(define-key yas-minor-mode-map (kbd "TAB") nil))
 
 (with-eval-after-load 'projectile
   (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")

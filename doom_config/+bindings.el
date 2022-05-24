@@ -12,26 +12,16 @@
  ;; overrides other minor mode keymaps (just for non-evil)
  (:map override ;; general-override-mode-map
   "M-q"   (if (daemonp) #'delete-frame #'save-buffers-kill-terminal)
-  "M-p"   #'+ivy/projectile-find-file
-  "M-y"   #'helm-show-kill-ring
-  "C-h m" #'describe-mode
   "C-]"   #'yas-expand
   "M-;"   #'+my/insert-semicolon-at-the-end-of-this-line
   "C-M-;" #'+my/delete-semicolon-at-the-end-of-this-line)
  "M-`"   #'other-frame
  "C-M-o" #'other-frame
  ;; fix OS window/frame navigation/manipulation keys
- "M-w" #'delete-window
- "M-W" #'delete-frame
  "M-n" #'+default/new-buffer
- "M-N" #'make-frame
- "C-M-f" #'toggle-frame-fullscreen
- "M-t" #'transpose-words
  :gn "C-t" nil
  ;; Restore OS undo, save, copy, & paste keys (without cua-mode, because
  ;; it imposes some other functionality and overhead we don't need)
- "M-z" #'undo
- "M-Z" #'redo
  "M-c" (if (featurep 'evil) #'evil-yank #'copy-region-as-kill)
  "M-v" #'yank-with-delete-region
  "M-s" #'evil-write-all
@@ -94,6 +84,8 @@
  :v "DEL" (kbd "\"_d")
  :v "<del>" (kbd "\"_d")
  :v "<backspace>" (kbd "\"_d")
+ :nmv "TAB" #'c-indent-line-or-region
+ :v "` `" #'c-indent-line-or-region
  :nmv "-" (λ! (better-jumper-jump-backward 1))
  :nmv "=" (λ! (better-jumper-jump-forward 1))
 
@@ -105,8 +97,6 @@
 ; following two key binding break copy-paste
 ; :gnmvi "M-*" #'pop-tag-mark
 ; :gnmvi "M-[" #'pop-tag-mark
- :nv "ge"  #'counsel-etags-find-tag-at-point
- :nv "gE"  #'counsel-etags-find-tag
 
  (:prefix "C-x"
   :n "e"  #'pp-eval-last-sexp)

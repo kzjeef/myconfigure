@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: Express Router function
-# key: erf
-# --
-
-router.${1:post}('$2', function(req, res, next) {
-  $3                     
-};
