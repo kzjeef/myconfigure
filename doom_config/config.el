@@ -40,6 +40,23 @@
 ;;; 防止tramp出现小文件打不开的
 (setq tramp-inline-compress-start-size 1000000)
 
+(setq projectile-file-exists-remote-cache-expire nil)
+
+(menu-bar-mode t) ;; 防止新版本里面禁止了menubar
+
+(defun projectile-find-file-hook-function ()
+  "Called by `find-file-hook' when `projectile-mode' is on.
+
+The function does pretty much nothing when triggered on remote files
+as all the operations it normally performs are extremely slow over
+tramp."
+  (unless (file-remote-p default-directory)
+    (when projectile-dynamic-mode-line
+      (projectile-update-mode-line))
+    (projectile-cache-files-find-file-hook)
+    (projectile-track-known-projects-find-file-hook)
+    (projectile-visit-project-tags-table)))
+
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
 ;; - `load!' for loading external *.el files relative to this one

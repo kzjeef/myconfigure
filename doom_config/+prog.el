@@ -64,20 +64,11 @@
 
           ;; 在mac的UI模式下关闭高亮当前行，有些速度慢
           (lambda()
-
-            (global-set-key (kbd "<f5>") (lambda ()
-                                           (interactive)
-                                           (setq-local compilation-read-command nil)
-                                           (call-interactively 'compile)))
             (if (display-graphic-p)
                 (when IS-MAC
                   (progn
                     (hl-line-mode -1)
                     (global-hl-line-mode -1))))
-                                        ;
-                                        ;  (setq lsp-enable-file-watchers nil) ; 如果禁用file watch 去掉前面注释。
-                                        ;               (setq lsp-auto-guess-root nil)
-
             )
           't
           )
