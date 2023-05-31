@@ -17,17 +17,17 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;(setq doom-theme 'doom-one)
-;(setq doom-theme 'doom-one-light)
+(setq doom-theme 'doom-one-light)
 ;(setq doom-theme 'doom-gruvbox)
 ;(setq doom-theme 'doom-dark+)
 ;(setq doom-theme 'doom-monokai)
-(setq doom-theme 'doom-dracula)
+;(setq doom-theme 'doom-dracula)
 ;(setq org-directory "~/Dropbox/org/")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 ;; 关闭行号, 在mac下面org-mode会非常的卡.
-(setq display-line-numbers-type nil)
+(setq display-line-numbers-type t)
 
 ;; 解决中文卡顿的问题.
 (set-language-environment 'utf-8)
@@ -43,6 +43,9 @@
 (setq projectile-file-exists-remote-cache-expire nil)
 
 (menu-bar-mode t) ;; 防止新版本里面禁止了menubar
+
+(setq debug-on-error nil)
+
 
 (defun projectile-find-file-hook-function ()
   "Called by `find-file-hook' when `projectile-mode' is on.
@@ -104,11 +107,6 @@ tramp."
             (setq retval (cons 'exception (list ex)))))
          retval)
      ,@clean-up))
-
-
-(setq pyim-dicts
-   (quote
-    ((:name "greatdict" :file "~/myconfigure/input/pyim-greatdict.pyim.gz"))))
 
 
 (cond (on_darwin
@@ -230,12 +228,11 @@ tramp."
 (setq visiable-bell t)	 ;; 把嘟的声音去掉
 (setq ring-bell-function 'ignore)	;; 不要让那个DIDI的响
 
-(global-visual-line-mode t) ;; 长行折行
+(set-default 'truncate-lines nil) ;; long line auto wrap at edge.
 
 (setq transient-mark-mode nil)	 ;; 两次按C－space以后高亮显示区域
 
-(setq display-time-24hr-format nil
-)
+(setq display-time-24hr-format nil)
 (setq display-time-day-and-date nil)
 (setq display-time-interval 10)
 (display-time-mode nil)
