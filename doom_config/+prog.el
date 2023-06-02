@@ -140,6 +140,15 @@
 ;(setq valign-fancy-bar non-nil))
 
 
+
+;; 针对远程模式，注册ccls
+(lsp-register-client
+    (make-lsp-client
+       :new-connection (lsp-tramp-connection (lambda () (cons "/var/lib/snapd/snap/bin/ccls" ccls-args)))
+                     :major-modes '(c++-mode cmake-mode)
+                     :remote? t
+                     :server-id 'lsp-remote))
+
 ;; 让中文表格对齐.
 (setq valign-fancy-bar 1)
 (add-hook 'org-mode-hook 'valign-mode)
