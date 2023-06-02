@@ -57,6 +57,8 @@
 (package! clang-format)
 (package! clang-format-plus)
 
+(package! emacs-snippets :disable t)
+
 (package! ox-ioslide)
 (package! theme-changer
   :recipe (:fork (:host github :repo "cnsunyour/theme-changer")))
