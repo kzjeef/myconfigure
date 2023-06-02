@@ -61,21 +61,24 @@
   (add-to-list 'lsp-file-watch-ignored-files "[/\\\\]\\.my-files\\'"))
 
 (add-hook 'c-mode-common-hook
+;; disable hightlight in all mode.
+(progn
+  (hl-line-mode -1)
+  (global-hl-line-mode -1))
 
-          ;; 在mac的UI模式下关闭高亮当前行，有些速度慢
-          (lambda()
-            (if (display-graphic-p)
-                (when IS-MAC
-                  (progn
-                    (hl-line-mode -1)
-                    (global-hl-line-mode -1))))
-                                        ;
-                                        ;  (setq lsp-enable-file-watchers nil) ; 如果禁用file watch 去掉前面注释。
-                                        ;               (setq lsp-auto-guess-root nil)
+;; 在mac的UI模式下关闭高亮当前行，有些速度慢
+(lambda()
+  (if (display-graphic-p)
+      (when IS-MAC
+        (progn
+          (hl-line-mode -1)
+          (global-hl-line-mode -1))))
+;  (setq lsp-enable-file-watchers nil) ; 如果禁用file watch 去掉前面注释。
+;               (setq lsp-auto-guess-root nil)
 
-            )
-          't
-          )
+  )
+'t
+)
 ;; will apply clang-format iff there is a .clang-format file under project.
 ;; will only format the modify line,  really handy.
 ;; too much change!!!!
