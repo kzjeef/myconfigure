@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# uuid: A3555C49-D367-4CF5-8032-13B291820CD3
-# key: log
-# contributor: Translated from textmate snippet by PROGRAM_NAME
-# name: NSLog(.., _cmd)
-## condition: "
-# --
-NSLog(@"%s$1", sel_getName(_cmd)${1/[^%]*(%)?.*/(?1:, :\);)/}$2${1/[^%]*(%)?.*/(?1:\);)/}

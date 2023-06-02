@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: IOServer New Admin Router Path
-# key: iadr
-# --
-
-tokenutil.ensureAuthAdmin(req, res, function(req, res, user) {
-   $1
- }, utils.on_not_auth);
