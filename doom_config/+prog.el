@@ -166,3 +166,13 @@
   (interactive)
   (setq buffer-display-table (make-display-table))
   (aset buffer-display-table ?\^M []))
+
+;; 让search project 在tramp模式下work
+;; 不然会有error code 2
+(after! counsel
+  (advice-add 'counsel-rg
+              :around
+              (lambda (func &rest args)
+                (cl-letf (((symbol-function #'process-exit-status)
+                           (lambda (_proc) 0)))
+                  (apply func args)))))
