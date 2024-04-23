@@ -31,8 +31,8 @@
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 ;; 关闭在 tramp 下面的自动补全
-(defun company-files--connected-p (file)
-  (not (file-remote-p file)))
+;;(defun company-files--connected-p (file)
+;;  (not (file-remote-p file)))
 
 (use-package! bazel-mode
   :defer t
@@ -113,7 +113,6 @@
   (add-to-list 'projectile-globally-ignored-directories "build_101")
   )
 
-
 (when IS-MAC
 ;; method0 是英文输入法，method1是中文输入法
 (setq input-switch-method0 "com.apple.keylayout.ABC")
@@ -121,9 +120,11 @@
 (setq input-switch-is-on nil)
 
 ;; 通过运行命令切换输入法，只在非编程模式下才做这个输入法切换。
+;; reference this link to install tools.
+;; https://github.com/laishulu/macism
 (defun input-switch-use-method (method)
   (when (and input-switch-is-on (not (derived-mode-p 'prog-mode)))
-    (shell-command (replace-regexp-in-string "method" method "swim use method"))))
+    (shell-command (replace-regexp-in-string "method" method "macism method"))))
 
 ;; 开启或关闭输入法切换
 (defun input-switch-enable () (interactive) (setq input-switch-is-on t))
@@ -140,6 +141,11 @@
 (add-hook 'org-mode-hook (lambda()
                            (input-switch-enable)
                            ))
+;; 确保在离开org mode（或切换到非org mode的buffer）时关闭输入法切换
+ (add-hook 'window-configuration-change-hook
+            (lambda ()
+              (unless (eq major-mode 'org-mode)
+                (input-switch-disable))))
 
 )
 
@@ -159,9 +165,9 @@
                      :remote? t
                      :server-id 'lsp-remote)))
 
-;; 让中文表格对齐.
-(setq valign-fancy-bar 1)
-(add-hook 'org-mode-hook 'valign-mode)
+;; 让中文表格对齐, 关掉这个，新emacs版本并不对齐
+;(setq valign-fancy-bar 1)
+;(add-hook 'org-mode-hook 'valign-mode)
 
 
 (defun remove-dos-eol ()
@@ -179,3 +185,27 @@
                 (cl-letf (((symbol-function #'process-exit-status)
                            (lambda (_proc) 0)))
                   (apply func args)))))
+
+  (if (display-graphic-p)
+      (when IS-MAC
+        (progn
+          (add-to-list 'load-path "/Users/jiejingzhang/ml-dev/lsp-bridge")
+(require 'yasnippet)
+(yas-global-mode 1)
+
+;(require 'lsp-bridge)
+;(global-lsp-bridge-mode)
+          )))
+;  (setq lsp-enable-file-watchers nil) ; 如果禁用file watch 去掉前面注释。
+;               (setq lsp-auto-guess-root nil)
+
+
+;; enable python for in-buffer evaluation
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)))
+
+;; all python code be safe
+(defun my-org-confirm-babel-evaluate (lang body)
+(not (string= lang "python")))
+(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)

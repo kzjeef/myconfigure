@@ -11,16 +11,23 @@
 (setq user-full-name "Jiejing Zhang"
       user-mail-address "jiejing.zjj@alibaba-inc.com")
 (require 'cl)
-(setq doom-font (font-spec :family "Source Code Pro" :size 13))
-;(setq doom-font (font-spec :family "Fira Code" :size 12))
+(setq doom-font (font-spec :family "Source Code Pro" :size 13 :weight 'normal))
+;(setq doom-font (font-spec :family "Menlo" :size 14))
+;(setq doom-font (font-spec :family "Fira Code" :size 14))
+
 
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;(setq doom-theme 'doom-one)
 ;(setq doom-theme 'doom-one-light)
-;(setq doom-theme 'doom-gruvbox)
-(setq doom-theme 'doom-dark+)
-;(setq doom-theme 'doom-monokai)
+(setq doom-themes-enable-bold nil    ; if nil, bold is universally disabled
+        doom-themes-enable-italic nil) ; i
+;(setq doom-theme 'doom-solarized-light) ;; don't
+(setq solarized-italic nil)
+(setq solarized-bold nil)
+(setq solarized-termcolors 256)
+;;(setq doom-theme 'doom-dark+)
+(setq doom-theme 'doom-monokai-classic)
 ;(setq doom-theme 'doom-dracula)
 ;(setq org-directory "~/Dropbox/org/")
 
@@ -44,7 +51,7 @@
 
 (menu-bar-mode t) ;; 防止新版本里面禁止了menubar
 
-(setq debug-on-error nil)
+;(setq debug-on-error nil)
 
 
 (defun projectile-find-file-hook-function ()
@@ -194,6 +201,8 @@ tramp."
 ;  (global-eldoc-mode -1)
 
   (show-paren-mode t)
+
+(setq debug-ignored-errors nil)
 
     (setq puml-plantuml-jar-path "/usr/local/Cellar/plantuml/8037/plantuml.8037.jar")
   (add-to-list 'auto-mode-alist '("\\.puml\\'" . puml-mode))
@@ -434,21 +443,14 @@ lsp-ui-sideline-enable t))
 ;;(defun my-remap-hl-line ()
 ;;  "Remap hl-line face."
 ;;  (face-remap-add-relative 'hl-line `(:background ,(face-background 'default) :foreground ,(face-foreground 'lazy-highlight))))
+;;
+;;;; setup path for brew
+;;;;
+(setenv "PATH" (concat (getenv "PATH") ":/opt/homebrew/bin:/opt/homebrew/bin:/opt/homebrew/bin:/Users/jiejingzhang/bin:/opt/homebrew/bin:/opt/homebrew/bin"))
+
+(setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))
+
+
 
 (with-eval-after-load 'treemacs
   (add-hook 'treemacs-mode-hook #'my-remap-hl-line))
-
-(advice-add #'doom-highlight-non-default-indentation-h :override #'ignore)
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(safe-local-variable-values (quote ((rm-trailing-spaces . t)))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )

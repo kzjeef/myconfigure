@@ -44,7 +44,7 @@
 
 ;(package! ggtags)
 ;(package! helm-gtags)
-(package! hungry-delete)
+;(package! hungry-delete)
 ;(package! magit-section)
 
 ;; window
